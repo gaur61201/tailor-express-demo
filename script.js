@@ -567,10 +567,21 @@
       return            { x: Math.sign(pos) * 640, scale: 0.45, rotate: Math.sign(pos) * 14, opacity: 0, zIndex: 1 };
     }
     function mobileConfigForPosition(pos) {
-      // Mobile: single card visible, neighbors hidden (we'll fade-slide on advance)
-      if (pos === 0) return { x: 0,             scale: 1.0, rotate: 0, opacity: 1, zIndex: 5 };
-      if (pos === 1 || pos === -1) return { x: pos * 380, scale: 0.95, rotate: 0, opacity: 0, zIndex: 3 };
-      return { x: Math.sign(pos) * 480, scale: 0.9, rotate: 0, opacity: 0, zIndex: 1 };
+      // Mobile Pattern B — symmetric peek: active card centered at 70vw,
+      // adjacent cards peek from each edge at 0.3 opacity. Translate
+      // neighbors by 70vw + 5px (center-to-center) so each shows ~15vw.
+      // Edge cards (first/last) hide the wrapped neighbor so no broken
+      // peek appears on the missing side.
+      if (pos === 0) return { x: 0, scale: 1.0, rotate: 0, opacity: 1, zIndex: 5 };
+      const isEdgeWrap =
+        (activeIndex === 0     && pos === -1) ||
+        (activeIndex === N - 1 && pos ===  1);
+      if ((pos === 1 || pos === -1) && !isEdgeWrap) {
+        const peekX = window.innerWidth * 0.70 + 5;
+        return { x: pos * peekX, scale: 1.0, rotate: 0, opacity: 0.3, zIndex: 3 };
+      }
+      // Edge-wrap neighbor OR far cards — push off-screen, fully hidden
+      return { x: Math.sign(pos || 1) * window.innerWidth, scale: 1.0, rotate: 0, opacity: 0, zIndex: 1 };
     }
     function configForPosition(pos) {
       return mobileQuery.matches ? mobileConfigForPosition(pos) : desktopConfigForPosition(pos);

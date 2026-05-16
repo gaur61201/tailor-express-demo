@@ -1045,21 +1045,26 @@ body[dir="rtl"] .services__arrow svg { transform: scaleX(-1); }
     height: 540px;
     padding-inline: var(--container-pad);
   }
+  /* Pattern B — symmetric peek: active card at 70vw with neighbors
+     peeking from each edge. The JS-driven mobile positioning (see
+     mobileConfigForPosition in script.js) translates neighbors by
+     70vw + 5px center-to-center so each shows ~15vw of itself with
+     0.3 opacity. Width and centering live here in CSS. */
   .services__card {
-    width: min(320px, 80vw);
+    width: 70vw;
     height: 470px;
     margin-top: -235px;
-    margin-left: calc(min(320px, 80vw) / -2);
+    margin-left: -35vw;
   }
   .services__arrow { display: none; }
 }
 
 @media (max-width: 480px) {
   .services__card {
-    width: min(280px, 78vw);
+    width: 70vw;
     height: 420px;
     margin-top: -210px;
-    margin-left: calc(min(280px, 78vw) / -2);
+    margin-left: -35vw;
   }
   .services__stage { height: 480px; }
 }
