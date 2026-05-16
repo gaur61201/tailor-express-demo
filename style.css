@@ -1045,26 +1045,35 @@ body[dir="rtl"] .services__arrow svg { transform: scaleX(-1); }
     height: 540px;
     padding-inline: var(--container-pad);
   }
-  /* Pattern B — symmetric peek: active card at 70vw with neighbors
-     peeking from each edge. The JS-driven mobile positioning (see
-     mobileConfigForPosition in script.js) translates neighbors by
-     70vw + 5px center-to-center so each shows ~15vw of itself with
-     0.3 opacity. Width and centering live here in CSS. */
+  /* Pattern C — stacked deck: active card at 88vw lifted with strong
+     shadow, peek cards offset only ±8px behind it (z-index lower) so
+     just an 8px colored strip of each peek shows past the active card's
+     edges. JS-driven positions live in mobileConfigForPosition (see
+     script.js); CSS handles widths and the active/peek shadow tiers
+     via data-mobile-state set in applyPositions. */
   .services__card {
-    width: 70vw;
+    width: 88vw;
     height: 470px;
     margin-top: -235px;
-    margin-left: -35vw;
+    margin-left: -44vw;
+  }
+  .services__card[data-mobile-state="active"] {
+    box-shadow:
+      0 16px 32px rgba(26, 13, 18, 0.35),
+      0 8px 16px rgba(26, 13, 18, 0.25);
+  }
+  .services__card[data-mobile-state="peek"] {
+    box-shadow: 0 4px 12px rgba(26, 13, 18, 0.15);
   }
   .services__arrow { display: none; }
 }
 
 @media (max-width: 480px) {
   .services__card {
-    width: 70vw;
+    width: 88vw;
     height: 420px;
     margin-top: -210px;
-    margin-left: -35vw;
+    margin-left: -44vw;
   }
   .services__stage { height: 480px; }
 }

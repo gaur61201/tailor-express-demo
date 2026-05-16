@@ -567,21 +567,21 @@
       return            { x: Math.sign(pos) * 640, scale: 0.45, rotate: Math.sign(pos) * 14, opacity: 0, zIndex: 1 };
     }
     function mobileConfigForPosition(pos) {
-      // Mobile Pattern B — symmetric peek: active card centered at 70vw,
-      // adjacent cards peek from each edge at 0.3 opacity. Translate
-      // neighbors by 70vw + 5px (center-to-center) so each shows ~15vw.
-      // Edge cards (first/last) hide the wrapped neighbor so no broken
-      // peek appears on the missing side.
-      if (pos === 0) return { x: 0, scale: 1.0, rotate: 0, opacity: 1, zIndex: 5 };
+      // Mobile Pattern C — stacked deck: active card lifted with strong
+      // shadow (CSS via data-mobile-state="active"); adjacent cards
+      // offset only ±8px so an 8px colored strip peeks from behind. With
+      // both active and peek at 88vw, the peek's bulk is hidden behind
+      // active (z-index 1 vs 3); only the offset 8px shows past the
+      // active card's edges. Edge cards hide the wrapped neighbor.
+      if (pos === 0) return { x: 0, y: -8, scale: 1.0, rotate: 0, opacity: 1, zIndex: 3, mobileState: 'active' };
       const isEdgeWrap =
         (activeIndex === 0     && pos === -1) ||
         (activeIndex === N - 1 && pos ===  1);
       if ((pos === 1 || pos === -1) && !isEdgeWrap) {
-        const peekX = window.innerWidth * 0.70 + 5;
-        return { x: pos * peekX, scale: 1.0, rotate: 0, opacity: 0.3, zIndex: 3 };
+        return { x: pos * 8, y: 0, scale: 1.0, rotate: 0, opacity: 1, zIndex: 1, mobileState: 'peek' };
       }
       // Edge-wrap neighbor OR far cards — push off-screen, fully hidden
-      return { x: Math.sign(pos || 1) * window.innerWidth, scale: 1.0, rotate: 0, opacity: 0, zIndex: 1 };
+      return { x: Math.sign(pos || 1) * window.innerWidth, y: 0, scale: 1.0, rotate: 0, opacity: 0, zIndex: 0, mobileState: 'hidden' };
     }
     function configForPosition(pos) {
       return mobileQuery.matches ? mobileConfigForPosition(pos) : desktopConfigForPosition(pos);
@@ -599,9 +599,14 @@
       cards.forEach((card, i) => {
         const pos = getSignedPosition(i);
         const cfg = configForPosition(pos);
+        // Pattern C mobile uses data-mobile-state for CSS shadow tiers
+        // (active/peek). Desktop config doesn't set mobileState → attr
+        // cleared so desktop shadow CSS rule chain stays in effect.
+        if (cfg.mobileState) card.dataset.mobileState = cfg.mobileState;
+        else delete card.dataset.mobileState;
         gsap.to(card, {
           x: cfg.x,
-          y: 0,
+          y: cfg.y || 0,
           scale: cfg.scale,
           rotate: cfg.rotate,
           opacity: cfg.opacity,
