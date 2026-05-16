@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build artifacts
+dist/
+build/
+.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Sensitive client files (DO NOT COMMIT — owner's IP)
+Brand Style Guide.pdf
+BRAND_CONTEXT.md
+POLISH_NOTES.md
+
+# Internal QA / debugging
+_qa_screenshots/
+*.log
+debug-*.html
+
+# Reference materials (local only)
+assets/instagram_refs/
