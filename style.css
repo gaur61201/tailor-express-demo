@@ -736,19 +736,56 @@ body[dir="rtl"] .hero__scroll-label { letter-spacing: 0.1em; text-transform: non
 }
 
 @media (max-width: 900px) {
+  /* Mobile hero — full-bleed video with text overlaid at bottom over a
+     plum gradient. Override the desktop two-column grid into a single
+     stacking context where the video fills the section and the text
+     sits absolutely positioned at the bottom 40%. */
   .hero {
-    grid-template-columns: 1fr;
-    grid-template-rows: 50vh auto;
-    min-height: auto;
+    display: block;
+    height: 100vh;
+    min-height: 100vh;
+    padding-top: 0;
+    background: var(--color-plum);
   }
   .hero__media {
-    order: -1;
-    height: 50vh;
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+  }
+  /* Replace the uniform 22% plum tint with a top-transparent → bottom-
+     plum gradient so text overlaid at the bottom remains readable. */
+  .hero__media-tint {
+    background: linear-gradient(
+      180deg,
+      rgba(51, 32, 42, 0)    0%,
+      rgba(51, 32, 42, 0.15) 50%,
+      rgba(51, 32, 42, 0.85) 100%
+    );
   }
   .hero__text {
-    padding: var(--space-6) var(--container-pad) var(--space-8);
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    padding: var(--space-3) 24px 32px;
+    justify-content: flex-end;
   }
   .hero__text-inner { max-width: none; gap: var(--space-2); }
+
+  /* Mobile color overrides — blush-on-plum for legibility against the
+     gradient. Desktop colors (burgundy/plum/sage on blush bg) untouched. */
+  .hero__eyebrow      { color: var(--color-blush); }
+  .hero__headline     { color: var(--color-blush); font-size: clamp(1.75rem, 8vw, 2.5rem); }
+  .hero__subline      { color: rgba(246, 232, 234, 0.85); }
+  .hero__open-numerals,
+  .hero__open-label   { color: var(--color-blush); }
+  /* slash stays coral — pops as accent against blush */
+  .btn--ghost         { color: var(--color-blush); border-color: rgba(246, 232, 234, 0.5); }
+  .btn--ghost:hover   { background: var(--color-blush); color: var(--color-plum); }
+
   .hero__media-x {
     width: 56px;
     height: 56px;

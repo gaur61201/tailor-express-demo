@@ -2913,10 +2913,42 @@
   };
 
   /* =============================================
+     HERO VIDEO AUTOPLAY FALLBACK
+     iOS Safari (and some Android browsers) can block autoplay even with
+     muted+playsinline. If .play() rejects, wait for any user interaction
+     and try again — first touchstart/click anywhere will start the video.
+     ============================================= */
+  const initHeroVideo = () => {
+    const heroVideo = document.querySelector('.hero__video');
+    if (!heroVideo) return;
+    const tryPlay = () => {
+      const p = heroVideo.play();
+      if (p && typeof p.then === 'function') {
+        p.catch(() => {
+          // Autoplay blocked — wait for first user interaction
+          const playOnTouch = () => {
+            heroVideo.play().catch(() => {});
+            document.removeEventListener('touchstart', playOnTouch);
+            document.removeEventListener('click', playOnTouch);
+          };
+          document.addEventListener('touchstart', playOnTouch, { once: true });
+          document.addEventListener('click', playOnTouch, { once: true });
+        });
+      }
+    };
+    if (heroVideo.readyState >= 2) {
+      tryPlay();
+    } else {
+      heroVideo.addEventListener('loadeddata', tryPlay, { once: true });
+    }
+  };
+
+  /* =============================================
      INIT
      ============================================= */
   document.addEventListener('DOMContentLoaded', () => {
     initNav();
+    initHeroVideo();
     initLangToggle();
     initAnchors();
     initAbout();
