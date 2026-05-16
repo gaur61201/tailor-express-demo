@@ -2293,37 +2293,32 @@
         },
       });
 
-      /* === Scroll-driven camera sweep (v7 pin) =====================
-         Pin the Gallery section and link the camera position to scroll
-         progress via a 5-point S-curve sweep. The camera moves left,
-         returns center + slightly lifted/forward, moves right, returns
-         to start. Look-at is FIXED at (0, 3, 2) — the pedestal/hero
-         zone — so the pedestal stays in view throughout. NOT a true
-         360° orbit; the 3-wall room geometry would clip and reveal
-         backs of planes if we tried to circle.
-
-         Pin duration: 1500px desktop / 800px ≤900px viewport / 400px
-         under reduced-motion (pin still applies — it prevents the
-         next section from bleeding through during scroll — but the
-         camera does NOT animate under reduced-motion).
-
-         FALLBACK PATTERN 1 — Slow zoom forward
-         If the S-curve sweep doesn't read well visually, swap the
-         positions array for these values:
-             positions: [
-               { p: 0.00, x: 0, y: 4.0, z: 14 },
-               { p: 1.00, x: 0, y: 4.5, z: 9  }
-             ],
-             lookAt: { x: 0, y: 2.5, z: 0 }
-         This dollies straight forward with a slight upward lift —
-         simpler, lower-risk. */
+      /*
+       * GALLERY CAMERA — Pull-back reveal
+       *
+       * Camera starts immersive (left-of-center, slightly forward)
+       * and pulls back to the clean center view as user scrolls.
+       *
+       * Progress 0.0 → Image 2 position: in the room, looking from
+       *   the left side, walls extending at angles
+       * Progress 1.0 → Image 1 position: composed center view, full
+       *   gallery surveyable, pedestal centered
+       *
+       * The pull-back motion ends on a "landing" frame — the viewer
+       * feels they have arrived at the canonical gallery view.
+       *
+       * Look-at is FIXED at (0, 3, 2) — the pedestal/hero zone — so
+       * the pedestal stays in view throughout the pull-back.
+       *
+       * Pin duration: 1000px desktop / 600px ≤900px viewport / 400px
+       * under reduced-motion (pin still applies — it prevents the
+       * next section from bleeding through during scroll — but the
+       * camera does NOT animate under reduced-motion).
+       */
       const cameraKeyframes = {
         positions: [
-          { p: 0.00, x:  0,   y: 4.0, z: 14 },
-          { p: 0.25, x: -4,   y: 4.2, z: 13 },
-          { p: 0.50, x:  0,   y: 5.0, z: 12 },
-          { p: 0.75, x:  4,   y: 4.2, z: 13 },
-          { p: 1.00, x:  0,   y: 4.0, z: 14 },
+          { p: 0.00, x: -4,   y: 4.2, z: 13 },  // Start: immersive left
+          { p: 1.00, x:  0,   y: 4.0, z: 14 },  // End: clean center
         ],
         lookAt: { x: 0, y: 3, z: 2 },
       };
@@ -2367,7 +2362,7 @@
         start: 'top top',
         end: () => '+=' + (
           prefersReducedMotion ? 400 :
-          (window.innerWidth <= 900 ? 800 : 1500)
+          (window.innerWidth <= 900 ? 600 : 1000)
         ),
         pin: true,
         pinSpacing: true,
