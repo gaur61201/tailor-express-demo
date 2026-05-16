@@ -567,21 +567,26 @@
       return            { x: Math.sign(pos) * 640, scale: 0.45, rotate: Math.sign(pos) * 14, opacity: 0, zIndex: 1 };
     }
     function mobileConfigForPosition(pos) {
-      // Mobile Pattern C — stacked deck: active card lifted with strong
-      // shadow (CSS via data-mobile-state="active"); adjacent cards
-      // offset only ±8px so an 8px colored strip peeks from behind. With
-      // both active and peek at 88vw, the peek's bulk is hidden behind
-      // active (z-index 1 vs 3); only the offset 8px shows past the
-      // active card's edges. Edge cards hide the wrapped neighbor.
-      if (pos === 0) return { x: 0, y: -8, scale: 1.0, rotate: 0, opacity: 1, zIndex: 3, mobileState: 'active' };
-      const isEdgeWrap =
-        (activeIndex === 0     && pos === -1) ||
-        (activeIndex === N - 1 && pos ===  1);
-      if ((pos === 1 || pos === -1) && !isEdgeWrap) {
-        return { x: pos * 8, y: 0, scale: 1.0, rotate: 0, opacity: 1, zIndex: 1, mobileState: 'peek' };
+      // Mobile Pattern A — asymmetric peek-right only. Active card sits
+      // left-aligned with ~20px viewport left padding; right neighbor
+      // peeks at 0.3 opacity. No left peek ever. Last card hides the
+      // wrapped right neighbor (card 0). Math:
+      //   active center  = (20 + activeWidth/2)               from vp left
+      //   peek center    = activeRightEdge + 12 + peekWidth/2 from vp left
+      //   translateX     = (target center) - (viewport center, i.e. 50vw)
+      // With activeWidth = peekWidth = 85vw, this resolves to:
+      //   activeX = 20 - 0.075 * innerWidth
+      //   peekX   = 32 + 0.775 * innerWidth
+      const vw = window.innerWidth;
+      if (pos === 0) {
+        return { x: 20 - 0.075 * vw, y: 0, scale: 1.0, rotate: 0, opacity: 1, zIndex: 2 };
       }
-      // Edge-wrap neighbor OR far cards — push off-screen, fully hidden
-      return { x: Math.sign(pos || 1) * window.innerWidth, y: 0, scale: 1.0, rotate: 0, opacity: 0, zIndex: 0, mobileState: 'hidden' };
+      const isLastCardRightWrap = (activeIndex === N - 1 && pos === 1);
+      if (pos === 1 && !isLastCardRightWrap) {
+        return { x: 32 + 0.775 * vw, y: 0, scale: 0.97, rotate: 0, opacity: 0.3, zIndex: 1 };
+      }
+      // No left peek, no far cards visible, no wrapped right peek on last
+      return { x: Math.sign(pos || 1) * vw, y: 0, scale: 0.97, rotate: 0, opacity: 0, zIndex: 0 };
     }
     function configForPosition(pos) {
       return mobileQuery.matches ? mobileConfigForPosition(pos) : desktopConfigForPosition(pos);

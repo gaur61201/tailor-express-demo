@@ -1045,35 +1045,28 @@ body[dir="rtl"] .services__arrow svg { transform: scaleX(-1); }
     height: 540px;
     padding-inline: var(--container-pad);
   }
-  /* Pattern C — stacked deck: active card at 88vw lifted with strong
-     shadow, peek cards offset only ±8px behind it (z-index lower) so
-     just an 8px colored strip of each peek shows past the active card's
-     edges. JS-driven positions live in mobileConfigForPosition (see
-     script.js); CSS handles widths and the active/peek shadow tiers
-     via data-mobile-state set in applyPositions. */
+  /* Pattern A — asymmetric peek-right: active card sits at 85vw with
+     its left edge ~20px from the viewport's left edge (left-aligned),
+     and the next card peeks from the right at 0.3 opacity / scale 0.97.
+     NO left peek — even on middle cards. Last card hides the wrapped
+     right neighbor. JS handles the X offsets in mobileConfigForPosition
+     (see script.js); base card shadow (defined outside this query) is
+     used — no Pattern C heavy-shadow override here. */
   .services__card {
-    width: 88vw;
+    width: 85vw;
     height: 470px;
     margin-top: -235px;
-    margin-left: -44vw;
-  }
-  .services__card[data-mobile-state="active"] {
-    box-shadow:
-      0 16px 32px rgba(26, 13, 18, 0.35),
-      0 8px 16px rgba(26, 13, 18, 0.25);
-  }
-  .services__card[data-mobile-state="peek"] {
-    box-shadow: 0 4px 12px rgba(26, 13, 18, 0.15);
+    margin-left: -42.5vw;
   }
   .services__arrow { display: none; }
 }
 
 @media (max-width: 480px) {
   .services__card {
-    width: 88vw;
+    width: 85vw;
     height: 420px;
     margin-top: -210px;
-    margin-left: -44vw;
+    margin-left: -42.5vw;
   }
   .services__stage { height: 480px; }
 }
