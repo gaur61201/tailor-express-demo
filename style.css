@@ -1802,6 +1802,11 @@ html[dir="rtl"] .branches__bracket-tag {
     grid-template-columns: 1fr;
     gap: var(--space-6);
   }
+  /* Mobile reorder: branch list FIRST so user picks a branch before
+     seeing visual context. Images + map (inside .branches__panels)
+     follow in DOM order (images → map), which is the desired sequence. */
+  .branches__list   { order: 1; }
+  .branches__panels { order: 2; }
   .branches__images {
     height: clamp(280px, 60vw, 380px);
   }
