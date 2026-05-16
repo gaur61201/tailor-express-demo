@@ -1679,7 +1679,12 @@
                   (c.getContext('webgl') || c.getContext('experimental-webgl')));
       } catch (e) { return false; }
     })();
-    const use3D = !prefersReducedMotion && !isNarrow && !isLowEnd && hasWebGL;
+    // v8 — mobile 3D enabled: isNarrow no longer blocks the 3D path.
+    // prefersReducedMotion still disables 3D (accessibility); isLowEnd
+    // (hardwareConcurrency < 4) still falls back to 2D for underpowered
+    // devices; hasWebGL still gates on capability. `isNarrow` is kept as
+    // a const above for the mobile keyframe / pin distance switches.
+    const use3D = !prefersReducedMotion && !isLowEnd && hasWebGL;
 
     /* --- Lightbox -------------------------------------------- */
     let activeIndex = 0;
@@ -2295,7 +2300,35 @@
           }
         }
         renderer.render(scene, camera);
+        monitorFps();
         rafId = requestAnimationFrame(loop);
+      };
+
+      // v8 — mobile-only FPS monitor. Logs a warning when FPS drops
+      // below 30 for 2 consecutive seconds while the gallery is in
+      // viewport. No auto-fallback — just observability. Desktop runs
+      // monitorFps but it short-circuits on the viewport-width check.
+      let _fpsFrameCount = 0;
+      let _fpsLastCheck  = (typeof performance !== 'undefined') ? performance.now() : Date.now();
+      let _fpsLowCount   = 0;
+      const monitorFps = () => {
+        if (window.innerWidth > 900) return;
+        _fpsFrameCount++;
+        const now = (typeof performance !== 'undefined') ? performance.now() : Date.now();
+        if (now - _fpsLastCheck >= 1000) {
+          const fps = _fpsFrameCount;
+          _fpsFrameCount = 0;
+          _fpsLastCheck = now;
+          if (fps < 30) {
+            _fpsLowCount++;
+            if (_fpsLowCount >= 2) {
+              console.warn('[TE-GALLERY] Mobile FPS below 30 for 2s (fps=' + fps + ')');
+              _fpsLowCount = 0; // throttle log to once per low-period
+            }
+          } else {
+            _fpsLowCount = 0;
+          }
+        }
       };
 
       // In-viewport gate for the animation loop (perf)
@@ -2335,14 +2368,30 @@
        * under reduced-motion (pin still applies — it prevents the
        * next section from bleeding through during scroll — but the
        * camera does NOT animate under reduced-motion).
+       *
+       * v8 — separate keyframes for portrait mobile. Portrait viewport
+       * (aspect ~0.46) crops far more horizontally than landscape, so
+       * the camera is pulled further back (z=16-17 vs 13-14) to keep
+       * the room and pedestal readable. Less extreme x offset (-2 vs
+       * -4) keeps side planes in frame at the immersive start.
        */
-      const cameraKeyframes = {
+      const cameraKeyframesMobile = {
+        positions: [
+          { p: 0.00, x: -2,   y: 4.2, z: 16 },  // Start: less extreme left, further back
+          { p: 1.00, x:  0,   y: 4.0, z: 17 },  // End: further back to compensate for narrow FOV
+        ],
+        lookAt: { x: 0, y: 3, z: 2 },
+      };
+      const cameraKeyframesDesktop = {
         positions: [
           { p: 0.00, x: -4,   y: 4.2, z: 13 },  // Start: immersive left
           { p: 1.00, x:  0,   y: 4.0, z: 14 },  // End: clean center
         ],
         lookAt: { x: 0, y: 3, z: 2 },
       };
+      const cameraKeyframes = (window.innerWidth <= 900)
+        ? cameraKeyframesMobile
+        : cameraKeyframesDesktop;
 
       const updateCameraForScroll = (progress) => {
         if (!camera) return;
