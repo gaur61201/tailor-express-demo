@@ -36,3 +36,12 @@ debug-*.html
 
 # Reference materials (local only)
 assets/instagram_refs/
+
+# Business / client documents — local only, NEVER push
+contract/
+invoice/
+onboarding/
+quotation/
+
+# Stray temp file from earlier video export
+assets/video-for-service-page/FINAL-SERVICE-VIDEO.47868.58884.m4v
