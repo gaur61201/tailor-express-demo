@@ -140,10 +140,107 @@
   };
 
   /* =============================================
+     FULL-SCREEN MENU OVERLAY
+     Hamburger ⇄ X toggles a curtain-reveal overlay menu.
+     Esc closes; clicking a link navigates and closes; body
+     scroll locks while open.
+     ============================================= */
+  const initMainMenu = () => {
+    const toggle = document.querySelector('.nav-menu-toggle');
+    const menu = document.getElementById('main-menu');
+    if (!toggle || !menu) return;
+
+    const openMenu = () => {
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Close menu');
+      menu.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('menu-open');
+    };
+    const closeMenu = () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Open menu');
+      menu.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('menu-open');
+    };
+
+    toggle.addEventListener('click', () => {
+      if (toggle.getAttribute('aria-expanded') === 'true') closeMenu();
+      else openMenu();
+    });
+
+    // Clicking a menu link navigates AND closes the overlay.
+    menu.querySelectorAll('.main-menu__link').forEach((link) => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Escape closes the menu when open.
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') closeMenu();
+    });
+  };
+
+  /* =============================================
+     CONTACT PAGE (contact.html)
+     Hero cascade + scroll-reveal for cards/form; bilingual
+     placeholder swap on language toggle. No-ops on other pages.
+     ============================================= */
+  const initContactPage = () => {
+    const hero = document.querySelector('.contact-hero');
+    if (!hero) return;
+
+    // Bilingual placeholder for inputs that carry data-placeholder-en/ar.
+    const swapPlaceholders = () => {
+      const ar = document.documentElement.dir === 'rtl' || document.body.dir === 'rtl';
+      document.querySelectorAll('[data-placeholder-en]').forEach((el) => {
+        el.setAttribute('placeholder', ar ? el.dataset.placeholderAr : el.dataset.placeholderEn);
+      });
+    };
+    swapPlaceholders();
+    document.addEventListener('te:langchange', swapPlaceholders);
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || typeof gsap === 'undefined') return;  // content stays at natural (visible) state
+
+    // Hero cascade (eyebrow → heading → sub)
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.6 } });
+    const eb = hero.querySelector('.contact-hero__eyebrow');
+    const hd = hero.querySelector('.contact-hero__heading');
+    const sb = hero.querySelector('.contact-hero__sub');
+    if (eb) tl.from(eb, { opacity: 0, y: 16 }, 0.2);
+    if (hd) tl.from(hd, { opacity: 0, y: 20 }, 0.3);
+    if (sb) tl.from(sb, { opacity: 0, y: 16 }, 0.5);
+
+    // Scroll-reveal: each [data-reveal] group staggers its children in.
+    if (typeof ScrollTrigger !== 'undefined') {
+      document.querySelectorAll('[data-reveal]').forEach((group) => {
+        const items = group.children.length ? Array.from(group.children) : [group];
+        ScrollTrigger.create({
+          trigger: group,
+          start: 'top 85%',
+          once: true,
+          onEnter: () => gsap.from(items, { opacity: 0, y: 24, duration: 0.7, stagger: 0.08, ease: 'power3.out' }),
+        });
+      });
+    }
+  };
+
+  /* =============================================
      EN/AR LANGUAGE TOGGLE
      Updates BOTH html.dir and body.dir so CSS matches either selector.
      ============================================= */
+  const LANG_STORAGE_KEY = 'tailor-express-language';
+
   const initLangToggle = () => {
+    // Apply a saved Arabic preference on load so the choice carries across pages.
+    // Default markup is lang="en" dir="ltr", so we only need to act for 'ar'.
+    let saved = null;
+    try { saved = localStorage.getItem(LANG_STORAGE_KEY); } catch (e) {}
+    if (saved === 'ar') {
+      document.documentElement.lang = 'ar';
+      document.documentElement.dir = 'rtl';
+      document.body.dir = 'rtl';
+    }
+
     document.querySelectorAll('[data-lang-toggle]').forEach(btn => {
       btn.addEventListener('click', () => {
         const currentDir = document.documentElement.dir || document.body.dir || 'ltr';
@@ -154,11 +251,32 @@
         document.documentElement.lang = nextLang;
         document.body.dir = nextDir;
 
+        // Persist the choice so it carries across page navigation.
+        try { localStorage.setItem(LANG_STORAGE_KEY, nextLang); } catch (e) {}
+
+        // Let language-aware widgets (e.g. the branches map) re-render.
+        document.dispatchEvent(new CustomEvent('te:langchange', { detail: { lang: nextLang } }));
+
         if (typeof ScrollTrigger !== 'undefined') {
           ScrollTrigger.refresh();
         }
       });
     });
+  };
+
+  /* Bilingual <select> options (services inquiry form). <option> can't hold
+     .en-text/.ar-text spans, so we swap textContent on load + on te:langchange.
+     Standalone (not in initServicesPage, which early-returns under reduced
+     motion); a no-op on pages without such options. */
+  const initSelectI18n = () => {
+    const opts = document.querySelectorAll('select option[data-en][data-ar]');
+    if (!opts.length) return;
+    const apply = () => {
+      const key = document.documentElement.lang === 'ar' ? 'ar' : 'en';
+      opts.forEach((o) => { o.textContent = o.dataset[key]; });
+    };
+    apply(); // initial (reads the lang initLangToggle just applied)
+    document.addEventListener('te:langchange', apply);
   };
 
   /* =============================================
@@ -1332,24 +1450,31 @@
     const section = document.querySelector('#branches');
     if (!section) return;
 
-    // === Branch data (placeholder; client to confirm names + coords) ===
+    // === Branch data — real names (EN/AR) + real coordinates. Coords for
+    // branches 2-9 were resolved from the owner's maps.app.goo.gl short links
+    // (the place-pin !3d/!4d values); Avenues is the flagship embed. The
+    // "Open in Maps →" links still use the original short URLs. ===
     const branches = [
-      { en: 'Tailor Express — Avenues', ar: 'تيلور إكسبرس — الأفنيوز', lat: 29.3027, lng: 47.9347 },
-      { en: '[Branch 2 — TBD]',          ar: '[فرع 2 — قيد التأكيد]',  lat: 29.3760, lng: 48.0067 },
-      { en: '[Branch 3 — TBD]',          ar: '[فرع 3 — قيد التأكيد]',  lat: 29.3416, lng: 47.9282 },
-      { en: '[Branch 4 — TBD]',          ar: '[فرع 4 — قيد التأكيد]',  lat: 29.3162, lng: 48.0723 },
-      { en: '[Branch 5 — TBD]',          ar: '[فرع 5 — قيد التأكيد]',  lat: 29.2786, lng: 48.0681 },
-      { en: '[Branch 6 — TBD]',          ar: '[فرع 6 — قيد التأكيد]',  lat: 29.4337, lng: 47.9778 },
-      { en: '[Branch 7 — TBD]',          ar: '[فرع 7 — قيد التأكيد]',  lat: 29.2491, lng: 48.0911 },
-      { en: '[Branch 8 — TBD]',          ar: '[فرع 8 — قيد التأكيد]',  lat: 29.3947, lng: 48.0419 },
-      { en: '[Branch 9 — TBD]',          ar: '[فرع 9 — قيد التأكيد]',  lat: 29.2233, lng: 48.0445 },
+      { en: 'Tailor Express — Avenues',        ar: 'Tailor Express — الأفنيوز',  lat: 29.3027,    lng: 47.9347 },
+      { en: 'Tailor Express — Hessa District',  ar: 'Tailor Express — ضاحية حصة', lat: 29.3593245, lng: 48.0208909 },
+      { en: 'Tailor Express — Promenade',       ar: 'Tailor Express — بروميناد',  lat: 29.3469709, lng: 48.0124569 },
+      { en: 'Tailor Express — W-Mishrif',       ar: 'Tailor Express — غرب مشرف',  lat: 29.2731356, lng: 48.0445720 },
+      { en: 'Tailor Express — Yarmouk',         ar: 'Tailor Express — اليرموك',   lat: 29.3135497, lng: 47.9662392 },
+      { en: 'Tailor Express — Qurtoba',         ar: 'Tailor Express — قرطبة',     lat: 29.3130369, lng: 47.9861687 },
+      { en: 'Tailor Express — Zahra Complex',   ar: 'Tailor Express — مجمع زهرة', lat: 29.3416300, lng: 48.0721896 },
+      { en: 'Tailor Express — Dasma',           ar: 'Tailor Express — الدسمة',    lat: 29.3656113, lng: 48.0015817 },
+      { en: 'Premium Tailor',                   ar: 'Premium Tailor',             lat: 29.3791050, lng: 47.9932457 },
     ];
 
     // Placeholder image URLs — picsum returns a deterministic random photo per
     // seed. Real branch photos drop in here when the client provides them.
     const interiorUrl = (i) => `https://picsum.photos/seed/te-int-${i + 1}/800/600`;
     const exteriorUrl = (i) => `https://picsum.photos/seed/te-ext-${i + 1}/800/600`;
-    const mapEmbedUrl = (lat, lng) => `https://maps.google.com/maps?q=${lat},${lng}&z=14&output=embed`;
+    // Map language follows the page (EN/AR). hl=ar gives Arabic map labels.
+    const currentHl = () =>
+      (document.documentElement.dir === 'rtl' || document.body.dir === 'rtl' ||
+       document.documentElement.lang === 'ar') ? 'ar' : 'en';
+    const mapEmbedUrl = (lat, lng) => `https://maps.google.com/maps?q=${lat},${lng}&hl=${currentHl()}&z=16&output=embed`;
     const directionsUrl = (lat, lng) => `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
 
     // === Element refs ===
@@ -1417,8 +1542,9 @@
       updateBracketAria(newIdx);
       updateMapLink(newIdx);
 
-      // 2. Map fade-swap (iframe src swap with crossfade)
+      // 2. Map fade-swap to the selected branch's real location.
       const newMapSrc = mapEmbedUrl(branch.lat, branch.lng);
+      mapFrame.dataset.loaded = '1';   // we own the src now; lazy-load won't override
       if (prefersReducedMotion) {
         mapFrame.src = newMapSrc;
       } else {
@@ -1502,12 +1628,28 @@
       // Keyboard: Enter / Space already trigger click on <button>; nothing extra.
     });
 
+    // "Open in Maps →" opens the branch's real location in a new tab. Stop the
+    // click from bubbling to the bracket (which would also fire goToBranch).
+    section.querySelectorAll('.branches__bracket-maps').forEach((link) => {
+      link.addEventListener('click', (e) => { e.stopPropagation(); });
+    });
+
     // === Lazy-load map iframe — defer until section enters viewport ===
     const lazyLoadMap = () => {
       if (mapFrame.dataset.loaded === '1') return;
-      mapFrame.src = mapFrame.dataset.src;
+      const b = branches[activeIndex];        // Avenues on first load
+      mapFrame.src = mapEmbedUrl(b.lat, b.lng);
       mapFrame.dataset.loaded = '1';
     };
+
+    // When the user toggles EN/AR, re-render the active branch's map so the
+    // Google Maps labels switch language (hl param).
+    document.addEventListener('te:langchange', () => {
+      if (mapFrame.dataset.loaded === '1') {
+        const b = branches[activeIndex];
+        mapFrame.src = mapEmbedUrl(b.lat, b.lng);
+      }
+    });
     const mapObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -2369,16 +2511,18 @@
        * next section from bleeding through during scroll — but the
        * camera does NOT animate under reduced-motion).
        *
-       * v8 — separate keyframes for portrait mobile. Portrait viewport
-       * (aspect ~0.46) crops far more horizontally than landscape, so
-       * the camera is pulled further back (z=16-17 vs 13-14) to keep
-       * the room and pedestal readable. Less extreme x offset (-2 vs
-       * -4) keeps side planes in frame at the immersive start.
+       * v9 — pulled camera back to z=22-24 on mobile so the entire 3D
+       * scene fits the portrait viewport like a miniature. Room,
+       * pedestal, and all 9 planes visible at once. x-offset matches
+       * desktop (-4 → 0) so the pull-back motion still reads. lookAt
+       * unchanged — still aimed at pedestal/hero zone. camera.far is
+       * 100 (line 1877) so the back wall at z=-15 (39u from cam at
+       * z=24) stays well inside the far plane.
        */
       const cameraKeyframesMobile = {
         positions: [
-          { p: 0.00, x: -2,   y: 4.2, z: 16 },  // Start: less extreme left, further back
-          { p: 1.00, x:  0,   y: 4.0, z: 17 },  // End: further back to compensate for narrow FOV
+          { p: 0.00, x: -4,   y: 4.2, z: 22 },  // Start: pulled way back, same x-offset as desktop
+          { p: 1.00, x:  0,   y: 4.0, z: 24 },  // End: pulled back further still
         ],
         lookAt: { x: 0, y: 3, z: 2 },
       };
@@ -2850,8 +2994,10 @@
      ============================================= */
   const initPopup = () => {
     const popup = document.getElementById('lead-popup');
-    const form  = document.getElementById('popup-form');
-    if (!popup || !form) return;
+    if (!popup) return;
+    // form is optional now — homepage popup is a booking CTA card with no form;
+    // services.html popup still has a form. Wiring below is conditional.
+    const form = document.getElementById('popup-form');
 
     const STORAGE_KEY = 'tailor_express_popup_shown';
     const DELAY = 7000;
@@ -2921,9 +3067,12 @@
       void popup.offsetHeight;
       requestAnimationFrame(() => popup.classList.add('is-open'));
 
-      // Move focus to first input
-      const firstInput = form.querySelector('input, select, textarea');
+      // Move focus to first interactive element — form input if a
+      // form variant, otherwise the CTA link in the booking variant
+      const firstInput = form ? form.querySelector('input, select, textarea') : null;
+      const bookingCta = popup.querySelector('.popup__cta');
       if (firstInput) firstInput.focus();
+      else if (bookingCta) bookingCta.focus();
 
       document.addEventListener('keydown', onKeyDown);
     };
@@ -2943,17 +3092,31 @@
       el.addEventListener('click', close);
     });
 
-    // Wire the popup's form via the shared helper. On success, swap
-    // form → success state inside the card, then auto-dismiss after
-    // 4s (no manual close needed).
-    const popupSuccess = popup.querySelector('.contact-form__success');
-    wireContactForm(form, {
-      onSuccess: () => {
-        form.hidden = true;
-        if (popupSuccess) popupSuccess.hidden = false;
-        setTimeout(close, 4000);
-      },
-    });
+    // Form variant (services.html): wire submit via shared helper.
+    // On success, swap form → success state inside the card, then
+    // auto-dismiss after 4s.
+    if (form) {
+      const popupSuccess = popup.querySelector('.contact-form__success');
+      wireContactForm(form, {
+        onSuccess: () => {
+          form.hidden = true;
+          if (popupSuccess) popupSuccess.hidden = false;
+          setTimeout(close, 4000);
+        },
+      });
+    }
+
+    // Booking-CTA variant (index.html): close the popup as soon as
+    // the user clicks the booking link. target="_blank" still opens
+    // the booking flow in a new tab; the close lets the homepage
+    // stay clean behind it.
+    const bookingCta = popup.querySelector('.popup__cta');
+    if (bookingCta) {
+      bookingCta.addEventListener('click', () => {
+        sessionStorage.setItem(STORAGE_KEY, '1');
+        close();
+      });
+    }
 
     // 7-second trigger
     openTimer = setTimeout(() => {
@@ -3014,12 +3177,794 @@
   };
 
   /* =============================================
+     SERVICES PAGE (services.html only)
+     - Hero entry: eyebrow → heading → sub-line fade-up
+     - Per-section scroll reveals: number scale + fade,
+       eyebrow/heading/desc translateY, image scale, bullets stagger
+     - Defensive: bails immediately if .svc-hero is not present.
+     ============================================= */
+  const initServicesPage = () => {
+    const hero = document.querySelector('.svc-hero');
+    if (!hero) return;
+
+    if (prefersReducedMotion) {
+      // CSS handles the reduced-motion final state via @media block;
+      // nothing to animate.
+      return;
+    }
+
+    // Hero entry — runs once on load
+    const heroTl = gsap.timeline({ delay: 0.2 });
+    heroTl
+      .fromTo('.svc-hero__eyebrow',
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+      )
+      .fromTo('.svc-hero__heading',
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
+        '-=0.4'
+      )
+      .fromTo('.svc-hero__sub',
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
+        '-=0.4'
+      );
+
+    // Per-section scroll reveals
+    document.querySelectorAll('.svc-section').forEach(section => {
+      const number   = section.querySelector('.svc-section__number');
+      const eyebrow  = section.querySelector('.svc-section__eyebrow');
+      const heading  = section.querySelector('.svc-section__heading');
+      const desc     = section.querySelector('.svc-section__desc');
+      const img      = section.querySelector('.svc-section__img');
+      const bullets  = section.querySelectorAll('.svc-section__bullets li');
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 75%',
+          once: true,
+        },
+      });
+
+      // Image entry now lives in animateServiceImages() below
+      // (wrapper-level slide-in keyed off slide-from-* classes).
+      if (number) {
+        tl.to(number, {
+          opacity: 1,
+          scale: 1,
+          duration: 1.2,
+          ease: 'power3.out',
+        }, 0);
+      }
+      if (eyebrow) {
+        tl.to(eyebrow, {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+        }, 0.15);
+      }
+      if (heading) {
+        tl.to(heading, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+        }, 0.25);
+      }
+      if (desc) {
+        tl.to(desc, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+        }, 0.4);
+      }
+      if (bullets.length) {
+        tl.to(bullets, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'power3.out',
+          stagger: 0.08,
+        }, 0.55);
+      }
+    });
+
+    // At-a-glance overview: label fades in first, then 6 cards in
+    // two waves of 3 with a 0.4s gap between waves.
+    // Reduced motion: parent function already early-returned above,
+    // so cards stay at their natural (visible) CSS state — no guard.
+    const glanceSection = document.querySelector('.svc-glance');
+    if (glanceSection) {
+      const label = glanceSection.querySelector('.svc-glance__eyebrow');
+      const cards = glanceSection.querySelectorAll('.svc-glance__card');
+
+      if (cards.length) {
+        if (label) gsap.set(label, { opacity: 0, y: 8 });
+        // Pure vertical rise — no scale. Scale was visually dominating
+        // horizontally on wider-than-tall cards, making the motion
+        // read as sideways instead of "up from below". Bumped y from
+        // 24 → 32 for a more pronounced rise.
+        gsap.set(cards, { opacity: 0, y: 32 });
+
+        ScrollTrigger.create({
+          trigger: glanceSection,
+          start: 'top 80%',
+          once: true,
+          onEnter: () => {
+            const tl = gsap.timeline();
+
+            if (label) {
+              tl.to(label, {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'power3.out',
+              }, 0);
+            }
+
+            // Wave 1 — cards 1-3, start at t=0.5s (~60% through label
+            // so cards arrive as the label settles)
+            tl.to([cards[0], cards[1], cards[2]].filter(Boolean), {
+              opacity: 1,
+              y: 0,
+              duration: 1.2,
+              ease: 'power3.out',
+              stagger: 0.14,
+            }, 0.5);
+
+            // Wave 2 — cards 4-6, start 0.6s after Wave 1 began
+            tl.to([cards[3], cards[4], cards[5]].filter(Boolean), {
+              opacity: 1,
+              y: 0,
+              duration: 1.2,
+              ease: 'power3.out',
+              stagger: 0.14,
+            }, 1.1);
+          },
+        });
+      }
+    }
+
+    // Per-service image slide-in. Wrapper has slide-from-left or
+    // slide-from-right class; CSS sets the initial translateX
+    // (negative for left, positive for right; flipped under RTL).
+    // We just animate to x:0 / opacity:1 when each frame enters
+    // viewport. Once per page load.
+    const leftFrames  = document.querySelectorAll('.svc-section__media.slide-from-left');
+    const rightFrames = document.querySelectorAll('.svc-section__media.slide-from-right');
+    const allFrames   = [...leftFrames, ...rightFrames];
+
+    if (allFrames.length) {
+      allFrames.forEach((frame) => {
+        ScrollTrigger.create({
+          trigger: frame,
+          start: 'top 80%',
+          once: true,
+          onEnter: () => {
+            gsap.to(frame, {
+              opacity: 1,
+              x: 0,
+              duration: 1.2,
+              ease: 'power3.out',
+            });
+          },
+        });
+      });
+    }
+  };
+
+  /* =============================================
+     GALLERY PAGE (gallery.html) — 180° immersive 3D experience
+     Camera sits at the origin and rotates in place from scroll
+     progress 0 → 1, sweeping a 180° arc of 12 image planes. The
+     user feels like they're standing in a gallery turning their head.
+     Self-contained: only runs when #gallery-canvas exists.
+     ============================================= */
+  const initGalleryPage = () => {
+    const canvas = document.getElementById('gallery-canvas');
+    if (!canvas) return; // not the gallery page
+
+    // Three.js is loaded via a blocking <script> on gallery.html, so it
+    // should be present. Bail gracefully (dark bg + overlay) if not.
+    if (typeof THREE === 'undefined') {
+      console.warn('[gallery] Three.js not available — 3D gallery skipped.');
+      return;
+    }
+
+    const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // r128 (the build this site ships) predates the colorSpace API; it uses
+    // the older encoding API. Feature-detect so colors are correct on both.
+    const applyTexColorSpace = (tex) => {
+      if (typeof THREE.SRGBColorSpace !== 'undefined') tex.colorSpace = THREE.SRGBColorSpace;
+      else if (typeof THREE.sRGBEncoding !== 'undefined') tex.encoding = THREE.sRGBEncoding;
+    };
+
+    /* ---- Scene ---- */
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0508);   // deep dark void, hint of plum
+    scene.fog = new THREE.Fog(0x0a0508, 8, 30);     // distant planes melt into the void
+
+    /* ---- Camera (at origin; only rotation.y changes on scroll) ---- */
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 0);
+    camera.rotation.order = 'YXZ';
+    camera.rotation.y = Math.PI / 2; // start of the 180° sweep (also the post-intro resting pose)
+
+    /* ---- Page-enter intro: once per session, skipped under reduced motion.
+       First visit → start at a bird's-eye pose so the opening frame is an
+       establishing shot; the GSAP timeline below descends to the resting pose.
+       Set here (before the render loop starts) so frame 1 is already elevated. */
+    const INTRO_KEY = 'gallery-intro-played';
+    const introFirstVisit = !sessionStorage.getItem(INTRO_KEY);
+    sessionStorage.setItem(INTRO_KEY, 'true');
+    const playIntro = introFirstVisit && !prefersReduced;
+    if (playIntro) {
+      camera.position.set(0, 25, 35);
+      camera.lookAt(0, 0, 0);
+      document.body.classList.add('intro-playing'); // locks scroll via CSS
+      const introOverlay = document.querySelector('.gallery-experience__overlay');
+      if (introOverlay) introOverlay.classList.add('is-hidden');
+    }
+
+    /* ---- Renderer ---- */
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: false,
+      powerPreference: 'high-performance',
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    if (typeof THREE.SRGBColorSpace !== 'undefined') renderer.outputColorSpace = THREE.SRGBColorSpace;
+    else if (typeof THREE.sRGBEncoding !== 'undefined') renderer.outputEncoding = THREE.sRGBEncoding;
+
+    /* ---- Lighting ---- */
+    scene.add(new THREE.AmbientLight(0xf6e8ea, 0.3));
+    const directional = new THREE.DirectionalLight(0xffffff, 0.8);
+    directional.position.set(0, 10, 5);
+    scene.add(directional);
+
+    /* ---- Starfield: 700 points on a spherical shell (r 25–40, well beyond
+       the planes at 6–18) so the camera's rotation parallaxes them subtly and
+       the planes always occlude them. Decorative — no raycasting. Additive
+       blending makes them glow against the dark void; the scene fog (8→30)
+       fades the nearer stars for depth. ---------------------------------- */
+
+    // 64×64 canvas star sprite: soft halo + bright core + 4-point diffraction
+    // cross, white on transparent so PointsMaterial vertex colours tint it.
+    const createStarTexture = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      const center = 32;
+
+      // Layer 1 — soft outer halo
+      const halo = ctx.createRadialGradient(center, center, 0, center, center, 32);
+      halo.addColorStop(0, 'rgba(255,255,255,0.4)');
+      halo.addColorStop(0.3, 'rgba(255,255,255,0.15)');
+      halo.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = halo; ctx.fillRect(0, 0, 64, 64);
+
+      // Layer 2 — bright center core (enlarged so it survives at on-screen size)
+      const core = ctx.createRadialGradient(center, center, 0, center, center, 11);
+      core.addColorStop(0, 'rgba(255,255,255,1)');
+      core.addColorStop(0.5, 'rgba(255,255,255,0.9)');
+      core.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = core; ctx.fillRect(0, 0, 64, 64);
+
+      // Layer 3 — diffraction spikes (additive), soft-faded ends. Thicker than the
+      // spec's 1.2 so the 4-point cross still reads once the sprite shrinks on screen.
+      ctx.globalCompositeOperation = 'lighter';
+      const spikeStops = [[0, 0], [0.3, 0.6], [0.5, 1], [0.7, 0.6], [1, 0]];
+      const vSpike = ctx.createLinearGradient(center, 4, center, 60);
+      spikeStops.forEach(([o, a]) => vSpike.addColorStop(o, `rgba(255,255,255,${a})`));
+      ctx.strokeStyle = vSpike; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(center, 4); ctx.lineTo(center, 60); ctx.stroke();
+      const hSpike = ctx.createLinearGradient(4, center, 60, center);
+      spikeStops.forEach(([o, a]) => hSpike.addColorStop(o, `rgba(255,255,255,${a})`));
+      ctx.strokeStyle = hSpike; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(4, center); ctx.lineTo(60, center); ctx.stroke();
+      ctx.globalCompositeOperation = 'source-over';
+
+      const texture = new THREE.CanvasTexture(canvas);
+      applyTexColorSpace(texture);
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      return texture;
+    };
+
+    const createStarField = () => {
+      const STAR_COUNT = 700;
+      const RADIUS_MIN = 25, RADIUS_MAX = 40;
+      const COLOR_VARIANTS = [
+        { color: new THREE.Color(0xffffff), weight: 0.30 }, // pure white
+        { color: new THREE.Color(0xfff5e6), weight: 0.25 }, // warm white
+        { color: new THREE.Color(0xe8f0ff), weight: 0.15 }, // cool white
+        { color: new THREE.Color(0xf4e0a8), weight: 0.15 }, // pale gold
+        { color: new THREE.Color(0xd4a574), weight: 0.10 }, // deep gold
+        { color: new THREE.Color(0xfce5b8), weight: 0.05 }, // champagne
+      ];
+      const positions = new Float32Array(STAR_COUNT * 3);
+      const colors = new Float32Array(STAR_COUNT * 3);
+      const sizes = new Float32Array(STAR_COUNT);
+
+      for (let i = 0; i < STAR_COUNT; i++) {
+        // even spherical distribution (acos keeps it from clustering at poles)
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const radius = RADIUS_MIN + Math.random() * (RADIUS_MAX - RADIUS_MIN);
+        positions[i * 3]     = radius * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = radius * Math.cos(phi);
+        positions[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
+
+        // weighted pick from the 6 variants
+        const cr = Math.random();
+        let cum = 0, c = COLOR_VARIANTS[0].color;
+        for (const v of COLOR_VARIANTS) { cum += v.weight; if (cr < cum) { c = v.color; break; } }
+        colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
+
+        // per-star size is informational only (PointsMaterial uses a global
+        // size); kept for possible future ShaderMaterial upgrade
+        const sr = Math.random();
+        sizes[i] = sr < 0.80 ? (0.02 + Math.random() * 0.03)
+                 : sr < 0.95 ? (0.06 + Math.random() * 0.04)
+                 :             (0.10 + Math.random() * 0.05);
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+      const starTexture = createStarTexture();
+      const material = new THREE.PointsMaterial({
+        vertexColors: true,
+        // Spec's 0.4 left the textured sprite sub-pixel in its bright detail
+        // (faint halo only). 0.9 + the enlarged core/spikes makes the star shape
+        // read while staying tasteful at 700 stars.
+        size: 0.9,
+        sizeAttenuation: true,
+        transparent: true,
+        opacity: 1.0,
+        depthWrite: false,                // additive glow; planes still occlude via depthTest
+        blending: THREE.AdditiveBlending,
+        map: starTexture,
+        alphaTest: 0.001,                 // smooths transparent-sprite rendering
+      });
+
+      const pts = new THREE.Points(geometry, material);
+      scene.add(pts);
+      return pts;
+    };
+    const stars = createStarField();
+
+    /* ---- Celestial brand mark: a large (30×30) textured plane far out at
+       distance 35 in the North (−Z) direction, tinted blush at 12%. It lives
+       IN the scene, so it parallaxes with the camera (enters as you scroll in,
+       centres at mid, exits at end). renderOrder −1 + genuine depth (35, beyond
+       the planes at 6–18) + depthTest means the photo planes always occlude it;
+       depthWrite:false keeps it from blocking the stars behind it. ---------- */
+    const createCelestialLogo = () => {
+      // Draw the X mark directly on a 2D canvas (circle "planet" + cross-stitch
+      // X, white on transparent) and use a CanvasTexture. We draw with canvas
+      // primitives rather than rasterising the .svg through an <img>: SVG images
+      // taint/fail WebGL texImage2D (the plane uploaded black in testing), while
+      // a primitive-drawn canvas is always origin-clean.
+      const S = 512;
+      const cnv = document.createElement('canvas');
+      cnv.width = cnv.height = S;
+      const ctx = cnv.getContext('2d');
+      ctx.clearRect(0, 0, S, S);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      const c = S / 2;
+      ctx.lineWidth = 14;                          // circle
+      ctx.beginPath(); ctx.arc(c, c, S * 0.44, 0, Math.PI * 2); ctx.stroke();
+      ctx.lineWidth = 26;                          // bold X (visible at 12%)
+      const lo = S * 0.28, hi = S * 0.72;
+      ctx.beginPath(); ctx.moveTo(lo, lo); ctx.lineTo(hi, hi); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(hi, lo); ctx.lineTo(lo, hi); ctx.stroke();
+
+      const logoTexture = new THREE.CanvasTexture(cnv);
+      applyTexColorSpace(logoTexture);
+      logoTexture.minFilter = THREE.LinearFilter;
+      logoTexture.magFilter = THREE.LinearFilter;
+
+      const LOGO_DISTANCE = 35, LOGO_SIZE = 65; // 65 → circle edges spill past the viewport ("inside the celestial body")
+      const geometry = new THREE.PlaneGeometry(LOGO_SIZE, LOGO_SIZE);
+      const material = new THREE.MeshBasicMaterial({
+        map: logoTexture,
+        transparent: true,
+        opacity: 0.12,
+        side: THREE.DoubleSide,
+        color: 0xf6e8ea,    // tint the white mark to blush
+        depthWrite: false,  // don't block the stars sitting behind it
+        fog: false,         // CRITICAL: logo sits at 35, beyond fog far (30); without
+                            // this the scene fog washes it to the void colour (invisible)
+      });
+      const logoPlane = new THREE.Mesh(geometry, material);
+      logoPlane.position.set(0, 0, -LOGO_DISTANCE); // North — centres at mid-scroll
+      logoPlane.lookAt(0, 0, 0);
+      logoPlane.renderOrder = -1; // draw first; photo planes (order 0) draw in front
+      scene.add(logoPlane);
+      return logoPlane;
+    };
+    const celestialLogo = createCelestialLogo();
+
+    /* ---- Plane configuration: 18 planes ALGORITHMICALLY distributed across
+       the full 360° azimuth so the camera's East→West sweep always has content
+       in view (no empty arc > ~25°). x = sin(az)·r, z = -cos(az)·r places each
+       plane on a circle around the camera; distances/heights/sizes/images are
+       varied with adjacency constraints so nothing reads as a grid.
+       Deterministic (seeded) → identical placement on every load. ---------- */
+    const IMAGE_POOL = [
+      'assets/image_background_about_section/bg_01.jpg',
+      'assets/image_background_about_section/bg_02.jpg',
+      'assets/image_background_about_section/bg_03.jpg',
+      'assets/image_background_about_section/bg_04.jpg',
+      'assets/image_background_about_section/bg_05.jpg',
+      'assets/image_background_about_section/bg_06.jpg',
+      'assets/image_background_about_section/bg_07.jpg',
+      'assets/image_background_about_section/bg_08.jpg',
+      'assets/images_service_section/card_01.jpg',
+      'assets/images_service_section/card_02.jpg',
+      'assets/images_service_section/card_03.jpg',
+      'assets/images_service_section/card_04.jpg',
+      'assets/images_service_section/card_05.jpg',
+      'assets/images_service_section/card_06.jpg',
+    ];
+    const altFor = (img) => img.includes('/card_')
+      ? 'Tailor Express service'
+      : 'Inside the Tailor Express atelier';
+
+    const generatePlaneConfigs = (seedStart) => {
+      const RADIUS_BANDS = [6, 9, 12, 15, 18];
+      const HEIGHT_BANDS = [-2, -1, 0, 1.5, 2.5];
+      const SIZES = { large: [4, 3], medium: [3, 2.25], small: [2.5, 1.875] };
+      const BASE_STEP = 360 / 18; // 20°
+      // 6 large + 8 medium + 4 small = 18, spread so sizes don't cluster
+      const sizeLabels = [
+        'large', 'medium', 'small', 'large', 'medium',
+        'large', 'medium', 'small', 'large', 'medium',
+        'large', 'medium', 'small', 'medium', 'large',
+        'medium', 'small', 'medium',
+      ];
+
+      let seed = seedStart;
+      const seededRandom = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+
+      const planes = [];
+      for (let i = 0; i < 18; i++) {
+        const baseAzimuth = i * BASE_STEP;
+        const azimuth = baseAzimuth + (seededRandom() - 0.5) * 8; // ±4° jitter
+
+        let radiusIdx;
+        do { radiusIdx = Math.floor(seededRandom() * RADIUS_BANDS.length); }
+        while (i > 0 && radiusIdx === planes[i - 1].radiusIdx);
+
+        let heightIdx;
+        do { heightIdx = Math.floor(seededRandom() * HEIGHT_BANDS.length); }
+        while (i > 0 && heightIdx === planes[i - 1].heightIdx);
+
+        planes.push({
+          azimuth,
+          radius: RADIUS_BANDS[radiusIdx],
+          y: HEIGHT_BANDS[heightIdx],
+          size: SIZES[sizeLabels[i]],
+          radiusIdx,
+          heightIdx,
+          image: null,
+        });
+      }
+
+      // First pass: 14 unique images cycle across 18 planes (last 4 repeat)
+      for (let i = 0; i < 18; i++) planes[i].image = IMAGE_POOL[i % IMAGE_POOL.length];
+
+      // Second pass: push any repeat that sits within 60° of its twin to a far slot
+      const norm = (a) => ((a % 360) + 360) % 360;
+      const arc = (a, b) => { const d = Math.abs(norm(a) - norm(b)); return Math.min(d, 360 - d); };
+      for (let i = 14; i < 18; i++) {
+        const current = planes[i].image;
+        const tooClose = planes.some((p, j) => j !== i && p.image === current && arc(p.azimuth, planes[i].azimuth) < 60);
+        if (tooClose) {
+          for (let k = 0; k < 18; k++) {
+            if (k === i) continue;
+            if (arc(planes[k].azimuth, planes[i].azimuth) > 90 && planes[k].image !== current) {
+              const tmp = planes[k].image; planes[k].image = planes[i].image; planes[i].image = tmp;
+              break;
+            }
+          }
+        }
+      }
+
+      return planes.map((p) => ({ azimuth: p.azimuth, radius: p.radius, y: p.y, size: p.size, image: p.image, alt: altFor(p.image) }));
+    };
+
+    // Validate the distribution against the 5 coverage constraints; returns maxGap.
+    const validatePlaneConfigs = (cfgs) => {
+      const norm = (a) => ((a % 360) + 360) % 360;
+      const arc = (a, b) => { const d = Math.abs(norm(a) - norm(b)); return Math.min(d, 360 - d); };
+      let violations = 0;
+      const warn = (m) => { violations++; console.warn('[GALLERY] constraint:', m); };
+
+      if (cfgs.length !== 18) warn('expected 18 planes, got ' + cfgs.length);
+
+      const sorted = cfgs.map((c) => ({ ...c, az: norm(c.azimuth) })).sort((a, b) => a.az - b.az);
+      for (let k = 0; k < sorted.length; k++) {
+        const a = sorted[k], b = sorted[(k + 1) % sorted.length];
+        if (a.radius === b.radius) warn(`azimuth-adjacent planes share radius ${a.radius} (${a.az.toFixed(1)}°, ${b.az.toFixed(1)}°)`);
+        if (a.y === b.y) warn(`azimuth-adjacent planes share height ${a.y} (${a.az.toFixed(1)}°, ${b.az.toFixed(1)}°)`);
+      }
+      for (let m = 0; m < cfgs.length; m++) {
+        for (let n = m + 1; n < cfgs.length; n++) {
+          if (cfgs[m].image === cfgs[n].image && arc(cfgs[m].azimuth, cfgs[n].azimuth) < 60) {
+            warn(`same image within 60°: ${cfgs[m].image.split('/').pop()} (${norm(cfgs[m].azimuth).toFixed(1)}°, ${norm(cfgs[n].azimuth).toFixed(1)}°)`);
+          }
+        }
+      }
+      let maxGap = 0;
+      for (let k = 0; k < sorted.length; k++) {
+        const a = sorted[k].az, b = sorted[(k + 1) % sorted.length].az;
+        const gap = (k + 1 < sorted.length) ? (b - a) : (360 - a + sorted[0].az);
+        if (gap > maxGap) maxGap = gap;
+      }
+      if (maxGap > 25) warn(`largest azimuth gap ${maxGap.toFixed(1)}° exceeds 25°`);
+      return { maxGap, violations };
+    };
+
+    // Generate, then auto-retry a few seeds if the layout has hard violations
+    // (gap > 25° or a within-60° image clash). Wraparound band repeats are
+    // tolerated — they're cosmetic, not coverage gaps.
+    let planeConfigs, vr, usedSeed = 42;
+    for (const trySeed of [42, 7, 99, 123, 2026, 314, 555]) {
+      planeConfigs = generatePlaneConfigs(trySeed);
+      vr = validatePlaneConfigs(planeConfigs);
+      usedSeed = trySeed;
+      if (vr.maxGap <= 25) break; // coverage is the constraint that matters most
+    }
+    console.log('[GALLERY] Generated', planeConfigs.length, 'planes (seed', usedSeed + ')');
+    console.log('[GALLERY] Largest azimuth gap:', vr.maxGap.toFixed(1), '°');
+    console.log('[GALLERY] Constraint warnings:', vr.violations);
+
+    /* ---- Build planes ---- */
+    const planes = [];
+    const textureLoader = new THREE.TextureLoader();
+    const maxAniso = renderer.capabilities.getMaxAnisotropy();
+
+    planeConfigs.forEach((config, index) => {
+      const angleRad = THREE.MathUtils.degToRad(config.azimuth);
+      const x = Math.sin(angleRad) * config.radius;
+      const z = -Math.cos(angleRad) * config.radius;
+
+      const texture = textureLoader.load(config.image, (tex) => {
+        applyTexColorSpace(tex);
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        tex.anisotropy = maxAniso;
+        tex.needsUpdate = true;
+        renderer.render(scene, camera); // repaint once the image lands
+      });
+      applyTexColorSpace(texture);
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.anisotropy = maxAniso;
+
+      const geometry = new THREE.PlaneGeometry(config.size[0], config.size[1]);
+      const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+      const plane = new THREE.Mesh(geometry, material);
+      plane.position.set(x, config.y, z);
+      plane.lookAt(0, config.y, 0); // face the camera at the origin (pure yaw — same height as target)
+
+      plane.userData = {
+        basePosition: { x, y: config.y, z },
+        baseRotZ: plane.rotation.z,
+        driftPhase: index * 1.37,            // deterministic, de-synced (no Math.random — keeps QA reproducible)
+        driftSpeed: 0.35 + (index % 5) * 0.06,
+        imagePath: config.image,
+        index,
+      };
+
+      scene.add(plane);
+      planes.push(plane);
+    });
+
+    /* ---- Resize ---- */
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    };
+    window.addEventListener('resize', handleResize);
+
+    /* ---- Continuous subtle drift (independent of scroll) ---- */
+    const clock = new THREE.Clock();
+    const animate = () => {
+      const elapsed = clock.getElapsedTime();
+      if (!prefersReduced) {
+        planes.forEach((plane) => {
+          const { basePosition, baseRotZ, driftPhase, driftSpeed } = plane.userData;
+          plane.position.y = basePosition.y + Math.sin(elapsed * driftSpeed + driftPhase) * 0.05;
+          plane.rotation.z = baseRotZ + Math.sin(elapsed * driftSpeed + driftPhase) * 0.02;
+        });
+        // Starfield whole-system pulse (Approach A twinkle) — the sky "breathes"
+        if (stars) stars.material.opacity = 0.85 + Math.sin(elapsed * 0.3) * 0.15;
+      }
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    };
+    animate();
+
+    /* ---- Scroll-driven camera rotation (pinned, scrubbed) ----
+       Wrapped in a function so the page-enter intro can defer creating the
+       pin until its 4s descent finishes (otherwise the trigger's onUpdate
+       would snap rotation.y back to the resting pose mid-intro). */
+    const galleryExperience = document.querySelector('.gallery-experience');
+    const overlay = document.querySelector('.gallery-experience__overlay');
+
+    const createRotationTrigger = () => {
+      if (prefersReduced || !galleryExperience || typeof ScrollTrigger === 'undefined') return;
+      ScrollTrigger.create({
+        id: 'gallery-rotation',
+        trigger: galleryExperience,
+        start: 'top top',
+        end: '+=1800',
+        pin: true,
+        scrub: 1,
+        onUpdate: (self) => {
+          // 0 → rotation.y = +π/2 ; 1 → rotation.y = -π/2  (a smooth 180° sweep)
+          camera.rotation.y = Math.PI / 2 - self.progress * Math.PI;
+          if (overlay) overlay.classList.toggle('is-faded', self.progress > 0.05);
+        },
+      });
+      // Pin spacer is created after this trigger; refresh once so any later
+      // ScrollTriggers measure against the spaced flow (v7.3 learning).
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+    };
+
+    if (playIntro) {
+      /* Cinematic bird's-eye → resting-pose descent (4s), then hand off to scroll.
+         Position and orientation tween in parallel; orientation slerps between
+         the establishing-shot quaternion and the East-facing resting quaternion. */
+      const startQ = new THREE.Quaternion();
+      { const t = camera.clone(); t.position.set(0, 25, 35); t.lookAt(0, 0, 0); startQ.copy(t.quaternion); }
+      const endQ = new THREE.Quaternion();
+      { const t = camera.clone(); t.position.set(0, 0, 0); t.rotation.set(0, Math.PI / 2, 0); endQ.copy(t.quaternion); }
+      const rot = { t: 0 };
+      const tl = gsap.timeline({
+        onComplete: () => {
+          camera.position.set(0, 0, 0);
+          camera.quaternion.copy(endQ);           // land exactly on the resting pose
+          document.body.classList.remove('intro-playing'); // restore scroll
+          if (overlay) overlay.classList.remove('is-hidden'); // fade heading in (CSS 0.8s)
+          createRotationTrigger();                // scroll-rotation takes over
+        },
+      });
+      tl.to(camera.position, { x: 0, y: 0, z: 0, duration: 4, ease: 'power3.inOut' }, 0);
+      tl.to(rot, {
+        t: 1, duration: 4, ease: 'power3.inOut',
+        onUpdate: () => camera.quaternion.slerpQuaternions(startQ, endQ, rot.t),
+      }, 0);
+    } else {
+      // Repeat visit (camera already at resting pose) — scroll-rotation immediately.
+      // Reduced motion: createRotationTrigger() early-returns → static East view.
+      createRotationTrigger();
+    }
+
+    /* ---- Lightbox (reuses the homepage #gallery-lightbox markup/CSS) ---- */
+    const lb        = document.getElementById('gallery-lightbox');
+    const lbImg     = lb?.querySelector('.gallery-lightbox__img');
+    const lbCur     = lb?.querySelector('.gallery-lightbox__counter-current');
+    const lbTot     = lb?.querySelector('.gallery-lightbox__counter-total');
+    const lbClose   = lb?.querySelector('.gallery-lightbox__close');
+    const lbPrev    = lb?.querySelector('.gallery-lightbox__nav--prev');
+    const lbNext    = lb?.querySelector('.gallery-lightbox__nav--next');
+    let lbIndex = 0;
+
+    if (lbTot) lbTot.textContent = planeConfigs.length;
+
+    const renderLb = () => {
+      if (!lbImg) return;
+      lbImg.src = planeConfigs[lbIndex].image;
+      lbImg.alt = planeConfigs[lbIndex].alt || '';
+      if (lbCur) lbCur.textContent = lbIndex + 1;
+    };
+    const openLb = (index) => {
+      if (!lb) return;
+      lbIndex = index;
+      renderLb();
+      lb.hidden = false;
+      lb.setAttribute('aria-hidden', 'false');
+      void lb.offsetHeight; // force reflow so the transition runs
+      requestAnimationFrame(() => lb.classList.add('is-open'));
+    };
+    const closeLb = () => {
+      if (!lb) return;
+      lb.classList.remove('is-open');
+      lb.setAttribute('aria-hidden', 'true');
+      setTimeout(() => { if (!lb.classList.contains('is-open')) lb.hidden = true; }, 320);
+    };
+    const stepLb = (dir) => {
+      lbIndex = (lbIndex + dir + planeConfigs.length) % planeConfigs.length;
+      if (lb) lb.classList.add('is-changing');
+      setTimeout(() => { renderLb(); lb?.classList.remove('is-changing'); }, 160);
+    };
+
+    lbClose?.addEventListener('click', closeLb);
+    lbPrev?.addEventListener('click', () => stepLb(-1));
+    lbNext?.addEventListener('click', () => stepLb(1));
+    lb?.addEventListener('click', (e) => { if (e.target === lb) closeLb(); });
+    document.addEventListener('keydown', (e) => {
+      if (lb?.hidden) return;
+      if (e.key === 'Escape') closeLb();
+      else if (e.key === 'ArrowRight') stepLb(1);
+      else if (e.key === 'ArrowLeft') stepLb(-1);
+    });
+
+    /* ---- Raycaster: hover (scale up + pointer cursor) and click (lightbox) ---- */
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    let hovered = null;
+
+    const updatePointer = (clientX, clientY) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+    };
+    const pick = () => {
+      if (document.body.classList.contains('intro-playing')) return null; // no plane interactions during the intro
+      raycaster.setFromCamera(pointer, camera);
+      const hits = raycaster.intersectObjects(planes);
+      return hits.length ? hits[0].object : null;
+    };
+
+    canvas.addEventListener('mousemove', (e) => {
+      updatePointer(e.clientX, e.clientY);
+      const next = pick();
+      if (next !== hovered) {
+        if (hovered) gsap.to(hovered.scale, { x: 1, y: 1, z: 1, duration: 0.4, ease: 'power3.out' });
+        hovered = next;
+        if (hovered) gsap.to(hovered.scale, { x: 1.05, y: 1.05, z: 1.05, duration: 0.4, ease: 'power3.out' });
+        document.body.style.cursor = hovered ? 'pointer' : '';
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      if (hovered) gsap.to(hovered.scale, { x: 1, y: 1, z: 1, duration: 0.4, ease: 'power3.out' });
+      hovered = null;
+      document.body.style.cursor = '';
+    });
+
+    canvas.addEventListener('click', (e) => {
+      updatePointer(e.clientX, e.clientY);
+      const hit = pick();
+      if (hit) openLb(hit.userData.index);
+    });
+    // Touch: tap-to-open (a quick raycast at the touch point).
+    canvas.addEventListener('touchend', (e) => {
+      const t = e.changedTouches && e.changedTouches[0];
+      if (!t) return;
+      updatePointer(t.clientX, t.clientY);
+      const hit = pick();
+      if (hit) openLb(hit.userData.index);
+    }, { passive: true });
+  };
+
+  /* =============================================
      INIT
      ============================================= */
   document.addEventListener('DOMContentLoaded', () => {
     initNav();
+    initMainMenu();
+    initContactPage();
     initHeroVideo();
     initLangToggle();
+    initSelectI18n();
     initAnchors();
     initAbout();
     initAboutBgSequence();
@@ -3032,6 +3977,8 @@
     initContactForm();
     initPopup();
     initNavAutoHide();
+    initServicesPage();
+    initGalleryPage();
     // Defer preloader start one frame so all fonts and CSS apply
     requestAnimationFrame(runPreloader);
     // Note: the ScrollTrigger.refresh() that used to live here was

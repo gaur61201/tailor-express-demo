@@ -323,6 +323,7 @@ body[dir="rtl"] .preloader__wordmark {
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;  /* logo → far left, cluster → far right */
   gap: var(--space-3);
 }
 
@@ -506,11 +507,139 @@ body[dir="rtl"] .nav__panel-links a { letter-spacing: 0; }
   color: var(--color-burgundy);
 }
 
-@media (max-width: 900px) {
-  .nav__links { display: none; }
-  .nav__burger { display: flex; }
-  .nav__lang { display: none; }
-  /* On mobile only the phone button + burger remain visible */
+/* The simplified nav keeps logo + phone + language toggle + menu button
+   visible at ALL sizes. (The old .nav__links / .nav__burger / .nav__panel
+   are removed from markup; their rules above are now inert.) */
+
+/* === Hamburger menu toggle (all viewports) === */
+.nav-menu-toggle {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 40px;
+  height: 40px;
+  color: var(--color-burgundy);   /* matches the phone + lang colour */
+  flex-shrink: 0;
+}
+.nav-menu-toggle__line {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transform-origin: center;
+}
+@media (hover: hover) {
+  .nav-menu-toggle:hover .nav-menu-toggle__line { opacity: 0.7; }
+}
+.nav-menu-toggle:focus-visible {
+  outline: 2px solid var(--color-coral);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Open state — the three lines fold into an X */
+.nav-menu-toggle[aria-expanded="true"] .nav-menu-toggle__line:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.nav-menu-toggle[aria-expanded="true"] .nav-menu-toggle__line:nth-child(2) { opacity: 0; }
+.nav-menu-toggle[aria-expanded="true"] .nav-menu-toggle__line:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* === Full-screen overlay menu === */
+.main-menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(51, 32, 42, 0.98);   /* plum at 98% */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Hidden — curtain parked above the viewport */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-100%);
+  transition: opacity 0.5s ease-in-out,
+              visibility 0s linear 0.5s,
+              transform 0.6s cubic-bezier(0.7, 0, 0.3, 1);
+}
+.main-menu[aria-hidden="false"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.5s ease-in-out,
+              visibility 0s,
+              transform 0.6s cubic-bezier(0.7, 0, 0.3, 1);
+}
+.main-menu__watermark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+.main-menu__watermark svg { width: 100%; height: auto; }
+.main-menu__nav { position: relative; z-index: 1; text-align: center; }
+.main-menu__list { list-style: none; padding: 0; margin: 0; }
+.main-menu__item {
+  margin: 16px 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.main-menu[aria-hidden="false"] .main-menu__item { opacity: 1; transform: translateY(0); }
+.main-menu[aria-hidden="false"] .main-menu__item:nth-child(1) { transition-delay: 0.30s; }
+.main-menu[aria-hidden="false"] .main-menu__item:nth-child(2) { transition-delay: 0.40s; }
+.main-menu[aria-hidden="false"] .main-menu__item:nth-child(3) { transition-delay: 0.50s; }
+.main-menu[aria-hidden="false"] .main-menu__item:nth-child(4) { transition-delay: 0.60s; }
+.main-menu[aria-hidden="false"] .main-menu__item:nth-child(5) { transition-delay: 0.70s; }
+.main-menu[aria-hidden="false"] .main-menu__item:nth-child(6) { transition-delay: 0.80s; }
+.main-menu__link {
+  display: inline-block;
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  color: var(--color-blush);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  padding: 12px 24px;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+body[dir="rtl"] .main-menu__link { font-family: var(--font-ar); letter-spacing: 0; }
+.main-menu__link:hover,
+.main-menu__link:focus-visible { color: var(--color-coral); transform: translateX(4px); }
+body[dir="rtl"] .main-menu__link:hover,
+body[dir="rtl"] .main-menu__link:focus-visible { transform: translateX(-4px); }
+.main-menu__link[aria-current="page"] { color: var(--color-coral); }
+
+/* Body scroll lock while the menu is open */
+body.menu-open { overflow: hidden; }
+
+/* Keep the nav (logo + X) ABOVE the overlay so the X closes it, and
+   recolour its elements blush for contrast over the plum menu. */
+body.menu-open .nav {
+  z-index: 1001;
+  background: transparent !important;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body.menu-open .nav__brand-text,
+body.menu-open .nav__phone,
+body.menu-open .nav__lang,
+body.menu-open .nav-menu-toggle { color: var(--color-blush); }
+
+@media (prefers-reduced-motion: reduce) {
+  .main-menu,
+  .main-menu__item,
+  .nav-menu-toggle__line { transition: none !important; }
+  /* Items appear instantly; the X still forms (just without the tween) */
+  .main-menu__item { opacity: 1; transform: none; }
 }
 
 /* =============================================
@@ -1159,7 +1288,9 @@ body[dir="rtl"] .services__arrow svg { transform: scaleX(-1); }
 .about__image-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 5;   /* portrait frame for the portrait team photo; cover
+                            fills the width so no one is cropped at the sides,
+                            trimming only the empty wall/counter top & bottom */
   overflow: hidden;
   will-change: transform, opacity;
   /* Initial state matches the JS scrub entry — JS will take over once loaded */
@@ -1287,7 +1418,8 @@ body[dir="rtl"] .about__cta:hover .about__cta-arrow { transform: translateX(-6px
     gap: var(--space-6);
   }
   .about__image-container {
-    aspect-ratio: 3 / 2; /* landscape on mobile to save vertical space */
+    aspect-ratio: 4 / 5; /* portrait team photo — keep portrait on mobile too
+                            (a landscape frame would crop the team's sides) */
   }
   .about__heading { max-width: none; }
   .about__paragraph { max-width: none; }
@@ -1838,6 +1970,46 @@ html[dir="rtl"] .branches__bracket-tag {
   font-family: var(--font-ar);
   letter-spacing: 0.05em;
   text-transform: none;
+}
+
+/* Right-side meta column: status tag + "Open in Maps" link, stacked. */
+.branches__bracket-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+body[dir="rtl"] .branches__bracket-meta,
+html[dir="rtl"] .branches__bracket-meta {
+  align-items: flex-start;
+}
+
+/* Subtle secondary link — opens the branch's real Google Maps location. */
+.branches__bracket-maps {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: #60202e;            /* burgundy — quiet against white bracket */
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: 0.8;
+  transition: color 0.3s var(--ease-out-soft), opacity 0.3s var(--ease-out-soft);
+}
+.branches__bracket-maps:hover,
+.branches__bracket-maps:focus-visible {
+  color: var(--color-coral);
+  opacity: 1;
+  text-decoration: underline;
+}
+.branches__bracket.is-active .branches__bracket-maps {
+  color: var(--color-blush);
+  opacity: 0.9;
+}
+body[dir="rtl"] .branches__bracket-maps,
+html[dir="rtl"] .branches__bracket-maps {
+  font-family: var(--font-ar);
 }
 
 /* === Mobile (stack vertically) === */
@@ -3175,43 +3347,123 @@ html[dir="rtl"] .popup__sub {
 /* =============================================
    TRUST STRIP (Section 12)
    ============================================= */
-.trust {
+/* Trust Strip — thin blush band with infinite marquee of partner
+   badges. ~70px tall. Sits between the contact/inline content
+   above and the footer below. */
+.trust-strip {
   background: var(--color-blush);
-  padding-block: clamp(56px, 6vw, 120px);
-  /* Spec says 120/80px — clamp interpolates between */
+  padding: 18px 0;
+  border-top: 1px solid rgba(51, 32, 42, 0.08);
+  border-bottom: 1px solid rgba(51, 32, 42, 0.08);
+  overflow: hidden;
+  position: relative;
 }
-.trust__inner {
-  max-width: var(--container-max);
-  margin-inline: auto;
-  text-align: center;
+.trust-strip__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
 }
-.trust__eyebrow {
+.trust-strip__label {
+  flex-shrink: 0;
   font-family: var(--font-en);
   font-weight: var(--fw-semibold);
-  font-size: 10px;
-  letter-spacing: 0.2em;
+  font-size: 11px;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--color-burgundy);
-  margin: 0 0 12px;
+  white-space: nowrap;
 }
-body[dir="rtl"] .trust__eyebrow,
-html[dir="rtl"] .trust__eyebrow {
+body[dir="rtl"] .trust-strip__label,
+html[dir="rtl"] .trust-strip__label {
   font-family: var(--font-ar);
   letter-spacing: 0.05em;
   text-transform: none;
 }
-.trust__marker {
-  font-family: var(--font-en);
-  font-weight: var(--fw-semibold);
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
-  letter-spacing: 0.05em;
-  color: var(--color-plum);
-  margin: 0;
+
+.trust-strip__marquee {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  min-width: 0;
 }
-body[dir="rtl"] .trust__marker,
-html[dir="rtl"] .trust__marker {
-  font-family: var(--font-ar);
-  letter-spacing: 0;
+/* Edge fade so logos don't pop at the strip's edges */
+.trust-strip__marquee::before,
+.trust-strip__marquee::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  z-index: 2;
+}
+.trust-strip__marquee::before {
+  left: 0;
+  background: linear-gradient(to right, var(--color-blush), transparent);
+}
+.trust-strip__marquee::after {
+  right: 0;
+  background: linear-gradient(to left, var(--color-blush), transparent);
+}
+
+.trust-strip__marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  width: max-content;
+  animation: marquee-scroll 30s linear infinite;
+  will-change: transform;
+}
+.trust-strip__marquee-track img {
+  height: 45px;
+  width: auto;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Track has two identical copies; translating -50% lands on the
+   second copy, which looks identical to the first → seamless. */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* RTL flow: marquee scrolls left-to-right to match reading
+   direction. animation-direction: reverse plays the same
+   keyframes from "to" back to "from" — visually equivalent
+   to scrolling images rightward. */
+html[dir="rtl"] .trust-strip__marquee-track,
+body[dir="rtl"] .trust-strip__marquee-track {
+  animation-direction: reverse;
+}
+
+@media (max-width: 768px) {
+  .trust-strip {
+    padding: 14px 0;
+  }
+  .trust-strip__inner {
+    gap: 20px;
+    padding: 0 20px;
+  }
+  .trust-strip__label {
+    font-size: 10px;
+  }
+  .trust-strip__marquee-track {
+    gap: 36px;
+    animation-duration: 24s;
+  }
+  .trust-strip__marquee-track img {
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-strip__marquee-track {
+    animation: none;
+  }
 }
 
 /* =============================================
@@ -3221,7 +3473,7 @@ html[dir="rtl"] .trust__marker {
 .site-footer {
   background: #2a1a22;       /* deep plum-warm; sibling of section bg */
   color: var(--color-blush);
-  padding: 80px 0 32px;
+  padding: 32px 0 0;         /* columns pulled up; wordmark + bottom strip own the lower spacing */
   position: relative;
 }
 .site-footer__inner {
@@ -3243,11 +3495,15 @@ html[dir="rtl"] .trust__marker {
   background-position: center;
 }
 
+/* Layer 1 — four equal content columns, centered, capped so they
+   don't sprawl on ultrawide viewports. */
 .site-footer__cols {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1.2fr 1fr;
-  gap: clamp(32px, 4vw, 64px);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 48px;
   align-items: start;
+  max-width: 1200px;
+  margin-inline: auto;
 }
 
 .site-footer__col-heading {
@@ -3379,16 +3635,50 @@ html[dir="rtl"] .site-footer__address {
   border-radius: 4px;
 }
 
-/* Bottom strip */
+/* Layer 2 — massive edge-to-edge wordmark.
+   Full-bleed (sits outside .site-footer__inner). The SVG scales to the
+   container width via width:100% on a fixed viewBox; the 35% opacity
+   keeps it a restrained brand whisper, not a shout. */
+.site-footer__wordmark {
+  width: 100%;
+  margin: 56px 0 0;
+  overflow: hidden;
+  line-height: 0;
+}
+.site-footer__wordmark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* The global .ar-text rule shows Arabic as display:inline; the wordmark
+   SVG must be block so width:100% scaling works. Re-assert block in RTL. */
+html[dir="rtl"] .site-footer__wordmark .ar-text,
+html[lang="ar"] .site-footer__wordmark .ar-text,
+body[dir="rtl"] .site-footer__wordmark .ar-text {
+  display: block !important;
+}
+
+/* Layer 3 — minimal bottom strip: © + legal on one side, demo
+   watermark on the other. Sits back inside the padded inner. */
 .site-footer__bottom {
-  margin-top: 64px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(246, 232, 234, 0.1);
+  padding: 24px 0;
+  border-top: 1px solid rgba(246, 232, 234, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 12px 32px;
   flex-wrap: wrap;
+}
+.site-footer__bottom-group {
+  display: flex;
+  align-items: center;
+  gap: 6px 20px;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.site-footer__bottom-group--right {
+  justify-content: flex-end;
+  text-align: end;
 }
 .site-footer__copy,
 .site-footer__legal {
@@ -3405,7 +3695,7 @@ html[dir="rtl"] .site-footer__legal {
   font-family: var(--font-ar);
 }
 .site-footer__legal a {
-  color: inherit;
+  color: rgba(246, 232, 234, 0.6);
   text-decoration: none;
   transition: color 0.3s var(--ease-out-soft);
 }
@@ -3413,18 +3703,15 @@ html[dir="rtl"] .site-footer__legal {
   color: var(--color-blush);
 }
 
-/* Demo deploy watermark + notice — forced onto their own rows below
-   the copyright/legal pair via flex-basis: 100%. */
+/* Demo deploy watermark + notice — quiet, on the right side. */
 .site-footer__demo-watermark,
 .site-footer__demo-notice {
-  flex-basis: 100%;
-  margin: 12px 0 0;
+  margin: 0;
   font-family: var(--font-en);
   font-weight: 300;
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  color: rgba(246, 232, 234, 0.3);
-  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(246, 232, 234, 0.4);
 }
 body[dir="rtl"] .site-footer__demo-watermark,
 body[dir="rtl"] .site-footer__demo-notice,
@@ -3442,29 +3729,42 @@ html[dir="rtl"] .site-footer__demo-notice {
   color: var(--color-coral);
 }
 
-/* Footer mobile */
-@media (max-width: 900px) {
+/* Footer tablet — 4 columns collapse to a 2×2 grid */
+@media (max-width: 1024px) {
+  .site-footer__cols {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+}
+
+/* Footer mobile — single column, stacked centered bottom strip.
+   The wordmark stays edge-to-edge, just smaller. */
+@media (max-width: 768px) {
   .site-footer {
-    padding: 60px 0 24px;
+    padding-top: 48px;
     text-align: center;
   }
   .site-footer__cols {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 32px;
     text-align: center;
-  }
-  .site-footer__brand {
-    justify-content: center;
-  }
-  .site-footer__tagline {
-    margin-inline: auto;
   }
   .site-footer__social {
     justify-content: center;
   }
+  .site-footer__wordmark {
+    margin-top: 40px;
+  }
   .site-footer__bottom {
     flex-direction: column;
+    align-items: center;
     gap: 12px;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .site-footer__bottom-group,
+  .site-footer__bottom-group--right {
+    justify-content: center;
     text-align: center;
   }
 }
@@ -3492,3 +3792,1354 @@ html[dir="rtl"] .site-footer__demo-notice {
     box-shadow: none;
   }
 }
+
+/* ═══════════════════════════════════════════
+   SERVICES PAGE (services.html)
+   Hero · At-a-glance · 6 service sections
+   ═══════════════════════════════════════════ */
+
+/* When the nav is on the services page it never has a hero photo
+   behind it, so it can be solid blush from the start. */
+.nav.nav--solid {
+  background: rgba(246, 232, 234, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 rgba(51, 32, 42, 0.06);
+}
+
+/* Current-page link styling in nav */
+.nav__links a[aria-current="page"],
+.nav__panel-links a[aria-current="page"] {
+  color: var(--color-coral);
+}
+
+/* === HERO === */
+.svc-hero {
+  background: var(--color-plum);
+  color: var(--color-blush);
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  /* Top padding clears the 60px fixed nav; total padding stays
+     ~15vh combined so eyebrow→heading→sub-line breathe inside
+     the shorter 50vh frame */
+  padding: clamp(90px, 11vh, 130px) 0 clamp(30px, 4vh, 60px);
+}
+.svc-hero__inner {
+  text-align: center;
+  max-width: 880px;
+}
+.svc-hero__eyebrow {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-coral);
+  margin-bottom: 24px;
+  opacity: 0;
+}
+body[dir="rtl"] .svc-hero__eyebrow {
+  font-family: var(--font-ar);
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+.svc-hero__heading {
+  font-family: var(--font-en);
+  font-weight: var(--fw-bold);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  line-height: 1.1;
+  color: var(--color-blush);
+  margin-bottom: 24px;
+  opacity: 0;
+}
+body[dir="rtl"] .svc-hero__heading {
+  font-family: var(--font-ar);
+  letter-spacing: 0;
+}
+.svc-hero__sub {
+  font-family: var(--font-en);
+  font-weight: var(--fw-light);
+  font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+  line-height: 1.5;
+  color: rgba(246, 232, 234, 0.8);
+  max-width: 640px;
+  margin-inline: auto;
+  opacity: 0;
+}
+body[dir="rtl"] .svc-hero__sub {
+  font-family: var(--font-ar);
+  line-height: 1.75;
+}
+@media (max-width: 900px) {
+  .svc-hero {
+    min-height: 45vh;
+    padding: clamp(90px, 12vh, 120px) 0 clamp(24px, 4vh, 40px);
+  }
+}
+
+/* === AT-A-GLANCE OVERVIEW === */
+.svc-glance {
+  background: var(--color-blush);
+  padding: 80px 0;
+}
+@media (max-width: 900px) {
+  .svc-glance { padding: 60px 0; }
+}
+.svc-glance__eyebrow {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-burgundy);
+  margin-bottom: 32px;
+}
+body[dir="rtl"] .svc-glance__eyebrow {
+  font-family: var(--font-ar);
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+.svc-glance__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .svc-glance__grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+/* Card = 3D perspective container. Visual styling (bg, border,
+   padding) moves to the two faces. Box-shadow stays on the
+   card so the lift wraps both faces during the flip. */
+.svc-glance__card {
+  position: relative;
+  display: block;
+  perspective: 1200px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-decoration: none;
+  transition: box-shadow 0.3s var(--ease-out-soft);
+}
+.svc-glance__card:hover {
+  box-shadow: 0 8px 24px rgba(51, 32, 42, 0.1);
+}
+
+/* Inner element holds both faces stacked in the same grid cell
+   and is what actually rotates. Default transition is the OUT
+   easing (power3.in-equivalent) so mouse-leave reads snappy.
+   Hover overrides with the IN easing for a soft landing. */
+.svc-glance__card-inner {
+  position: relative;
+  display: grid;
+  grid-template-areas: "stack";
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+.svc-glance__face {
+  grid-area: stack;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(240, 100, 73, 0.4);
+  border-radius: 12px;
+  padding: 20px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  box-sizing: border-box;
+}
+.svc-glance__face--front {
+  background: var(--color-blush);
+}
+.svc-glance__face--back {
+  background: var(--color-plum);
+  color: var(--color-blush);
+  transform: rotateY(180deg);
+  align-items: flex-start;
+  justify-content: space-between;
+  border-color: rgba(246, 232, 234, 0.18);
+}
+/* The HERO accent now lives on the front face only */
+.svc-glance__card--hero .svc-glance__face--front {
+  border-color: var(--color-coral);
+}
+
+/* Hover flip — desktop only */
+@media (hover: hover) {
+  .svc-glance__card:hover .svc-glance__card-inner {
+    transform: rotateY(180deg);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: reduce) {
+  .svc-glance__card-inner {
+    transition: none;
+  }
+  .svc-glance__card:hover .svc-glance__card-inner {
+    transform: none;
+  }
+}
+
+/* Back-face content typography */
+.svc-glance__back-name {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 16px;
+  color: var(--color-blush);
+  margin: 0 0 8px 0;
+}
+body[dir="rtl"] .svc-glance__back-name { font-family: var(--font-ar); }
+
+.svc-glance__back-time {
+  font-family: var(--font-en);
+  font-weight: var(--fw-medium);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-coral);
+  margin: 0 0 auto 0;
+}
+body[dir="rtl"] .svc-glance__back-time {
+  font-family: var(--font-ar);
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+
+.svc-glance__back-cta {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 13px;
+  color: var(--color-blush);
+  border-bottom: 1px solid rgba(246, 232, 234, 0.4);
+  padding-bottom: 4px;
+  align-self: flex-start;
+}
+body[dir="rtl"] .svc-glance__back-cta { font-family: var(--font-ar); }
+
+/* Flip-card hover replaces the previous 360° spin. The flip
+   mechanic targets .svc-glance__card-inner; per-face styling
+   and the hover rule live in their own block below. */
+
+.svc-glance__icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 12px;
+}
+.svc-glance__icon svg { width: 100%; height: 100%; }
+.svc-glance__name {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 16px;
+  color: var(--color-plum);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+body[dir="rtl"] .svc-glance__name { font-family: var(--font-ar); }
+.svc-glance__teaser {
+  font-family: var(--font-en);
+  font-weight: var(--fw-light);
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(51, 32, 42, 0.7);
+  margin: 0;
+}
+body[dir="rtl"] .svc-glance__teaser { font-family: var(--font-ar); line-height: 1.6; }
+.svc-glance__badge {
+  display: inline-block;
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--color-coral);
+  color: var(--color-white);
+  padding: 2px 7px;
+  border-radius: 9999px;
+  line-height: 1.4;
+}
+.svc-glance__card--hero { border-color: var(--color-coral); }
+
+/* === SERVICE SECTIONS === */
+.svc-section {
+  background: var(--svc-bg, var(--color-white));
+  padding: 120px 0;
+  overflow: hidden;
+}
+@media (max-width: 900px) {
+  .svc-section { padding: 80px 0; }
+}
+
+/* Per-section accent + background tokens */
+.svc-section--1 { --svc-accent: var(--color-plum);    --svc-bg: var(--color-blush); }
+.svc-section--2 { --svc-accent: #2a1a22;              --svc-bg: var(--color-white); }
+.svc-section--3 { --svc-accent: var(--color-sage);    --svc-bg: var(--color-blush); }
+.svc-section--4 { --svc-accent: var(--color-coral);   --svc-bg: var(--color-white); }
+.svc-section--5 { --svc-accent: var(--color-burgundy);--svc-bg: var(--color-blush); }
+.svc-section--6 { --svc-accent: #2a1a22;              --svc-bg: var(--color-white); }
+
+.svc-section__inner {
+  display: flex;
+  gap: 80px;
+  align-items: center;
+}
+.svc-section--media-right .svc-section__inner {
+  flex-direction: row-reverse;
+}
+@media (max-width: 900px) {
+  .svc-section__inner,
+  .svc-section--media-right .svc-section__inner {
+    flex-direction: column;
+    gap: 32px;
+  }
+}
+
+/* Media side — glass frame around the photo */
+.svc-section__media {
+  flex: 1;
+  min-width: 0;
+  /* Glass frame: 12px matte zone around image, blurred video
+     visible at the edges, faint white highlight on the top edge */
+  position: relative;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 12px 32px rgba(51, 32, 42, 0.25),
+    0 4px 12px rgba(51, 32, 42, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition:
+    transform 0.5s var(--ease-out-soft),
+    box-shadow 0.5s var(--ease-out-soft);
+}
+
+/* Service-image entry: wrapper slides in from its column's
+   outer edge as the section enters viewport. Direction flips
+   in RTL so the image always slides from the side it visually
+   occupies. JS animates to x:0 / opacity:1; once: true. */
+.svc-section__media.slide-from-left {
+  opacity: 0;
+  transform: translateX(-80px);
+}
+.svc-section__media.slide-from-right {
+  opacity: 0;
+  transform: translateX(80px);
+}
+/* RTL: layout flips, so slide-from-left visual position is now
+   the right column → it should slide in from the right edge */
+html[dir="rtl"] .svc-section__media.slide-from-left,
+body[dir="rtl"] .svc-section__media.slide-from-left {
+  transform: translateX(80px);
+}
+html[dir="rtl"] .svc-section__media.slide-from-right,
+body[dir="rtl"] .svc-section__media.slide-from-right {
+  transform: translateX(-80px);
+}
+/* Reduced motion: no slide, no fade — images visible immediately.
+   The JS animation never runs under reduced motion (initServicesPage
+   early-returns), so this CSS reset is what keeps the images on
+   screen at all. */
+@media (prefers-reduced-motion: reduce) {
+  .svc-section__media.slide-from-left,
+  .svc-section__media.slide-from-right {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.svc-section__img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 12px;
+  /* Image stays sharp — frame owns the shadow.
+     Entry motion (slide + fade) now lives on the wrapper
+     (.svc-section__media.slide-from-*), so the image itself
+     has no initial state. */
+}
+/* Hover lift — pointer devices only */
+@media (hover: hover) {
+  .svc-section__media:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 16px 40px rgba(51, 32, 42, 0.30),
+      0 6px 16px rgba(51, 32, 42, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .svc-section__media {
+    transition: none;
+  }
+  .svc-section__media:hover {
+    transform: none;
+  }
+}
+
+/* Content side */
+.svc-section__content {
+  flex: 1;
+  min-width: 0;
+}
+.svc-section__number {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3rem, 5vw, 4rem);
+  line-height: 1;
+  color: var(--svc-accent);
+  margin-bottom: 16px;
+  opacity: 0;
+  transform: scale(0.85);
+  will-change: transform, opacity;
+}
+.svc-section__eyebrow {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--svc-accent);
+  margin-bottom: 12px;
+  opacity: 0;
+  transform: translateY(24px);
+  will-change: transform, opacity;
+}
+body[dir="rtl"] .svc-section__eyebrow {
+  font-family: var(--font-ar);
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+.svc-section__heading {
+  font-family: var(--font-en);
+  font-weight: var(--fw-bold);
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  line-height: 1.1;
+  color: var(--color-plum);
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(24px);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  will-change: transform, opacity;
+}
+body[dir="rtl"] .svc-section__heading {
+  font-family: var(--font-ar);
+  letter-spacing: 0;
+}
+.svc-section__badge {
+  display: inline-block;
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--color-coral);
+  color: var(--color-white);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  line-height: 1.6;
+}
+body[dir="rtl"] .svc-section__badge {
+  font-family: var(--font-en);
+}
+.svc-section__desc {
+  font-family: var(--font-en);
+  font-weight: var(--fw-light);
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgba(51, 32, 42, 0.85);
+  margin-bottom: 24px;
+  max-width: none;
+  opacity: 0;
+  transform: translateY(24px);
+  will-change: transform, opacity;
+}
+body[dir="rtl"] .svc-section__desc { font-family: var(--font-ar); line-height: 1.85; }
+@media (max-width: 900px) {
+  .svc-section__desc { font-size: 16px; }
+}
+
+/* Bullet list — coral dot + medium-weight text */
+.svc-section__bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.svc-section__bullets li {
+  position: relative;
+  padding-inline-start: 22px;
+  font-family: var(--font-en);
+  font-weight: var(--fw-medium);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-plum);
+  opacity: 0;
+  transform: translateY(12px);
+  will-change: transform, opacity;
+}
+body[dir="rtl"] .svc-section__bullets li {
+  font-family: var(--font-ar);
+}
+.svc-section__bullets li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-coral);
+}
+
+/* Meta pills */
+.svc-section__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.svc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(51, 32, 42, 0.2);
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.5);
+}
+.svc-pill__label {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(51, 32, 42, 0.55);
+}
+body[dir="rtl"] .svc-pill__label {
+  font-family: var(--font-ar);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.svc-pill__value {
+  font-family: var(--font-en);
+  font-weight: var(--fw-medium);
+  font-size: 13px;
+  color: var(--color-plum);
+}
+body[dir="rtl"] .svc-pill__value { font-family: var(--font-ar); }
+
+/* CTA — accent bg; blush text on dark accents, plum text on coral.
+   Brief said "plum text" but plum-on-plum/burgundy/sage is unreadable. */
+.svc-section__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--svc-accent);
+  color: var(--color-blush);
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  padding: 14px 32px;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: transform 0.3s var(--ease-out-soft), box-shadow 0.3s var(--ease-out-soft), filter 0.3s ease;
+  box-shadow: 0 4px 16px rgba(51, 32, 42, 0.12);
+}
+body[dir="rtl"] .svc-section__cta { font-family: var(--font-ar); letter-spacing: 0; }
+.svc-section__cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(51, 32, 42, 0.18);
+  filter: brightness(1.05);
+}
+.svc-section--4 .svc-section__cta { color: var(--color-plum); }
+
+/* Reduced motion: instant final state, no hover lift */
+@media (prefers-reduced-motion: reduce) {
+  .svc-hero__eyebrow,
+  .svc-hero__heading,
+  .svc-hero__sub,
+  .svc-section__img,
+  .svc-section__number,
+  .svc-section__eyebrow,
+  .svc-section__heading,
+  .svc-section__desc,
+  .svc-section__bullets li {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .svc-glance__card:hover,
+  .svc-section__cta:hover {
+    transform: none !important;
+    box-shadow: none;
+    filter: none;
+  }
+}
+
+/* ───────────────────────────────────────────
+   SERVICES PAGE — BACKDROP VIDEO LAYER
+   Fixed video + plum overlay sit behind the at-a-glance and
+   6 service sections. Hero/trust/footer remain opaque and
+   occlude the video at the page top and bottom.
+   ─────────────────────────────────────────── */
+
+.services-backdrop__video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 0;
+  background-color: #33202a;  /* fallback before video paints */
+  pointer-events: none;
+}
+/* Hide any UA-injected media controls (matches hero video pattern) */
+.services-backdrop__video::-webkit-media-controls,
+.services-backdrop__video::-webkit-media-controls-panel,
+.services-backdrop__video::-webkit-media-controls-play-button,
+.services-backdrop__video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  opacity: 0 !important;
+  -webkit-appearance: none !important;
+}
+
+.services-backdrop__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #33202a;
+  opacity: 0.55;     /* 55% plum dim → 45% video visibility */
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* All in-flow content must layer ABOVE the fixed overlay (z=1).
+   Without explicit stacking contexts, normal-flow elements would
+   paint below positioned z-indexed elements. */
+.svc-hero,
+.svc-glance,
+.svc-section,
+.trust-strip,
+.site-footer {
+  position: relative;
+  z-index: 10;
+}
+
+/* HERO — 60% plum tint. Video shows through subtly behind the
+   tint so the page reads as one continuous backdrop from the top.
+   Effective video visibility = (1 - 0.6) × (1 - 0.55) ≈ 18%. */
+.svc-hero { background: rgba(51, 32, 42, 0.6); }
+
+/* Gentle wave at the hero's bottom edge (desktop only). It HANGS below
+   the hero (top:100%) rather than sitting inside it — the hero bg is
+   itself 60% plum, so an inside wave would composite to ~84% and read as
+   a darker band. Below the edge it overlays the same video backdrop, so
+   its 60% plum matches the hero exactly and the curve looks continuous.
+   The 80px drop lands inside the at-a-glance section's 80px top padding,
+   so it never overlaps the cards. */
+.svc-hero__bottom-wave {
+  position: absolute;
+  top: 100%;               /* exactly at the hero edge — hero and wave are
+                              both 60% plum over the SAME fixed backdrop, so
+                              this is pixel-seamless (no overlap = no tint
+                              doubling, integer edge = no sub-pixel gap) */
+  left: 0;
+  width: 100%;
+  height: 80px;
+  display: block;
+  pointer-events: none;
+  z-index: 2;
+}
+@media (max-width: 768px) {
+  .svc-hero__bottom-wave { display: none; }   /* desktop only */
+}
+
+/* AT-A-GLANCE — section background transparent so video shows
+   through cleanly around the cards. Individual cards keep their
+   own opaque blush bg (rule lives in the earlier services-page
+   block) so they stay readable on their own. */
+.svc-glance {
+  background: transparent;
+}
+
+/* SERVICE SECTIONS — transparent so the video shows through.
+   Overrides the alternating blush/white background tokens from the
+   earlier services-page block. */
+.svc-section,
+.svc-section--1,
+.svc-section--2,
+.svc-section--3,
+.svc-section--4,
+.svc-section--5,
+.svc-section--6 {
+  background: transparent;
+}
+
+/* Service heading/desc/bullets were dark plum text designed for
+   blush/white backgrounds. Over the dimmed video they need to flip
+   to a light tone for AA contrast. */
+.svc-section__heading { color: var(--color-blush); }
+.svc-section__desc { color: rgba(246, 232, 234, 0.92); }
+.svc-section__bullets li { color: var(--color-blush); }
+
+/* Meta pills: lighten border + value text to read on dark video */
+.svc-section .svc-pill {
+  border-color: rgba(246, 232, 234, 0.35);
+  background: rgba(51, 32, 42, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.svc-section .svc-pill__label { color: rgba(246, 232, 234, 0.65); }
+.svc-section .svc-pill__value { color: var(--color-blush); }
+
+/* Per-service photo shadow is owned by the .svc-section__media
+   glass frame (defined earlier). No image-level shadow needed. */
+
+/* TRUST + FOOTER already have opaque backgrounds (blush / deep plum)
+   — they occlude the video when scrolled into view. No bg change. */
+
+/* Reduced-motion: hide the video; overlay alone provides plum bg.
+   Section text colours stay light so they remain readable on
+   the plum overlay. */
+@media (prefers-reduced-motion: reduce) {
+  .services-backdrop__video {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   CONTACT — booking variant (Section 11 on homepage)
+   Map LEFT, info + CTA RIGHT. Form removed.
+   ═══════════════════════════════════════════ */
+.contact__grid--booking {
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: stretch;
+  min-height: 380px;
+}
+.contact__grid--booking .contact__map-wrap {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 360px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+.contact__grid--booking .contact__map {
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+  border: 0;
+  display: block;
+  filter: grayscale(35%) contrast(1.05);
+}
+
+/* RIGHT column content */
+.contact__info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+}
+.contact__info .contact__eyebrow {
+  margin-bottom: 0;
+}
+.contact__info .contact__heading {
+  margin: 0;
+}
+.contact__sub {
+  font-family: var(--font-en);
+  font-weight: var(--fw-light);
+  font-size: 17px;
+  line-height: 1.55;
+  color: rgba(246, 232, 234, 0.75);
+  margin: 0;
+  max-width: 52ch;
+}
+body[dir="rtl"] .contact__sub,
+html[dir="rtl"] .contact__sub {
+  font-family: var(--font-ar);
+  line-height: 1.8;
+}
+@media (max-width: 768px) {
+  .contact__sub { font-size: 16px; }
+}
+
+/* Branch info block */
+.contact__branch {
+  margin-top: 4px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(246, 232, 234, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.contact__branch-label {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-coral);
+  margin: 0 0 6px 0;
+}
+body[dir="rtl"] .contact__branch-label,
+html[dir="rtl"] .contact__branch-label {
+  font-family: var(--font-ar);
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+.contact__branch-name {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 16px;
+  color: var(--color-blush);
+  margin: 0;
+}
+body[dir="rtl"] .contact__branch-name,
+html[dir="rtl"] .contact__branch-name {
+  font-family: var(--font-ar);
+}
+.contact__branch-address {
+  font-family: var(--font-en);
+  font-weight: var(--fw-light);
+  font-size: 14px;
+  color: rgba(246, 232, 234, 0.7);
+  margin: 0;
+}
+body[dir="rtl"] .contact__branch-address,
+html[dir="rtl"] .contact__branch-address {
+  font-family: var(--font-ar);
+}
+.contact__branch-hours {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 18px;
+  color: var(--color-coral);
+  margin: 6px 0 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.contact__branch-clock {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Booking CTA pill — mirrors hero btn--primary */
+.contact__cta {
+  align-self: flex-start;
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 32px;
+  background: var(--color-coral);
+  color: var(--color-plum);
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: none;
+  text-decoration: none;
+  border-radius: 9999px;
+  box-shadow: 0 6px 18px rgba(240, 100, 73, 0.25);
+  transition:
+    transform 0.3s var(--ease-out-soft),
+    box-shadow 0.3s var(--ease-out-soft),
+    filter 0.3s ease;
+}
+body[dir="rtl"] .contact__cta {
+  font-family: var(--font-ar);
+  letter-spacing: 0;
+}
+.contact__cta-arrow svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+body[dir="rtl"] .contact__cta-arrow svg {
+  transform: scaleX(-1);
+}
+@media (hover: hover) {
+  .contact__cta:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 24px rgba(240, 100, 73, 0.35);
+    filter: brightness(1.04);
+  }
+  .contact__cta:hover .contact__cta-arrow svg {
+    transform: translateX(3px);
+  }
+  body[dir="rtl"] .contact__cta:hover .contact__cta-arrow svg {
+    transform: translateX(-3px) scaleX(-1);
+  }
+}
+.contact__cta:focus-visible {
+  outline: 3px solid var(--color-blush);
+  outline-offset: 3px;
+}
+
+/* Mobile stack: map on top, info below */
+@media (max-width: 900px) {
+  .contact__grid--booking {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    min-height: auto;
+  }
+  .contact__grid--booking .contact__map-wrap,
+  .contact__grid--booking .contact__map {
+    min-height: 280px;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   POPUP — booking CTA variant (homepage only)
+   Form removed. Single CTA pill.
+   ═══════════════════════════════════════════ */
+.popup__card--booking {
+  text-align: center;
+  padding-block: clamp(40px, 6vw, 56px);
+  padding-inline: clamp(28px, 5vw, 48px);
+  max-width: 460px;
+}
+.popup__title--booking {
+  font-family: var(--font-en);
+  font-weight: var(--fw-bold);
+  font-size: 24px;
+  color: var(--color-plum);
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+body[dir="rtl"] .popup__title--booking,
+html[dir="rtl"] .popup__title--booking {
+  font-family: var(--font-ar);
+}
+.popup__sub--booking {
+  font-family: var(--font-en);
+  font-weight: var(--fw-light);
+  font-size: 16px;
+  color: rgba(51, 32, 42, 0.75);
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+body[dir="rtl"] .popup__sub--booking,
+html[dir="rtl"] .popup__sub--booking {
+  font-family: var(--font-ar);
+  line-height: 1.8;
+}
+
+.popup__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  background: var(--color-coral);
+  color: var(--color-plum);
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  border-radius: 9999px;
+  box-shadow: 0 6px 18px rgba(240, 100, 73, 0.25);
+  transition:
+    transform 0.3s var(--ease-out-soft),
+    box-shadow 0.3s var(--ease-out-soft),
+    filter 0.3s ease;
+}
+body[dir="rtl"] .popup__cta {
+  font-family: var(--font-ar);
+  letter-spacing: 0;
+}
+.popup__cta-arrow svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+body[dir="rtl"] .popup__cta-arrow svg {
+  transform: scaleX(-1);
+}
+@media (hover: hover) {
+  .popup__cta:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 24px rgba(240, 100, 73, 0.35);
+    filter: brightness(1.04);
+  }
+  .popup__cta:hover .popup__cta-arrow svg {
+    transform: translateX(3px);
+  }
+  body[dir="rtl"] .popup__cta:hover .popup__cta-arrow svg {
+    transform: translateX(-3px) scaleX(-1);
+  }
+}
+.popup__cta:focus-visible {
+  outline: 3px solid var(--color-coral);
+  outline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════════
+   CONTACT PAGE (contact.html)
+   Hero · Booking CTA · 3 methods · 9 branches · inquiry form
+   ═══════════════════════════════════════════ */
+
+/* --- Section 1: hero (solid plum) --- */
+.contact-hero {
+  background: var(--color-plum);
+  color: var(--color-blush);
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  padding: clamp(90px, 11vh, 130px) 0 clamp(30px, 4vh, 60px);
+}
+.contact-hero__inner { text-align: center; max-width: 880px; }
+.contact-hero__eyebrow { color: var(--color-coral); margin: 0 0 24px; }
+.contact-hero__heading {
+  font-family: var(--font-en); font-weight: var(--fw-bold);
+  font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1.1;
+  color: var(--color-blush); margin: 0 0 24px;
+}
+.contact-hero__sub {
+  font-family: var(--font-en); font-weight: var(--fw-light);
+  font-size: clamp(1.125rem, 1.8vw, 1.375rem); line-height: 1.5;
+  color: rgba(246, 232, 234, 0.8); max-width: 640px; margin: 0 auto;
+}
+
+/* --- Section 2: booking CTA (blush) --- */
+.contact-booking { background: var(--color-blush); padding: clamp(60px, 8vh, 80px) 0; text-align: center; }
+.contact-booking__eyebrow { margin: 0 0 16px; }
+.contact-booking__heading {
+  font-family: var(--font-en); font-weight: var(--fw-bold);
+  font-size: clamp(2rem, 3.5vw, 2.75rem); line-height: 1.15;
+  color: var(--color-plum); margin: 0 0 16px;
+}
+.contact-booking__sub {
+  font-family: var(--font-en); font-weight: var(--fw-light); font-size: 17px;
+  color: rgba(51, 32, 42, 0.75); max-width: 560px; margin: 0 auto 32px; line-height: 1.5;
+}
+.contact-booking__cta,
+.inquiry-form__submit {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--color-coral); color: var(--color-plum);
+  font-family: var(--font-en); font-weight: var(--fw-semibold);
+  font-size: 14px; letter-spacing: 0.05em;
+  padding: 18px 40px; border: none; border-radius: var(--r-pill); cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s var(--ease-out-soft), box-shadow 0.3s var(--ease-out-soft);
+}
+.contact-booking__cta-arrow svg { width: 18px; height: 18px; display: block; }
+/* RTL: flip the booking-CTA arrow to point left (matches the other CTA arrows) */
+[dir="rtl"] .contact-booking__cta-arrow svg { transform: scaleX(-1); }
+@media (hover: hover) {
+  .contact-booking__cta:hover,
+  .inquiry-form__submit:hover { transform: scale(1.02); box-shadow: 0 10px 30px rgba(240, 100, 73, 0.35); }
+}
+.contact-booking__cta:focus-visible,
+.inquiry-form__submit:focus-visible { outline: 3px solid var(--color-burgundy); outline-offset: 3px; }
+
+/* --- Section 3: contact methods (white) --- */
+.contact-methods { background: #ffffff; padding: clamp(60px, 8vh, 80px) 0; }
+.contact-methods__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.method-card {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(51, 32, 42, 0.08);
+  border-radius: 16px; padding: 32px;
+  display: flex; flex-direction: column; align-items: flex-start;
+  transition: transform 0.3s var(--ease-out-soft), box-shadow 0.3s var(--ease-out-soft);
+}
+@media (hover: hover) {
+  .method-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(51, 32, 42, 0.10); }
+}
+.method-card__icon {
+  font-size: 26px; width: 56px; height: 56px;
+  display: grid; place-items: center; border-radius: 14px;
+  background: rgba(96, 32, 46, 0.06); color: var(--color-burgundy); margin-bottom: 20px;
+}
+.method-card__icon--whatsapp { color: #25D366; background: rgba(37, 211, 102, 0.08); }
+.method-card__name {
+  font-family: var(--font-en); font-weight: var(--fw-semibold);
+  font-size: 1.25rem; color: var(--color-plum); margin: 0 0 12px;
+}
+.method-card__value {
+  font-family: var(--font-en); font-weight: var(--fw-medium); font-size: 1rem;
+  color: var(--color-burgundy); text-decoration: none; margin-bottom: 4px;
+  transition: color 0.3s var(--ease-out-soft);
+}
+.method-card__value:hover { color: var(--color-coral); }
+.method-card__value--link { font-weight: var(--fw-semibold); }
+.method-card__desc {
+  font-family: var(--font-en); font-weight: var(--fw-light); font-size: 0.875rem;
+  color: rgba(51, 32, 42, 0.65); line-height: 1.6; margin: 12px 0 0;
+}
+
+/* --- Section 4: branches grid (blush) --- */
+.contact-branches { background: var(--color-blush); padding: clamp(60px, 8vh, 80px) 0; text-align: center; }
+.contact-branches__eyebrow { margin: 0 0 16px; }
+.contact-branches__heading {
+  font-family: var(--font-en); font-weight: var(--fw-bold);
+  font-size: clamp(2rem, 3.5vw, 2.75rem); color: var(--color-plum); margin: 0 0 12px;
+}
+.contact-branches__sub {
+  font-family: var(--font-en); font-weight: var(--fw-light); font-size: 17px;
+  color: rgba(51, 32, 42, 0.7); margin: 0 auto 40px;
+}
+.contact-branches__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: start; }
+.contact-branch-card {
+  background: #ffffff; border: 1px solid rgba(51, 32, 42, 0.08);
+  border-radius: 12px; padding: 24px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+}
+.contact-branch-card .branch-number {
+  font-family: var(--font-display); font-weight: 300; font-size: 28px;
+  color: var(--color-coral); line-height: 1;
+}
+.contact-branch-card .branch-name {
+  font-family: var(--font-en); font-weight: var(--fw-semibold);
+  font-size: 18px; color: var(--color-plum); margin: 0;
+}
+.contact-branch-card .branch-status {
+  display: inline-block; font-family: var(--font-en); font-weight: var(--fw-semibold);
+  font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #515a47; background: rgba(81, 90, 71, 0.10); padding: 4px 10px; border-radius: var(--r-pill);
+}
+.contact-branch-card .branch-maps-link {
+  font-family: var(--font-en); font-weight: var(--fw-semibold); font-size: 0.8125rem;
+  color: var(--color-coral); text-decoration: none; margin-top: 4px;
+}
+.contact-branch-card .branch-maps-link:hover { text-decoration: underline; }
+
+/* --- Section 5: inquiry form (plum-warm) --- */
+.contact-inquiry { background: #2a1a22; padding: clamp(60px, 8vh, 80px) 0; }
+.contact-inquiry__inner { max-width: 720px; }
+.contact-inquiry__eyebrow { color: var(--color-coral); margin: 0 0 16px; }
+.contact-inquiry__heading {
+  font-family: var(--font-en); font-weight: var(--fw-bold);
+  font-size: clamp(1.75rem, 3vw, 2.5rem); color: var(--color-blush); margin: 0 0 16px;
+}
+.contact-inquiry__sub {
+  font-family: var(--font-en); font-weight: var(--fw-light); font-size: 17px;
+  color: rgba(246, 232, 234, 0.75); margin: 0 0 32px; line-height: 1.5;
+}
+.inquiry-form { display: flex; flex-direction: column; gap: 20px; }
+.inquiry-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.inquiry-form__field { display: flex; flex-direction: column; gap: 8px; }
+.inquiry-form__label {
+  font-family: var(--font-en); font-weight: var(--fw-medium); font-size: 0.8125rem;
+  letter-spacing: 0.04em; color: rgba(246, 232, 234, 0.7);
+}
+.inquiry-form__input {
+  font-family: var(--font-en); font-size: 1rem; color: var(--color-blush);
+  background: rgba(246, 232, 234, 0.05); border: 1px solid rgba(246, 232, 234, 0.2);
+  border-radius: 8px; padding: 14px 16px; width: 100%;
+  transition: border-color 0.3s var(--ease-out-soft), background 0.3s var(--ease-out-soft);
+}
+.inquiry-form__input::placeholder { color: rgba(246, 232, 234, 0.4); }
+.inquiry-form__input:focus { outline: none; border-color: var(--color-coral); background: rgba(246, 232, 234, 0.08); }
+.inquiry-form__textarea { resize: vertical; min-height: 120px; }
+.inquiry-form__submit { align-self: flex-start; margin-top: 4px; }
+.inquiry-form__note {
+  font-family: var(--font-en); font-weight: var(--fw-light); font-size: 0.8125rem;
+  color: rgba(246, 232, 234, 0.5); margin: 4px 0 0;
+}
+
+/* --- RTL font swap for Arabic --- */
+body[dir="rtl"] .contact-hero__heading,
+body[dir="rtl"] .contact-hero__sub,
+body[dir="rtl"] .contact-booking__heading,
+body[dir="rtl"] .contact-booking__sub,
+body[dir="rtl"] .contact-booking__cta,
+body[dir="rtl"] .method-card__name,
+body[dir="rtl"] .method-card__value,
+body[dir="rtl"] .method-card__desc,
+body[dir="rtl"] .contact-branches__heading,
+body[dir="rtl"] .contact-branches__sub,
+body[dir="rtl"] .contact-branch-card .branch-name,
+body[dir="rtl"] .contact-inquiry__heading,
+body[dir="rtl"] .contact-inquiry__sub,
+body[dir="rtl"] .inquiry-form__label,
+body[dir="rtl"] .inquiry-form__input,
+body[dir="rtl"] .inquiry-form__submit,
+body[dir="rtl"] .inquiry-form__note { font-family: var(--font-ar); }
+body[dir="rtl"] .contact-hero__eyebrow,
+body[dir="rtl"] .contact-booking__eyebrow,
+body[dir="rtl"] .contact-branches__eyebrow,
+body[dir="rtl"] .contact-inquiry__eyebrow,
+body[dir="rtl"] .contact-branch-card .branch-status {
+  font-family: var(--font-ar); letter-spacing: 0.04em; text-transform: none;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  .contact-branches__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  .contact-methods__grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .contact-hero { min-height: 45vh; }
+  .contact-branches__grid { grid-template-columns: 1fr; }
+  .inquiry-form__row { grid-template-columns: 1fr; }
+  .inquiry-form__submit { align-self: stretch; justify-content: center; width: 100%; }
+}
+
+/* ═══════════════════════════════════════════
+   GALLERY PAGE (gallery.html)
+   A single immersive 3D experience: a 180° semi-circular
+   gallery where the camera rotates in place as the user scrolls.
+   ═══════════════════════════════════════════ */
+
+.gallery-experience {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: #0a0508; /* matches the Three.js scene void so there's no flash before WebGL paints */
+}
+
+.gallery-experience__canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#gallery-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.gallery-experience__overlay {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90vw;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.8s ease-out; /* 0.8s so the post-intro fade-in reads cinematic */
+}
+
+/* Scroll-fade (during scroll) and intro-hidden (during the page-enter animation) */
+.gallery-experience__overlay.is-faded,
+.gallery-experience__overlay.is-hidden {
+  opacity: 0;
+}
+
+/* Scroll lock while the 4s page-enter intro plays */
+body.intro-playing {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.gallery-experience__eyebrow {
+  display: block;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #f06449;
+  margin-bottom: 12px;
+}
+
+.gallery-experience__heading {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: #f6e8ea;
+  text-shadow: 0 2px 12px rgba(51, 32, 42, 0.8);
+  margin: 0;
+}
+
+.gallery-experience__sub {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  color: rgba(246, 232, 234, 0.7);
+  margin-top: 8px;
+}
+
+/* Arabic overlay uses the Arabic font stack and aligns right in RTL */
+body[dir="rtl"] .gallery-experience__heading,
+body[dir="rtl"] .gallery-experience__sub { font-family: var(--font-ar); }
+body[dir="rtl"] .gallery-experience__overlay { text-align: right; }
+
+/* Reduced motion: no scroll-driven pin (handled in JS) — the section is a
+   simple static viewport showing the initial camera framing. Keep the
+   overlay visible since there's no "engagement" scroll to fade it out. */
+@media (prefers-reduced-motion: reduce) {
+  .gallery-experience__overlay { transition: none; }
+}
+
+@media (max-width: 768px) {
+  .gallery-experience__overlay { top: 72px; }
+}
+
+/* ───────────────────────────────────────────
+   GALLERY PAGE — transparent floating nav
+   Scoped to .gallery-page-body so homepage/services/contact nav
+   are untouched. Overrides .nav--solid AND .nav.is-scrolled (both
+   single-class) via the higher-specificity body-scoped selector.
+   Adapts the spec's .site-nav* names to this project's .nav* markup.
+   ─────────────────────────────────────────── */
+.gallery-page-body .nav {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Nav elements high-contrast (blush) against the dark 3D scene */
+.gallery-page-body .nav__brand-text,
+.gallery-page-body .nav__phone,
+.gallery-page-body .nav__lang,
+.gallery-page-body .nav-menu-toggle {
+  color: var(--color-blush);
+}
+
+/* Language toggle: blush text + faint blush border (its border uses
+   currentColor by default, so pin the border explicitly at 0.4) */
+.gallery-page-body .nav__lang {
+  border-color: rgba(246, 232, 234, 0.4);
+  background: transparent;
+}
+
+/* Logo text: subtle shadow so it stays legible over varied plane content */
+.gallery-page-body .nav__brand-text { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); }
+
+/* Phone icon + hamburger lines: subtle drop-shadow for readability */
+.gallery-page-body .nav__phone,
+.gallery-page-body .nav-menu-toggle__line {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+}
+
+/* When the full-screen menu is open, the shared body.menu-open rules take
+   over (transparent nav + blush elements) — already correct, nothing to add. */
