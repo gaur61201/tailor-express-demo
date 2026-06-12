@@ -3886,6 +3886,12 @@ body[dir="rtl"] .svc-hero__sub {
 @media (max-width: 900px) {
   .svc-glance { padding: 60px 0; }
 }
+/* Mobile: hide the at-a-glance overview entirely — users scroll the
+   6 real service sections below instead. display:none on the wrapper
+   also hides all mini-cards + their scroll/flip animations. */
+@media (max-width: 768px) {
+  .svc-glance { display: none; }
+}
 .svc-glance__eyebrow {
   font-family: var(--font-en);
   font-weight: var(--fw-semibold);
@@ -4473,7 +4479,13 @@ body[dir="rtl"] .svc-section__cta { font-family: var(--font-ar); letter-spacing:
   z-index: 2;
 }
 @media (max-width: 768px) {
-  .svc-hero__bottom-wave { display: none; }   /* desktop only */
+  /* Show the wave on mobile but at 60px (25% less than desktop's 80px).
+     preserveAspectRatio="none" stretches the SVG to the container, so the
+     shorter height scales the curve's amplitude down proportionally. */
+  .svc-hero__bottom-wave {
+    display: block;
+    height: 60px;
+  }
 }
 
 /* AT-A-GLANCE — section background transparent so video shows
