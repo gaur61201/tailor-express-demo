@@ -3390,7 +3390,12 @@
     scene.fog = new THREE.Fog(0x0a0508, 8, 30);     // distant planes melt into the void
 
     /* ---- Camera (at origin; only rotation.y changes on scroll) ---- */
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+    // Mobile gets a wider FOV (85° vs 75°) to ease the "too zoomed" feeling on
+    // narrow portrait viewports. Determined once at load (resize across the
+    // breakpoint needs a reload — acceptable for a single gallery viewing).
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const cameraFOV = isMobile ? 85 : 75;
+    const camera = new THREE.PerspectiveCamera(cameraFOV, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0, 0);
     camera.rotation.order = 'YXZ';
     camera.rotation.y = Math.PI / 2; // start of the 180° sweep (also the post-intro resting pose)
