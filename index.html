@@ -1622,6 +1622,73 @@
       </svg>
     </div>
 
+    <!-- Mobile-only split wordmark: TAILOR over EXPRESS, each photo-filled like
+         the desktop mark. Per-letter bands measured from real Raleway-900 glyph
+         metrics (getExtentOfChar). Unique clipPath IDs (fwt-*/fwe-*) so they never
+         collide with the desktop SVG's fw-* IDs. Decorative (aria-hidden). -->
+    <div class="site-footer__wordmark-mobile" aria-hidden="true">
+      <svg viewBox="0 0 1000 240" preserveAspectRatio="xMidYMid meet"
+           xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="fwt-tint" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#33202a" stop-opacity="0.35"/>
+            <stop offset="1" stop-color="#33202a" stop-opacity="0.35"/>
+          </linearGradient>
+          <clipPath id="fwt-word">
+            <text x="500" y="128" text-anchor="middle" dominant-baseline="middle"
+                  textLength="960" lengthAdjust="spacingAndGlyphs"
+                  font-family="'Raleway', sans-serif" font-weight="900" font-size="240"
+                  letter-spacing="-2">TAILOR</text>
+          </clipPath>
+          <clipPath id="fwt-b0"><rect x="0" y="0" width="178" height="240"/></clipPath>
+          <clipPath id="fwt-b1"><rect x="178" y="0" width="148.9" height="240"/></clipPath>
+          <clipPath id="fwt-b2"><rect x="326.9" y="0" width="126.1" height="240"/></clipPath>
+          <clipPath id="fwt-b3"><rect x="453" y="0" width="150.5" height="240"/></clipPath>
+          <clipPath id="fwt-b4"><rect x="603.5" y="0" width="187.9" height="240"/></clipPath>
+          <clipPath id="fwt-b5"><rect x="791.4" y="0" width="208.6" height="240"/></clipPath>
+        </defs>
+        <g opacity="0.9" clip-path="url(#fwt-word)">
+          <g clip-path="url(#fwt-b0)"><image href="assets/image_background_about_section/bg_01.jpg" x="0" y="0" width="178" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="0" y="0" width="178" height="240" fill="url(#fwt-tint)"/></g>
+          <g clip-path="url(#fwt-b1)"><image href="assets/image_background_about_section/bg_02.jpg" x="178" y="0" width="148.9" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="178" y="0" width="148.9" height="240" fill="url(#fwt-tint)"/></g>
+          <g clip-path="url(#fwt-b2)"><image href="assets/image_background_about_section/bg_03.jpg" x="326.9" y="0" width="126.1" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="326.9" y="0" width="126.1" height="240" fill="url(#fwt-tint)"/></g>
+          <g clip-path="url(#fwt-b3)"><image href="assets/image_background_about_section/bg_04.jpg" x="453" y="0" width="150.5" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="453" y="0" width="150.5" height="240" fill="url(#fwt-tint)"/></g>
+          <g clip-path="url(#fwt-b4)"><image href="assets/image_background_about_section/bg_05.jpg" x="603.5" y="0" width="187.9" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="603.5" y="0" width="187.9" height="240" fill="url(#fwt-tint)"/></g>
+          <g clip-path="url(#fwt-b5)"><image href="assets/image_background_about_section/bg_06.jpg" x="791.4" y="0" width="208.6" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="791.4" y="0" width="208.6" height="240" fill="url(#fwt-tint)"/></g>
+        </g>
+      </svg>
+      <svg viewBox="0 0 1000 240" preserveAspectRatio="xMidYMid meet"
+           xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="fwe-tint" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#33202a" stop-opacity="0.35"/>
+            <stop offset="1" stop-color="#33202a" stop-opacity="0.35"/>
+          </linearGradient>
+          <clipPath id="fwe-word">
+            <text x="500" y="128" text-anchor="middle" dominant-baseline="middle"
+                  textLength="960" lengthAdjust="spacingAndGlyphs"
+                  font-family="'Raleway', sans-serif" font-weight="900" font-size="240"
+                  letter-spacing="-2">EXPRESS</text>
+          </clipPath>
+          <clipPath id="fwe-b0"><rect x="0" y="0" width="154" height="240"/></clipPath>
+          <clipPath id="fwe-b1"><rect x="154" y="0" width="138.8" height="240"/></clipPath>
+          <clipPath id="fwe-b2"><rect x="292.8" y="0" width="141.2" height="240"/></clipPath>
+          <clipPath id="fwe-b3"><rect x="434" y="0" width="140.8" height="240"/></clipPath>
+          <clipPath id="fwe-b4"><rect x="574.8" y="0" width="136.1" height="240"/></clipPath>
+          <clipPath id="fwe-b5"><rect x="710.9" y="0" width="134" height="240"/></clipPath>
+          <clipPath id="fwe-b6"><rect x="844.9" y="0" width="155.1" height="240"/></clipPath>
+        </defs>
+        <g opacity="0.9" clip-path="url(#fwe-word)">
+          <g clip-path="url(#fwe-b0)"><image href="assets/image_background_about_section/bg_07.jpg" x="0" y="0" width="154" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="0" y="0" width="154" height="240" fill="url(#fwe-tint)"/></g>
+          <g clip-path="url(#fwe-b1)"><image href="assets/image_background_about_section/bg_08.jpg" x="154" y="0" width="138.8" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="154" y="0" width="138.8" height="240" fill="url(#fwe-tint)"/></g>
+          <g clip-path="url(#fwe-b2)"><image href="assets/image_background_about_section/bg_01.jpg" x="292.8" y="0" width="141.2" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="292.8" y="0" width="141.2" height="240" fill="url(#fwe-tint)"/></g>
+          <g clip-path="url(#fwe-b3)"><image href="assets/image_background_about_section/bg_02.jpg" x="434" y="0" width="140.8" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="434" y="0" width="140.8" height="240" fill="url(#fwe-tint)"/></g>
+          <g clip-path="url(#fwe-b4)"><image href="assets/image_background_about_section/bg_03.jpg" x="574.8" y="0" width="136.1" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="574.8" y="0" width="136.1" height="240" fill="url(#fwe-tint)"/></g>
+          <g clip-path="url(#fwe-b5)"><image href="assets/image_background_about_section/bg_04.jpg" x="710.9" y="0" width="134" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="710.9" y="0" width="134" height="240" fill="url(#fwe-tint)"/></g>
+          <g clip-path="url(#fwe-b6)"><image href="assets/image_background_about_section/bg_05.jpg" x="844.9" y="0" width="155.1" height="240" preserveAspectRatio="xMidYMid slice"/><rect x="844.9" y="0" width="155.1" height="240" fill="url(#fwe-tint)"/></g>
+        </g>
+      </svg>
+    </div>
+
     <div class="site-footer__inner container">
 
       <!-- Layer 3 — minimal bottom strip -->

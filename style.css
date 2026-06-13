@@ -3729,6 +3729,10 @@ html[dir="rtl"] .site-footer__demo-notice {
   color: var(--color-coral);
 }
 
+/* Split mobile wordmark (TAILOR / EXPRESS) — hidden on desktop; the
+   single-line .site-footer__wordmark shows instead. Swapped at <=768px. */
+.site-footer__wordmark-mobile { display: none; }
+
 /* Footer tablet — 4 columns collapse to a 2×2 grid */
 @media (max-width: 1024px) {
   .site-footer__cols {
@@ -3737,30 +3741,57 @@ html[dir="rtl"] .site-footer__demo-notice {
   }
 }
 
-/* Footer mobile — single column, stacked centered bottom strip.
-   The wordmark stays edge-to-edge, just smaller. */
+/* Footer mobile — 2×2 column grid (left-aligned) + dramatically larger
+   split TAILOR / EXPRESS wordmark. The single-line desktop wordmark is
+   hidden here; the bottom strip stays centered. */
 @media (max-width: 768px) {
   .site-footer {
-    padding-top: 48px;
-    text-align: center;
+    padding: 24px 0 0;
+    text-align: start;          /* left-aligned (auto-mirrors in RTL) */
   }
+  /* 2×2 grid: Explore | Contact (top) · Open | Follow (bottom) */
   .site-footer__cols {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    text-align: center;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 24px;             /* row gap 32 · column gap 24 */
+    text-align: start;
   }
+  .site-footer__col {
+    text-align: start;
+  }
+  .site-footer__col-heading {
+    text-align: start;
+  }
+  /* Follow icons sit in a left-aligned row */
   .site-footer__social {
-    justify-content: center;
+    justify-content: flex-start;
   }
+
+  /* Swap the single-line wordmark for the split TAILOR / EXPRESS mark */
   .site-footer__wordmark {
-    margin-top: 40px;
+    display: none;
   }
+  .site-footer__wordmark-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 24px 0 16px;
+  }
+  .site-footer__wordmark-mobile svg {
+    display: block;
+    width: 95vw;
+    height: auto;
+    margin: 0 auto;             /* center each line horizontally */
+  }
+
+  /* Bottom strip stays centered and stacked */
   .site-footer__bottom {
     flex-direction: column;
     align-items: center;
     gap: 12px;
     text-align: center;
-    padding: 20px 0;
+    padding: 16px 20px;
+    font-size: 12px;
   }
   .site-footer__bottom-group,
   .site-footer__bottom-group--right {
