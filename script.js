@@ -3956,6 +3956,91 @@
   };
 
   /* =============================================
+     SERVICES PAGE — mobile scroll-driven image sequence
+     Replaces the fixed video backdrop on <=768px. Total page scroll
+     (top → footer entering viewport) maps to a frame index 0..16.
+     Frame 0 is painted inline in the HTML; 1..16 preload silently.
+     NOTE: files use the .jpeg extension and skip file #000012 (the
+     array indices stay sequential).
+     ============================================= */
+  const initServicesMobileFrames = () => {
+    const framesContainer = document.querySelector('.services-mobile-frames');
+    if (!framesContainer) return;                       // not the services page
+
+    // Mobile-only. (Crossing the 768px breakpoint via rotate/resize after
+    // load is not re-evaluated — acceptable per spec.)
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
+
+    const frameImg = framesContainer.querySelector('.services-mobile-frames__img');
+    if (!frameImg) return;
+
+    const FRAMES = [
+      'assets/service-frames/frame_000000.jpeg',
+      'assets/service-frames/frame_000001.jpeg',
+      'assets/service-frames/frame_000002.jpeg',
+      'assets/service-frames/frame_000003.jpeg',
+      'assets/service-frames/frame_000004.jpeg',
+      'assets/service-frames/frame_000005.jpeg',
+      'assets/service-frames/frame_000006.jpeg',
+      'assets/service-frames/frame_000007.jpeg',
+      'assets/service-frames/frame_000008.jpeg',
+      'assets/service-frames/frame_000009.jpeg',
+      'assets/service-frames/frame_000010.jpeg',
+      'assets/service-frames/frame_000011.jpeg',
+      'assets/service-frames/frame_000013.jpeg',
+      'assets/service-frames/frame_000014.jpeg',
+      'assets/service-frames/frame_000015.jpeg',
+      'assets/service-frames/frame_000016.jpeg',
+      'assets/service-frames/frame_000017.jpeg'
+    ];
+    const TOTAL_FRAMES = FRAMES.length;                 // 17 (indices 0..16)
+    const loadedFrames = new Set([0]);                  // frame 0 already in DOM
+
+    // Silent preload of frames 1..16 (no visible loading indicator).
+    FRAMES.forEach((src, idx) => {
+      if (idx === 0) return;
+      const img = new Image();
+      img.onload = () => loadedFrames.add(idx);
+      img.onerror = () => console.warn('[ServicesFrames] failed to load frame ' + idx + ': ' + src);
+      img.src = src;
+    });
+
+    let lastFrameIdx = 0;
+    const updateFrame = () => {
+      const footer = document.querySelector('.site-footer');
+      if (!footer) return;
+
+      // Document-space top of the footer (robust vs offsetParent quirks).
+      const footerTopOnPage = footer.getBoundingClientRect().top + window.scrollY;
+      const totalScrollDistance = footerTopOnPage - window.innerHeight;
+      if (totalScrollDistance <= 0) return;             // page shorter than viewport
+
+      let progress = window.scrollY / totalScrollDistance;
+      progress = Math.max(0, Math.min(1, progress));    // clamp [0,1]
+
+      const frameIdx = Math.min(Math.floor(progress * TOTAL_FRAMES), TOTAL_FRAMES - 1);
+
+      // Only swap when the target frame changed AND has finished preloading
+      // (avoids flashing a not-yet-loaded src during fast early scrolls).
+      if (frameIdx !== lastFrameIdx && loadedFrames.has(frameIdx)) {
+        frameImg.src = FRAMES[frameIdx];
+        lastFrameIdx = frameIdx;
+      }
+    };
+
+    let scrollScheduled = false;
+    const onScroll = () => {
+      if (scrollScheduled) return;
+      scrollScheduled = true;
+      requestAnimationFrame(() => { updateFrame(); scrollScheduled = false; });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    updateFrame();                                       // set initial frame
+  };
+
+  /* =============================================
      INIT
      ============================================= */
   document.addEventListener('DOMContentLoaded', () => {
@@ -3978,6 +4063,7 @@
     initPopup();
     initNavAutoHide();
     initServicesPage();
+    initServicesMobileFrames();
     initGalleryPage();
     // Defer preloader start one frame so all fonts and CSS apply
     requestAnimationFrame(runPreloader);

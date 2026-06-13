@@ -244,7 +244,14 @@
          BACKDROP VIDEO + OVERLAY (fixed; sits behind all content)
          Visible behind the at-a-glance and 6 service sections;
          occluded by the opaque hero, trust strip, and footer.
+         On mobile (<=768px) the video is hidden and replaced by the
+         scroll-driven image sequence below (frame 0 painted inline).
          ========================================= -->
+    <div class="services-mobile-frames" aria-hidden="true">
+      <img class="services-mobile-frames__img"
+           src="assets/service-frames/frame_000000.jpeg"
+           alt="">
+    </div>
     <video
       id="services-backdrop-video"
       class="services-backdrop__video"

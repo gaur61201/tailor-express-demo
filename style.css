@@ -4453,6 +4453,37 @@ body[dir="rtl"] .svc-section__cta { font-family: var(--font-ar); letter-spacing:
   z-index: 10;
 }
 
+/* ── Mobile-only scroll-driven image-sequence backdrop ──
+   Replaces the video on <=768px. Sits at z:0 (same layer the video
+   occupied), so the existing 55% plum overlay (z:1) still tints it
+   and all content (z:10) still sits above. Desktop: hidden, video
+   shows as before. */
+.services-mobile-frames {
+  display: none;             /* desktop: hidden */
+}
+@media (max-width: 768px) {
+  /* Hide the video on mobile — the image sequence takes its place. */
+  .services-backdrop__video {
+    display: none !important;
+  }
+  .services-mobile-frames {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: #33202a;      /* plum fallback before a frame paints */
+    pointer-events: none;
+  }
+  .services-mobile-frames__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+}
+
 /* HERO — 60% plum tint. Video shows through subtly behind the
    tint so the page reads as one continuous backdrop from the top.
    Effective video visibility = (1 - 0.6) × (1 - 0.55) ≈ 18%. */
