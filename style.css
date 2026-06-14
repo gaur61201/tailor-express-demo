@@ -5217,3 +5217,127 @@ body[dir="rtl"] .gallery-experience__overlay { text-align: right; }
 
 /* When the full-screen menu is open, the shared body.menu-open rules take
    over (transparent nav + blush elements) — already correct, nothing to add. */
+
+
+/* ═══════════════════════════════════════════
+   FAQ PAGE (faq.html)
+   Reuses .contact-hero (solid plum hero), .faq / .faq__* accordion
+   (wired by the shared initFAQ), trust strip, and footer. Only the
+   welcome intro, category labels, accordion container width, and the
+   "still have questions" CTA are page-specific.
+   ═══════════════════════════════════════════ */
+
+/* Hero — slightly shorter than the contact hero (FAQ is utilitarian) */
+.faq-page-body .faq-hero { min-height: 45vh; display: flex; align-items: center; }
+@media (max-width: 768px) {
+  .faq-page-body .faq-hero { min-height: 40vh; }
+}
+
+/* Section 2 — welcome intro (blush band, elegant Cormorant italic) */
+.faq-welcome {
+  background: var(--color-blush);
+  padding: clamp(40px, 7vw, 60px) 0;
+}
+.faq-welcome__inner {
+  max-width: 720px;
+  margin-inline: auto;
+  text-align: center;
+}
+.faq-welcome__message {
+  font-family: var(--font-display);   /* Cormorant Garamond */
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(1.5rem, 3.2vw, 2rem);   /* ~28–32px */
+  line-height: 1.5;
+  color: var(--color-plum);
+  margin: 0;
+}
+/* Cormorant has no Arabic glyphs — use the Arabic stack, upright */
+body[dir="rtl"] .faq-welcome__message,
+html[dir="rtl"] .faq-welcome__message {
+  font-family: var(--font-ar);
+  font-style: normal;
+  line-height: 1.8;
+}
+
+/* Section 3 — accordion: widen container; category eyebrows between groups */
+.faq-page-body .faq__inner { max-width: 880px; }
+.faq__category {
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-burgundy);
+  margin: 40px 0 20px;
+}
+.faq__category:first-child { margin-top: 0; }
+body[dir="rtl"] .faq__category,
+html[dir="rtl"] .faq__category {
+  font-family: var(--font-ar);
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+/* Answer links inherit the coral accent for affordance */
+.faq__a-text a { color: var(--color-coral); text-decoration: underline; text-underline-offset: 2px; }
+.faq__a-text a:hover { color: var(--color-burgundy); }
+
+/* Section 4 — "still have questions" CTA (plum) */
+.faq-cta {
+  background: var(--color-plum);
+  color: var(--color-blush);
+  padding: clamp(48px, 8vw, 60px) 0;
+  text-align: center;
+}
+.faq-cta__inner { max-width: 720px; margin-inline: auto; }
+.faq-cta__heading {
+  font-family: var(--font-en);
+  font-weight: var(--fw-bold);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  color: var(--color-blush);
+  margin: 8px 0 12px;
+  letter-spacing: 0.01em;
+}
+body[dir="rtl"] .faq-cta__heading,
+html[dir="rtl"] .faq-cta__heading { font-family: var(--font-ar); letter-spacing: 0; }
+.faq-cta__sub {
+  font-family: var(--font-en);
+  font-weight: var(--fw-light);
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  color: rgba(246, 232, 234, 0.75);
+  margin: 0 0 28px;
+}
+body[dir="rtl"] .faq-cta__sub,
+html[dir="rtl"] .faq-cta__sub { font-family: var(--font-ar); }
+.faq-cta__actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.faq-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 28px;
+  border-radius: 9999px;
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  transition: transform 0.3s var(--ease-out-soft), background 0.3s, color 0.3s;
+}
+body[dir="rtl"] .faq-cta__btn,
+html[dir="rtl"] .faq-cta__btn { font-family: var(--font-ar); letter-spacing: 0; }
+.faq-cta__btn--primary { background: var(--color-coral); color: var(--color-plum); }
+.faq-cta__btn--ghost { background: transparent; color: var(--color-blush); border: 1px solid rgba(246, 232, 234, 0.5); }
+@media (hover: hover) {
+  .faq-cta__btn--primary:hover { transform: scale(1.02); }
+  .faq-cta__btn--ghost:hover { background: var(--color-blush); color: var(--color-plum); }
+}
+.faq-cta__btn:focus-visible { outline: 2px solid var(--color-coral); outline-offset: 3px; }
+@media (max-width: 600px) {
+  .faq-cta__actions { flex-direction: column; }
+  .faq-cta__btn { justify-content: center; }
+}
