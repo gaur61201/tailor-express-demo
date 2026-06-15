@@ -558,6 +558,10 @@ body[dir="rtl"] .nav__panel-links a { letter-spacing: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Breathing room from viewport edges so the first item clears the fixed
+     nav (top) and the last item never touches the bottom edge. */
+  padding: 60px 20px;
+  box-sizing: border-box;
   /* Hidden — curtain parked above the viewport */
   opacity: 0;
   visibility: hidden;
@@ -584,10 +588,25 @@ body[dir="rtl"] .nav__panel-links a { letter-spacing: 0; }
   overflow: hidden;
 }
 .main-menu__watermark svg { width: 100%; height: auto; }
-.main-menu__nav { position: relative; z-index: 1; text-align: center; }
+.main-menu__nav {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  /* Safety net for very short viewports (e.g. landscape phones): scroll
+     inside the menu rather than clipping the first/last item. Capped to the
+     padded area (matches .main-menu's 60px top+bottom padding) so flex
+     centering can never push items off-screen. */
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(246, 232, 234, 0.3) transparent;
+}
+.main-menu__nav::-webkit-scrollbar { width: 4px; }
+.main-menu__nav::-webkit-scrollbar-track { background: transparent; }
+.main-menu__nav::-webkit-scrollbar-thumb { background-color: rgba(246, 232, 234, 0.3); border-radius: 2px; }
 .main-menu__list { list-style: none; padding: 0; margin: 0; }
 .main-menu__item {
-  margin: 16px 0;
+  margin: 10px 0;
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.5s ease-out, transform 0.5s ease-out;
@@ -603,11 +622,11 @@ body[dir="rtl"] .nav__panel-links a { letter-spacing: 0; }
   display: inline-block;
   font-family: var(--font-en);
   font-weight: var(--fw-semibold);
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
   color: var(--color-blush);
   text-decoration: none;
   letter-spacing: 0.02em;
-  padding: 12px 24px;
+  padding: 8px 20px;
   transition: color 0.3s ease, transform 0.3s ease;
 }
 body[dir="rtl"] .main-menu__link { font-family: var(--font-ar); letter-spacing: 0; }
@@ -616,6 +635,31 @@ body[dir="rtl"] .main-menu__link { font-family: var(--font-ar); letter-spacing: 
 body[dir="rtl"] .main-menu__link:hover,
 body[dir="rtl"] .main-menu__link:focus-visible { transform: translateX(-4px); }
 .main-menu__link[aria-current="page"] { color: var(--color-coral); }
+
+/* Phones: tighter sizing so all 7 items fit comfortably without scrolling */
+@media (max-width: 480px) {
+  .main-menu { padding: 50px 16px; }
+  .main-menu__item { margin: 8px 0; }
+  .main-menu__link { font-size: clamp(1.25rem, 4vw, 2rem); padding: 6px 16px; }
+}
+
+/* Short viewports (small desktop windows, landscape phones): scale to HEIGHT
+   so all 7 items fit without scrolling down to ~600px tall. The clipping was
+   height-driven, so width media queries alone can't solve it. */
+@media (max-height: 650px) {
+  .main-menu { padding: 36px 20px; }
+  .main-menu__item { margin: 6px 0; }
+  .main-menu__link { font-size: clamp(1.25rem, 3.2vh, 2rem); padding: 6px 18px; }
+  .main-menu__nav { max-height: calc(100vh - 72px); }
+}
+
+/* Very short viewports (landscape phones ~375px tall): fit all 7 at rest. */
+@media (max-height: 430px) {
+  .main-menu { padding: 20px; }
+  .main-menu__item { margin: 4px 0; }
+  .main-menu__link { font-size: clamp(1.125rem, 4.2vh, 1.5rem); padding: 5px 16px; }
+  .main-menu__nav { max-height: calc(100vh - 40px); }
+}
 
 /* Body scroll lock while the menu is open */
 body.menu-open { overflow: hidden; }
