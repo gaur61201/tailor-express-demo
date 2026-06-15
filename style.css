@@ -5582,3 +5582,151 @@ body[dir="rtl"] .legal-status__label { font-family: var(--font-ar); letter-spaci
   .contact-hero--legal { min-height: 25vh; padding-top: clamp(146px, 24vh, 188px); }
   .legal-content { padding: 40px 0; }
 }
+
+/* ===========================================================
+   SEO/A11Y FIXES (audit follow-up, 2026-06-15)
+   Mobile tap targets, blog pricing table, numbered steps,
+   breadcrumbs. Desktop behaviour unchanged.
+   =========================================================== */
+
+/* --- FIX 1: Mobile tap targets >= 44x44 + readable fine print --- */
+@media (max-width: 768px) {
+
+  /* Services carousel dots: 44px hit area, visible 10px dot via ::before
+     (avoids the square-clip artefact of background-clip on a small box) */
+  .services__dots { gap: 4px; }
+  .services__dot {
+    width: 44px; height: 44px;
+    background: transparent;
+    border-radius: 0;
+    position: relative;
+    transform: none;
+  }
+  .services__dot::before {
+    content: ""; position: absolute; top: 50%; left: 50%;
+    width: 10px; height: 10px; margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: rgba(51, 32, 42, 0.25);
+    transition: background var(--duration-fast) var(--ease-elegant),
+                transform var(--duration-fast) var(--ease-elegant);
+  }
+  .services__dot:hover::before { background: rgba(51, 32, 42, 0.5); }
+  .services__dot.is-active::before { background: var(--color-coral); transform: scale(1.25); }
+  .services__dot.is-active:hover::before { background: var(--color-coral-light); }
+  /* Neutralise base active/hover BUTTON paint (higher specificity than .services__dot);
+     only the ::before should show the visible dot. */
+  .services__dot.is-active,
+  .services__dot:hover { background: transparent; transform: none; }
+
+  /* Testimonial dots: same 44px hit area; visible pill (8px -> 24px active) via ::before */
+  .testi__dots { gap: 4px; }
+  .testi__dot {
+    width: 44px; height: 44px;
+    background: transparent;
+    position: relative;
+  }
+  .testi__dot::before {
+    content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 8px; height: 8px; border-radius: 999px;
+    background: rgba(51, 32, 42, 0.25);
+    transition: width 0.4s var(--ease-out-soft), background-color 0.3s var(--ease-out-soft);
+  }
+  .testi__dot.is-active::before { width: 24px; background: var(--color-coral); }
+  /* Neutralise base active-button paint/width so only ::before shows; keep 44px hit area */
+  .testi__dot.is-active { background: transparent; width: 44px; }
+
+  /* Nav cluster: phone / language / hamburger -> 44px minimum */
+  .nav__cluster { gap: 8px; }
+  .nav__phone { width: 44px; height: 44px; }
+  .nav-menu-toggle { width: 44px; height: 44px; }
+  .nav__lang { min-height: 44px; display: inline-flex; align-items: center; }
+
+  /* Article share buttons: 36 -> 44 */
+  .article-share__btn { width: 44px; height: 44px; }
+
+  /* Footer fine print: 11 -> 12px minimum readable body text */
+  .site-footer__demo-watermark,
+  .site-footer__demo-notice { font-size: 12px; }
+}
+
+/* --- FIX 4: Blog pricing table (AEO-friendly) --- */
+.blog-article__pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 32px 0;
+  font-family: var(--font-en);
+}
+body[dir="rtl"] .blog-article__pricing-table { font-family: var(--font-ar); }
+.blog-article__pricing-table caption {
+  font-weight: 600;
+  text-align: start;
+  padding: 0 0 16px;
+  color: var(--color-plum);
+}
+.blog-article__pricing-table th,
+.blog-article__pricing-table td {
+  padding: 12px 16px;
+  text-align: start;
+  border-bottom: 1px solid rgba(51, 32, 42, 0.1);
+  vertical-align: top;
+}
+.blog-article__pricing-table th {
+  background: var(--color-blush);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-plum);
+}
+.blog-article__pricing-table td { font-size: 15px; color: rgba(51, 32, 42, 0.85); }
+.blog-article__pricing-table td:nth-child(2) { white-space: nowrap; font-weight: 600; color: var(--color-burgundy); }
+@media (max-width: 768px) {
+  .blog-article__pricing-table { font-size: 14px; }
+  .blog-article__pricing-table th,
+  .blog-article__pricing-table td { padding: 10px 8px; }
+  .blog-article__pricing-table td:nth-child(2) { white-space: normal; }
+}
+
+/* --- FIX 5: Numbered process steps --- */
+.blog-article__steps {
+  margin: 0 0 24px;
+  padding-inline-start: 24px;
+  list-style: decimal;
+}
+.blog-article__steps li {
+  font-family: var(--font-en);
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(51, 32, 42, 0.85);
+  margin-bottom: 12px;
+  padding-inline-start: 4px;
+}
+.blog-article__steps li strong { color: var(--color-plum); }
+body[dir="rtl"] .blog-article__steps li { font-family: var(--font-ar); }
+
+/* --- FIX 6: Breadcrumbs (blog articles) --- */
+.breadcrumbs {
+  background: var(--color-blush);
+  padding: 16px 0;
+}
+.breadcrumbs__list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--font-en);
+  font-size: 14px;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 720px;
+  padding-inline: var(--container-pad);
+}
+body[dir="rtl"] .breadcrumbs__list { font-family: var(--font-ar); }
+.breadcrumbs__item { color: rgba(51, 32, 42, 0.7); }
+.breadcrumbs__item:not(:last-child)::after {
+  content: "\203A"; /* › */
+  margin-inline-start: 8px;
+  color: rgba(51, 32, 42, 0.5);
+}
+[dir="rtl"] .breadcrumbs__item:not(:last-child)::after { content: "\2039"; /* ‹ */ }
+.breadcrumbs__item a { color: var(--color-coral); text-decoration: none; }
+.breadcrumbs__item a:hover { text-decoration: underline; }
+.breadcrumbs__item--current { color: var(--color-plum); font-weight: 600; }

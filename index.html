@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Tailor Express — The fastest tailoring service in Kuwait</title>
-  <meta name="description" content="Premium express tailoring across 9 branches in Kuwait. Open 24/7. Dishdasha, alterations, and bespoke service." />
+  <meta name="description" content="The fastest tailoring service in Kuwait. 9 branches offering alterations, home service, drive-thru, uniform tailoring, and 24/7 Tailor Cloud smart lockers." />
   <link rel="canonical" href="https://tailorexpress.kw/" />
 
   <!-- Hreflang — same URL serves both languages (client-side toggle) -->
@@ -13,11 +13,23 @@
   <link rel="alternate" hreflang="ar" href="https://tailorexpress.kw/" />
   <link rel="alternate" hreflang="x-default" href="https://tailorexpress.kw/" />
 
-  <meta property="og:title" content="Tailor Express — Kuwait" />
-  <meta property="og:description" content="The fastest tailoring service in Kuwait. 9 branches. Open 24/7." />
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tailorexpress.kw/" />
+  <meta property="og:title" content="Tailor Express — Premium Tailoring Across Kuwait, 24/7 Service" />
+  <meta property="og:description" content="9 branches across Kuwait offering alterations, home service, drive-thru, and Tailor Cloud 24/7 smart lockers. The fastest tailoring service in Kuwait." />
+  <meta property="og:image" content="https://tailorexpress.kw/assets/image_background_about_section/bg_01.jpg" />
+  <meta property="og:image:width" content="2752" />
+  <meta property="og:image:height" content="1536" />
   <meta property="og:locale" content="en_KW" />
   <meta property="og:locale:alternate" content="ar_KW" />
+  <meta property="og:site_name" content="Tailor Express" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tailor Express — Premium Tailoring Across Kuwait" />
+  <meta name="twitter:description" content="9 branches across Kuwait offering alterations, home service, drive-thru, and Tailor Cloud 24/7 smart lockers." />
+  <meta name="twitter:image" content="https://tailorexpress.kw/assets/image_background_about_section/bg_01.jpg" />
 
   <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
 
@@ -40,28 +52,117 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
 
+  <!-- Per-branch LocalBusiness graph (9 locations). Each branch is a branchOf
+       the main Tailor Express entity (#business, defined further down the page).
+       Opening hours mirror the published per-branch "Open 24/7" status shown on
+       the Contact page. geo coordinates included only where known (Avenues);
+       hasMap links provide precise location for the rest. [OWNER TO CONFIRM:
+       per-branch street addresses, hours, and whether all 9 are truly 24/7.] -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "ClothingStore",
-    "name": "Tailor Express",
-    "alternateName": "Tailor Express",
-    "image": "https://tailorexpress.kw/assets/images/og.jpg",
-    "url": "https://tailorexpress.kw/",
-    "telephone": ["+96598741904", "+96598742477"],
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Kuwait City",
-      "addressCountry": "KW"
-    },
-    "openingHoursSpecification": {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-      "opens": "00:00",
-      "closes": "23:59"
-    },
-    "priceRange": "$$",
-    "sameAs": ["https://instagram.com/tailorexpress_kw"]
+    "@graph": [
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://tailorexpress.kw/#branch-avenues",
+        "name": "Tailor Express — Avenues",
+        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpress.kw/#business" },
+        "telephone": ["+96598741904", "+96598742477"],
+        "address": { "@type": "PostalAddress", "streetAddress": "The Avenues Mall", "addressLocality": "Al-Rai", "addressCountry": "KW" },
+        "geo": { "@type": "GeoCoordinates", "latitude": "29.3027", "longitude": "47.9347" },
+        "hasMap": "https://www.google.com/maps/search/?api=1&query=29.3027,47.9347",
+        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
+        "url": "https://tailorexpress.kw/#branches"
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://tailorexpress.kw/#branch-hessa-district",
+        "name": "Tailor Express — Hessa District",
+        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpress.kw/#business" },
+        "telephone": ["+96598741904", "+96598742477"],
+        "address": { "@type": "PostalAddress", "addressLocality": "Hessa Al-Mubarak", "addressCountry": "KW" },
+        "hasMap": "https://maps.app.goo.gl/gacNM8rVFA5Lkw5VA",
+        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
+        "url": "https://tailorexpress.kw/#branches"
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://tailorexpress.kw/#branch-promenade",
+        "name": "Tailor Express — Promenade",
+        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpress.kw/#business" },
+        "telephone": ["+96598741904", "+96598742477"],
+        "address": { "@type": "PostalAddress", "addressLocality": "Kuwait", "addressCountry": "KW" },
+        "hasMap": "https://maps.app.goo.gl/9t9Mfd4BGgA9mgCm6",
+        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
+        "url": "https://tailorexpress.kw/#branches"
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://tailorexpress.kw/#branch-w-mishrif",
+        "name": "Tailor Express — W-Mishrif",
+        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpress.kw/#business" },
+        "telephone": ["+96598741904", "+96598742477"],
+        "address": { "@type": "PostalAddress", "addressLocality": "West Mishrif", "addressCountry": "KW" },
+        "hasMap": "https://maps.app.goo.gl/Ht7SWCWYMZqzt8Z78",
+        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
+        "url": "https://tailorexpress.kw/#branches"
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://tailorexpress.kw/#branch-yarmouk",
+        "name": "Tailor Express — Yarmouk",
+        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpress.kw/#business" },
+        "telephone": ["+96598741904", "+96598742477"],
+        "address": { "@type": "PostalAddress", "addressLocality": "Yarmouk", "addressCountry": "KW" },
+        "hasMap": "https://maps.app.goo.gl/DSiBYqoCpmoEdHVK9",
+        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
+        "url": "https://tailorexpress.kw/#branches"
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://tailorexpress.kw/#branch-qurtoba",
+        "name": "Tailor Express — Qurtoba",
+        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpress.kw/#business" },
+        "telephone": ["+96598741904", "+96598742477"],
+        "address": { "@type": "PostalAddress", "addressLocality": "Qurtoba", "addressCountry": "KW" },
+        "hasMap": "https://maps.app.goo.gl/gzj6RcXY7B97XR1n8",
+        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
+        "url": "https://tailorexpress.kw/#branches"
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://tailorexpress.kw/#branch-zahra",
+        "name": "Tailor Express — Zahra Complex",
+        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpress.kw/#business" },
+        "telephone": ["+96598741904", "+96598742477"],
+        "address": { "@type": "PostalAddress", "addressLocality": "Al-Zahra", "addressCountry": "KW" },
+        "hasMap": "https://maps.app.goo.gl/7d4m9B4qwCSnfKcG8",
+        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
+        "url": "https://tailorexpress.kw/#branches"
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://tailorexpress.kw/#branch-dasma",
+        "name": "Tailor Express — Dasma",
+        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpress.kw/#business" },
+        "telephone": ["+96598741904", "+96598742477"],
+        "address": { "@type": "PostalAddress", "addressLocality": "Dasma", "addressCountry": "KW" },
+        "hasMap": "https://maps.app.goo.gl/z7724ypMNggJ6SxEA",
+        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
+        "url": "https://tailorexpress.kw/#branches"
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://tailorexpress.kw/#branch-premium-tailor",
+        "name": "Premium Tailor",
+        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpress.kw/#business" },
+        "telephone": ["+96598741904", "+96598742477"],
+        "address": { "@type": "PostalAddress", "addressLocality": "Kuwait", "addressCountry": "KW" },
+        "hasMap": "https://maps.app.goo.gl/5e3JiJNuDxbZXCRB9",
+        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
+        "url": "https://tailorexpress.kw/#branches"
+      }
+    ]
   }
   </script>
 </head>
@@ -406,7 +507,7 @@
                    data-overlay-rgba="51,32,42,0.65"
                    data-overlay-tone="dark"
                    role="group" aria-roledescription="slide" aria-label="Clothing Alterations & Repairs">
-            <img class="services__card-bg" src="assets/images_service_section/card_01.jpg" alt="" decoding="async" />
+            <img class="services__card-bg" src="assets/images_service_section/card_01.jpg" alt="" decoding="async" width="1088" height="1350" />
             <div class="services__card-overlay" aria-hidden="true"></div>
             <svg class="services__card-x services__card-x--left" viewBox="-64 -64 128 128" aria-hidden="true" focusable="false">
               <circle cx="0" cy="0" r="56" fill="none" stroke="currentColor" stroke-width="3"/>
@@ -431,7 +532,7 @@
                    data-overlay-rgba="42,26,34,0.65"
                    data-overlay-tone="dark"
                    role="group" aria-roledescription="slide" aria-label="Home Service">
-            <img class="services__card-bg" src="assets/images_service_section/card_02.jpg" alt="" decoding="async" />
+            <img class="services__card-bg" src="assets/images_service_section/card_02.jpg" alt="" decoding="async" width="1088" height="1350" />
             <div class="services__card-overlay" aria-hidden="true"></div>
             <svg class="services__card-x services__card-x--right" viewBox="-64 -64 128 128" aria-hidden="true" focusable="false">
               <circle cx="0" cy="0" r="56" fill="none" stroke="currentColor" stroke-width="3"/>
@@ -456,7 +557,7 @@
                    data-overlay-rgba="81,90,71,0.65"
                    data-overlay-tone="dark"
                    role="group" aria-roledescription="slide" aria-label="Drive-Thru Service">
-            <img class="services__card-bg" src="assets/images_service_section/card_03.jpg" alt="" decoding="async" />
+            <img class="services__card-bg" src="assets/images_service_section/card_03.jpg" alt="" decoding="async" width="1088" height="1350" />
             <div class="services__card-overlay" aria-hidden="true"></div>
             <svg class="services__card-x services__card-x--left" viewBox="-64 -64 128 128" aria-hidden="true" focusable="false">
               <circle cx="0" cy="0" r="56" fill="none" stroke="currentColor" stroke-width="3"/>
@@ -481,7 +582,7 @@
                    data-overlay-rgba="240,100,73,0.65"
                    data-overlay-tone="dark"
                    role="group" aria-roledescription="slide" aria-label="Tailor Cloud">
-            <img class="services__card-bg" src="assets/images_service_section/card_04.jpg" alt="" decoding="async" />
+            <img class="services__card-bg" src="assets/images_service_section/card_04.jpg" alt="" decoding="async" width="1088" height="1350" />
             <div class="services__card-overlay" aria-hidden="true"></div>
             <svg class="services__card-x services__card-x--right" viewBox="-64 -64 128 128" aria-hidden="true" focusable="false">
               <circle cx="0" cy="0" r="56" fill="none" stroke="currentColor" stroke-width="3"/>
@@ -506,7 +607,7 @@
                    data-overlay-rgba="96,32,46,0.65"
                    data-overlay-tone="dark"
                    role="group" aria-roledescription="slide" aria-label="Uniform Alterations">
-            <img class="services__card-bg" src="assets/images_service_section/card_05.jpg" alt="" decoding="async" />
+            <img class="services__card-bg" src="assets/images_service_section/card_05.jpg" alt="" decoding="async" width="1088" height="1350" />
             <div class="services__card-overlay" aria-hidden="true"></div>
             <svg class="services__card-x services__card-x--left" viewBox="-64 -64 128 128" aria-hidden="true" focusable="false">
               <circle cx="0" cy="0" r="56" fill="none" stroke="currentColor" stroke-width="3"/>
@@ -531,7 +632,7 @@
                    data-overlay-rgba="42,26,34,0.65"
                    data-overlay-tone="dark"
                    role="group" aria-roledescription="slide" aria-label="Event and Brand Activations">
-            <img class="services__card-bg" src="assets/images_service_section/card_06.jpg" alt="" decoding="async" />
+            <img class="services__card-bg" src="assets/images_service_section/card_06.jpg" alt="" decoding="async" width="1088" height="1350" />
             <div class="services__card-overlay" aria-hidden="true"></div>
             <svg class="services__card-x services__card-x--right" viewBox="-64 -64 128 128" aria-hidden="true" focusable="false">
               <circle cx="0" cy="0" r="56" fill="none" stroke="currentColor" stroke-width="3"/>
@@ -1417,25 +1518,25 @@
         <div class="trust-strip__marquee">
           <div class="trust-strip__marquee-track">
             <!-- Copy 1 (the only one that's announced to screen readers) -->
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="KFH Rewards partner badge">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="KFH Rewards partner badge" width="474" height="170">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" width="690" height="362">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" width="474" height="170">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" width="690" height="362">
             <!-- Copy 2 -->
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true" width="474" height="170">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true" width="690" height="362">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true" width="474" height="170">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true" width="690" height="362">
             <!-- Copy 3 -->
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true" width="474" height="170">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true" width="690" height="362">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true" width="474" height="170">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true" width="690" height="362">
             <!-- Copy 4 (this+copy 3 cover the viewport at translate -50%) -->
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true">
-            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true" width="474" height="170">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true" width="690" height="362">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-1.png" alt="" aria-hidden="true" width="474" height="170">
+            <img src="assets/image-kfh-rewards/KFH-REWARDS-2.png" alt="" aria-hidden="true" width="690" height="362">
           </div>
         </div>
       </div>
@@ -1854,19 +1955,34 @@
   {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
+    "@id": "https://tailorexpress.kw/#business",
     "name": "Tailor Express",
     "alternateName": "Tailor Express",
-    "image": "[CLIENT TO CONFIRM: og-image URL]",
+    "image": "https://tailorexpress.kw/assets/image_background_about_section/bg_01.jpg",
+    "logo": "https://tailorexpress.kw/assets/icons/favicon.svg",
     "telephone": ["+96598741904", "+96598742477"],
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "[CLIENT TO CONFIRM]",
-      "addressLocality": "Rai",
-      "addressRegion": "The Avenues",
+      "streetAddress": "The Avenues Mall, Al-Rai",
+      "addressLocality": "Al-Rai",
       "addressCountry": "KW"
     },
-    "openingHours": "Mo-Su 00:00-24:00",
-    "url": "[CLIENT TO CONFIRM: production URL]",
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "29.3027",
+      "longitude": "47.9347"
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": "Kuwait"
+    },
+    "openingHoursSpecification": [{
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "opens": "00:00",
+      "closes": "23:59"
+    }],
+    "url": "https://tailorexpress.kw/",
     "sameAs": [
       "https://instagram.com/tailorexpress_kw"
     ],
