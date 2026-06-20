@@ -1,0 +1,21 @@
+# robots.txt for Tailor Express
+# https://tailorexpresskw.com
+
+User-agent: *
+Allow: /
+
+# Block draft/staging content if any
+Disallow: /_qa_screenshots/
+Disallow: /_qa_reports/
+
+# Block legal pages from indexing (draft state)
+# Note: noindex meta tag is already present on these pages
+# This is redundant safety
+Disallow: /privacy.html
+Disallow: /terms.html
+
+# Sitemap location
+Sitemap: https://tailorexpresskw.com/sitemap.xml
+
+# Crawl delay (optional, conservative)
+Crawl-delay: 1
