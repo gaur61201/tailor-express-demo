@@ -5757,3 +5757,83 @@ body[dir="rtl"] .breadcrumbs__list { font-family: var(--font-ar); }
 .breadcrumbs__item a { color: var(--color-coral); text-decoration: none; }
 .breadcrumbs__item a:hover { text-decoration: underline; }
 .breadcrumbs__item--current { color: var(--color-plum); font-weight: 600; }
+
+/* ============ FOUNDER QUOTE + BY THE NUMBERS (homepage) ============ */
+.founder { background: var(--color-blush); padding: clamp(64px, 10vh, 120px) 0; }
+.founder__inner { max-width: 960px; text-align: center; }
+.founder__eyebrow { color: var(--color-coral); margin-bottom: 24px; }
+.founder__quote { margin: 0 0 48px; }
+.founder__quote-text {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(1.4rem, 1rem + 1.6vw, 2.25rem);
+  line-height: 1.45;
+  color: var(--color-plum);
+  margin: 0 0 24px;
+}
+[dir="rtl"] .founder__quote-text { font-family: var(--font-ar); font-style: normal; }
+.founder__attribution {
+  font-family: var(--font-en);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--color-burgundy);
+}
+[dir="rtl"] .founder__attribution { font-family: var(--font-ar); }
+.founder__stats {
+  list-style: none; margin: 0; padding: 48px 0 0;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  border-top: 1px solid rgba(96, 32, 46, 0.18);
+}
+.founder__stat { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.founder__stat-num {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  line-height: 1;
+  color: var(--color-burgundy);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.founder__stat-label {
+  font-family: var(--font-en);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--color-plum);
+  max-width: 14ch;
+}
+[dir="rtl"] .founder__stat-label { font-family: var(--font-ar); }
+@media (max-width: 720px) {
+  .founder__stats { grid-template-columns: repeat(2, 1fr); gap: 32px 16px; }
+}
+@media (max-width: 380px) {
+  .founder__stats { grid-template-columns: 1fr; }
+}
+
+/* ============ SERVICES PAGE — WHAT MAKES US DIFFERENT ============ */
+.svc-diff { position: relative; z-index: 10; padding: clamp(64px, 9vh, 110px) 0; background: rgba(51, 32, 42, 0.82); }
+.svc-diff__inner { max-width: 1080px; }
+.svc-diff__eyebrow { color: var(--color-coral); text-align: center; margin-bottom: 12px; }
+.svc-diff__heading {
+  font-family: var(--font-en); font-weight: 700; font-size: var(--fs-h2);
+  letter-spacing: 0.03em; color: var(--color-blush); text-align: center; margin: 0 0 16px;
+}
+[dir="rtl"] .svc-diff__heading { font-family: var(--font-ar); }
+.svc-diff__lead {
+  text-align: center; color: rgba(246, 232, 234, 0.85); max-width: 60ch;
+  margin: 0 auto 40px; font-family: var(--font-en); line-height: 1.6;
+}
+[dir="rtl"] .svc-diff__lead { font-family: var(--font-ar); }
+.svc-diff__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 48px; }
+.svc-diff__item-title {
+  font-family: var(--font-en); font-weight: 600; font-size: 1.1rem;
+  color: var(--color-coral-light); margin: 0 0 8px; letter-spacing: 0.02em;
+}
+[dir="rtl"] .svc-diff__item-title { font-family: var(--font-ar); }
+.svc-diff__item-text {
+  font-family: var(--font-en); font-size: 0.95rem; line-height: 1.6;
+  color: rgba(246, 232, 234, 0.82); margin: 0;
+}
+[dir="rtl"] .svc-diff__item-text { font-family: var(--font-ar); }
+@media (max-width: 760px) { .svc-diff__grid { grid-template-columns: 1fr; gap: 28px; } }
