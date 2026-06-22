@@ -419,7 +419,6 @@
       // 2. One-time entry reveals — fire before pin engages
       gsap.set('.about__heading-inner', { y: '110%' });
       gsap.set('.about__paragraph',     { y: 24, opacity: 0 });
-      gsap.set('.about__cta',           { y: 16, opacity: 0 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -432,15 +431,14 @@
 
       tl.to('.about__eyebrow', { opacity: 1, duration: 0.8 })
         .to('.about__heading-inner', { y: 0, duration: 1.2, stagger: 0.15 }, '-=0.4')
-        .to('.about__paragraph', { y: 0, opacity: 1, duration: 0.8, stagger: 0.2 }, '-=0.7')
-        .to('.about__cta', { y: 0, opacity: 1, duration: 0.6 }, '+=0.1');
+        .to('.about__paragraph', { y: 0, opacity: 1, duration: 0.8, stagger: 0.2 }, '-=0.7');
     });
 
     // === Reduced motion: show everything statically ===
     mm.add('(prefers-reduced-motion: reduce)', () => {
       gsap.set(imageContainer, { scale: 1, opacity: 1 });
       gsap.set('.about__heading-inner', { y: 0 });
-      gsap.set('.about__eyebrow, .about__paragraph, .about__cta', { opacity: 1, y: 0 });
+      gsap.set('.about__eyebrow, .about__paragraph', { opacity: 1, y: 0 });
     });
   };
 
