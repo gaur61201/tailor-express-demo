@@ -2879,111 +2879,6 @@
   };
 
   /* =============================================
-     CONTACT FORM (Section 11)
-     Inline form + popup form both call into this. Validates per
-     field with native HTML5 constraints, surfaces messages in the
-     adjacent .field__error span, POSTs to Formspree, swaps to
-     a success state on 200, shows .contact-form__error on failure.
-     CLIENT TO CONFIRM: replace [PLACEHOLDER_ENDPOINT] in the form
-     action attribute before launch.
-     ============================================= */
-  const wireContactForm = (form, { onSuccess } = {}) => {
-    if (!form) return;
-    const fields = Array.from(form.querySelectorAll('.field'));
-    const submitBtn = form.querySelector('.contact-form__submit');
-    const errorEl = form.querySelector('.contact-form__error');
-
-    // Per-field error messages — kept short, brand-voice.
-    const messageFor = (input, lang) => {
-      const v = input.validity;
-      if (v.valueMissing) {
-        return lang === 'ar' ? 'هذا الحقل مطلوب' : 'This field is required';
-      }
-      if (v.typeMismatch && input.type === 'email') {
-        return lang === 'ar' ? 'يرجى إدخال بريد إلكتروني صحيح' : 'Please enter a valid email';
-      }
-      if (v.patternMismatch && input.type === 'tel') {
-        return lang === 'ar' ? 'يرجى إدخال رقم كويتي صحيح (8 أرقام)' : 'Enter a valid Kuwait number (8 digits)';
-      }
-      return lang === 'ar' ? 'هذا الحقل غير صالح' : 'Please check this field';
-    };
-
-    const langForPage = () => (document.documentElement.dir === 'rtl' ? 'ar' : 'en');
-
-    const showFieldError = (field, msg) => {
-      field.dataset.invalid = 'true';
-      const slot = field.querySelector('.field__error');
-      if (slot) slot.textContent = msg;
-    };
-    const clearFieldError = (field) => {
-      delete field.dataset.invalid;
-      const slot = field.querySelector('.field__error');
-      if (slot) slot.textContent = '';
-    };
-
-    // Clear an error as the user fixes it
-    fields.forEach((field) => {
-      const input = field.querySelector('.field__input');
-      if (!input) return;
-      input.addEventListener('input',  () => clearFieldError(field));
-      input.addEventListener('change', () => clearFieldError(field));
-    });
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      // Validate
-      let firstInvalid = null;
-      fields.forEach((field) => {
-        const input = field.querySelector('.field__input');
-        if (!input) return;
-        if (!input.checkValidity()) {
-          showFieldError(field, messageFor(input, langForPage()));
-          firstInvalid = firstInvalid || input;
-        } else {
-          clearFieldError(field);
-        }
-      });
-      if (errorEl) errorEl.hidden = true;
-      if (firstInvalid) { firstInvalid.focus(); return; }
-
-      // POST to Formspree
-      if (submitBtn) submitBtn.disabled = true;
-      form.classList.add('is-sending');
-
-      const fd = new FormData(form);
-      fetch(form.action, {
-        method: 'POST',
-        body: fd,
-        headers: { 'Accept': 'application/json' },
-      })
-      .then((res) => {
-        if (!res.ok) throw new Error('Submit failed: ' + res.status);
-        form.classList.remove('is-sending');
-        if (submitBtn) submitBtn.disabled = false;
-        if (typeof onSuccess === 'function') onSuccess();
-      })
-      .catch((err) => {
-        console.warn('[Tailor Express] Contact form submit failed:', err);
-        form.classList.remove('is-sending');
-        if (submitBtn) submitBtn.disabled = false;
-        if (errorEl) errorEl.hidden = false;
-      });
-    });
-  };
-
-  const initContactForm = () => {
-    const form = document.getElementById('contact-form');
-    const success = document.getElementById('contact-form-success');
-    wireContactForm(form, {
-      onSuccess: () => {
-        if (form) form.hidden = true;
-        if (success) success.hidden = false;
-      },
-    });
-  };
-
-  /* =============================================
      LEAD POPUP (Section 11 — popup variant)
      Fires 7s after DOMContentLoaded, desktop only (≥900px), once
      per session. Suppressed if the user has already scrolled
@@ -2993,9 +2888,7 @@
   const initPopup = () => {
     const popup = document.getElementById('lead-popup');
     if (!popup) return;
-    // form is optional now — homepage popup is a booking CTA card with no form;
-    // services.html popup still has a form. Wiring below is conditional.
-    const form = document.getElementById('popup-form');
+    // Booking-CTA popup only — no form (contact is WhatsApp / phone / email).
 
     const STORAGE_KEY = 'tailor_express_popup_shown';
     const DELAY = 7000;
@@ -3065,12 +2958,9 @@
       void popup.offsetHeight;
       requestAnimationFrame(() => popup.classList.add('is-open'));
 
-      // Move focus to first interactive element — form input if a
-      // form variant, otherwise the CTA link in the booking variant
-      const firstInput = form ? form.querySelector('input, select, textarea') : null;
+      // Move focus to the booking CTA link inside the popup card
       const bookingCta = popup.querySelector('.popup__cta');
-      if (firstInput) firstInput.focus();
-      else if (bookingCta) bookingCta.focus();
+      if (bookingCta) bookingCta.focus();
 
       document.addEventListener('keydown', onKeyDown);
     };
@@ -3089,20 +2979,6 @@
     popup.querySelectorAll('[data-popup-dismiss]').forEach((el) => {
       el.addEventListener('click', close);
     });
-
-    // Form variant (services.html): wire submit via shared helper.
-    // On success, swap form → success state inside the card, then
-    // auto-dismiss after 4s.
-    if (form) {
-      const popupSuccess = popup.querySelector('.contact-form__success');
-      wireContactForm(form, {
-        onSuccess: () => {
-          form.hidden = true;
-          if (popupSuccess) popupSuccess.hidden = false;
-          setTimeout(close, 4000);
-        },
-      });
-    }
 
     // Booking-CTA variant (index.html): close the popup as soon as
     // the user clicks the booking link. target="_blank" still opens
@@ -4062,7 +3938,6 @@
     initGallery();
     initTestimonials();
     initFAQ();
-    initContactForm();
     initPopup();
     initNavAutoHide();
     initServicesPage();
