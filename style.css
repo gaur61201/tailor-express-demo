@@ -5098,6 +5098,7 @@ body[dir="rtl"] .article-hero__title { font-family: var(--font-ar); }
 .article-meta__inner { display: flex; align-items: center; gap: 12px; padding-block: 16px; flex-wrap: wrap; }
 .article-meta__item { font-family: var(--font-en); font-size: 0.875rem; color: rgba(51,32,42,0.6); }
 body[dir="rtl"] .article-meta__item { font-family: var(--font-ar); }
+.article-meta__byline { color: var(--color-burgundy); font-weight: var(--fw-medium); }
 .article-meta__dot { color: rgba(51,32,42,0.3); }
 .article-meta__share { display: inline-flex; gap: 8px; margin-inline-start: auto; }
 .article-share__btn {

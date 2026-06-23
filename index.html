@@ -59,108 +59,478 @@
        hasMap links provide precise location for the rest. [OWNER TO CONFIRM:
        per-branch street addresses, hours, and whether all 9 are truly 24/7.] -->
   <script type="application/ld+json">
-  {
+    {
     "@context": "https://schema.org",
     "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://tailorexpresskw.com/#organization",
+        "name": "Tailor Express",
+        "alternateName": "Tailor Express Kuwait",
+        "url": "https://tailorexpresskw.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://tailorexpresskw.com/assets/icons/favicon.svg",
+          "width": 128,
+          "height": 128
+        },
+        "foundingDate": "2019",
+        "founder": {
+          "@id": "https://tailorexpresskw.com/#founder"
+        },
+        "areaServed": {
+          "@type": "Country",
+          "name": "Kuwait"
+        },
+        "knowsAbout": [
+          "Tailoring",
+          "Clothing Alterations",
+          "Wedding Garment Alterations",
+          "Abaya Alterations",
+          "Custom Tailoring",
+          "Women's Tailoring"
+        ],
+        "sameAs": [
+          "https://www.instagram.com/tailorexpress_kw"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://tailorexpresskw.com/#website",
+        "url": "https://tailorexpresskw.com/",
+        "name": "Tailor Express",
+        "publisher": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        },
+        "inLanguage": [
+          "en",
+          "ar"
+        ]
+      },
+      {
+        "@type": "Person",
+        "@id": "https://tailorexpresskw.com/#founder",
+        "name": "Dr. Shaikha E Alduaij",
+        "honorificPrefix": "Dr.",
+        "jobTitle": "Founder",
+        "worksFor": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        },
+        "knowsAbout": [
+          "Tailoring",
+          "Clothing Alterations",
+          "Kuwait Fashion Industry",
+          "Women's Tailoring",
+          "Wedding Garment Alterations"
+        ],
+        "nationality": {
+          "@type": "Country",
+          "name": "Kuwait"
+        }
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://tailorexpresskw.com/#business",
+        "name": "Tailor Express",
+        "alternateName": "Tailor Express Kuwait",
+        "image": "https://tailorexpresskw.com/assets/image_background_about_section/bg_01.jpg",
+        "logo": "https://tailorexpresskw.com/assets/icons/favicon.svg",
+        "telephone": [
+          "+96598741904",
+          "+96598742477"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "The Avenues Mall, Al-Rai",
+          "addressLocality": "Al-Rai",
+          "addressCountry": "KW"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "29.3027",
+          "longitude": "47.9347"
+        },
+        "areaServed": {
+          "@type": "Country",
+          "name": "Kuwait"
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "url": "https://tailorexpresskw.com/",
+        "sameAs": [
+          "https://instagram.com/tailorexpress_kw"
+        ],
+        "priceRange": "$$",
+        "foundingDate": "2019",
+        "founder": {
+          "@id": "https://tailorexpresskw.com/#founder"
+        },
+        "parentOrganization": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        },
+        "description": "Kuwait's fastest tailoring service with 9 branches operating 24/7."
+      },
       {
         "@type": "LocalBusiness",
         "@id": "https://tailorexpresskw.com/#branch-avenues",
         "name": "Tailor Express — Avenues",
-        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpresskw.com/#business" },
-        "telephone": ["+96598741904", "+96598742477"],
-        "address": { "@type": "PostalAddress", "streetAddress": "The Avenues Mall", "addressLocality": "Al-Rai", "addressCountry": "KW" },
-        "geo": { "@type": "GeoCoordinates", "latitude": "29.3027", "longitude": "47.9347" },
+        "branchOf": {
+          "@id": "https://tailorexpresskw.com/#business"
+        },
+        "telephone": [
+          "+96598741904",
+          "+96598742477"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "The Avenues Mall",
+          "addressLocality": "Al-Rai",
+          "addressCountry": "KW"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "29.3027",
+          "longitude": "47.9347"
+        },
         "hasMap": "https://www.google.com/maps/search/?api=1&query=29.3027,47.9347",
-        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
-        "url": "https://tailorexpresskw.com/#branches"
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "url": "https://tailorexpresskw.com/#branches",
+        "parentOrganization": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        }
       },
       {
         "@type": "LocalBusiness",
         "@id": "https://tailorexpresskw.com/#branch-hessa-district",
         "name": "Tailor Express — Hessa District",
-        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpresskw.com/#business" },
-        "telephone": ["+96598741904", "+96598742477"],
-        "address": { "@type": "PostalAddress", "addressLocality": "Hessa Al-Mubarak", "addressCountry": "KW" },
+        "branchOf": {
+          "@id": "https://tailorexpresskw.com/#business"
+        },
+        "telephone": [
+          "+96598741904",
+          "+96598742477"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Hessa Al-Mubarak",
+          "addressCountry": "KW"
+        },
         "hasMap": "https://maps.app.goo.gl/gacNM8rVFA5Lkw5VA",
-        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
-        "url": "https://tailorexpresskw.com/#branches"
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "url": "https://tailorexpresskw.com/#branches",
+        "parentOrganization": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        }
       },
       {
         "@type": "LocalBusiness",
         "@id": "https://tailorexpresskw.com/#branch-promenade",
         "name": "Tailor Express — Promenade",
-        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpresskw.com/#business" },
-        "telephone": ["+96598741904", "+96598742477"],
-        "address": { "@type": "PostalAddress", "addressLocality": "Kuwait", "addressCountry": "KW" },
+        "branchOf": {
+          "@id": "https://tailorexpresskw.com/#business"
+        },
+        "telephone": [
+          "+96598741904",
+          "+96598742477"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Kuwait",
+          "addressCountry": "KW"
+        },
         "hasMap": "https://maps.app.goo.gl/9t9Mfd4BGgA9mgCm6",
-        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
-        "url": "https://tailorexpresskw.com/#branches"
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "url": "https://tailorexpresskw.com/#branches",
+        "parentOrganization": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        }
       },
       {
         "@type": "LocalBusiness",
         "@id": "https://tailorexpresskw.com/#branch-w-mishrif",
         "name": "Tailor Express — W-Mishrif",
-        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpresskw.com/#business" },
-        "telephone": ["+96598741904", "+96598742477"],
-        "address": { "@type": "PostalAddress", "addressLocality": "West Mishrif", "addressCountry": "KW" },
+        "branchOf": {
+          "@id": "https://tailorexpresskw.com/#business"
+        },
+        "telephone": [
+          "+96598741904",
+          "+96598742477"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "West Mishrif",
+          "addressCountry": "KW"
+        },
         "hasMap": "https://maps.app.goo.gl/Ht7SWCWYMZqzt8Z78",
-        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
-        "url": "https://tailorexpresskw.com/#branches"
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "url": "https://tailorexpresskw.com/#branches",
+        "parentOrganization": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        }
       },
       {
         "@type": "LocalBusiness",
         "@id": "https://tailorexpresskw.com/#branch-yarmouk",
         "name": "Tailor Express — Yarmouk",
-        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpresskw.com/#business" },
-        "telephone": ["+96598741904", "+96598742477"],
-        "address": { "@type": "PostalAddress", "addressLocality": "Yarmouk", "addressCountry": "KW" },
+        "branchOf": {
+          "@id": "https://tailorexpresskw.com/#business"
+        },
+        "telephone": [
+          "+96598741904",
+          "+96598742477"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Yarmouk",
+          "addressCountry": "KW"
+        },
         "hasMap": "https://maps.app.goo.gl/DSiBYqoCpmoEdHVK9",
-        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
-        "url": "https://tailorexpresskw.com/#branches"
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "url": "https://tailorexpresskw.com/#branches",
+        "parentOrganization": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        }
       },
       {
         "@type": "LocalBusiness",
         "@id": "https://tailorexpresskw.com/#branch-qurtoba",
         "name": "Tailor Express — Qurtoba",
-        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpresskw.com/#business" },
-        "telephone": ["+96598741904", "+96598742477"],
-        "address": { "@type": "PostalAddress", "addressLocality": "Qurtoba", "addressCountry": "KW" },
+        "branchOf": {
+          "@id": "https://tailorexpresskw.com/#business"
+        },
+        "telephone": [
+          "+96598741904",
+          "+96598742477"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Qurtoba",
+          "addressCountry": "KW"
+        },
         "hasMap": "https://maps.app.goo.gl/gzj6RcXY7B97XR1n8",
-        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
-        "url": "https://tailorexpresskw.com/#branches"
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "url": "https://tailorexpresskw.com/#branches",
+        "parentOrganization": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        }
       },
       {
         "@type": "LocalBusiness",
         "@id": "https://tailorexpresskw.com/#branch-zahra",
         "name": "Tailor Express — Zahra Complex",
-        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpresskw.com/#business" },
-        "telephone": ["+96598741904", "+96598742477"],
-        "address": { "@type": "PostalAddress", "addressLocality": "Al-Zahra", "addressCountry": "KW" },
+        "branchOf": {
+          "@id": "https://tailorexpresskw.com/#business"
+        },
+        "telephone": [
+          "+96598741904",
+          "+96598742477"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Al-Zahra",
+          "addressCountry": "KW"
+        },
         "hasMap": "https://maps.app.goo.gl/7d4m9B4qwCSnfKcG8",
-        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
-        "url": "https://tailorexpresskw.com/#branches"
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "url": "https://tailorexpresskw.com/#branches",
+        "parentOrganization": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        }
       },
       {
         "@type": "LocalBusiness",
         "@id": "https://tailorexpresskw.com/#branch-dasma",
         "name": "Tailor Express — Dasma",
-        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpresskw.com/#business" },
-        "telephone": ["+96598741904", "+96598742477"],
-        "address": { "@type": "PostalAddress", "addressLocality": "Dasma", "addressCountry": "KW" },
+        "branchOf": {
+          "@id": "https://tailorexpresskw.com/#business"
+        },
+        "telephone": [
+          "+96598741904",
+          "+96598742477"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Dasma",
+          "addressCountry": "KW"
+        },
         "hasMap": "https://maps.app.goo.gl/z7724ypMNggJ6SxEA",
-        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
-        "url": "https://tailorexpresskw.com/#branches"
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "url": "https://tailorexpresskw.com/#branches",
+        "parentOrganization": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        }
       },
       {
         "@type": "LocalBusiness",
         "@id": "https://tailorexpresskw.com/#branch-premium-tailor",
         "name": "Premium Tailor",
-        "branchOf": { "@type": "Organization", "name": "Tailor Express", "@id": "https://tailorexpresskw.com/#business" },
-        "telephone": ["+96598741904", "+96598742477"],
-        "address": { "@type": "PostalAddress", "addressLocality": "Kuwait", "addressCountry": "KW" },
+        "branchOf": {
+          "@id": "https://tailorexpresskw.com/#business"
+        },
+        "telephone": [
+          "+96598741904",
+          "+96598742477"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Kuwait",
+          "addressCountry": "KW"
+        },
         "hasMap": "https://maps.app.goo.gl/5e3JiJNuDxbZXCRB9",
-        "openingHoursSpecification": [{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59" }],
-        "url": "https://tailorexpresskw.com/#branches"
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        ],
+        "url": "https://tailorexpresskw.com/#branches",
+        "parentOrganization": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        }
       }
     ]
   }
@@ -1945,50 +2315,6 @@
   }
   </script>
 
-  <!-- LocalBusiness JSON-LD Schema (Contact section).
-       Note: existing ClothingStore schema in <head> covers the same
-       entity at a higher level; this LocalBusiness block is the more
-       generic/widely-supported counterpart and lists Avenues hub as
-       the primary location. Both can co-exist. -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": "https://tailorexpresskw.com/#business",
-    "name": "Tailor Express",
-    "alternateName": "Tailor Express",
-    "image": "https://tailorexpresskw.com/assets/image_background_about_section/bg_01.jpg",
-    "logo": "https://tailorexpresskw.com/assets/icons/favicon.svg",
-    "telephone": ["+96598741904", "+96598742477"],
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "The Avenues Mall, Al-Rai",
-      "addressLocality": "Al-Rai",
-      "addressCountry": "KW"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": "29.3027",
-      "longitude": "47.9347"
-    },
-    "areaServed": {
-      "@type": "Country",
-      "name": "Kuwait"
-    },
-    "openingHoursSpecification": [{
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-      "opens": "00:00",
-      "closes": "23:59"
-    }],
-    "url": "https://tailorexpresskw.com/",
-    "sameAs": [
-      "https://instagram.com/tailorexpress_kw"
-    ],
-    "priceRange": "$$",
-    "description": "Kuwait's fastest tailoring service with 9 branches operating 24/7."
-  }
-  </script>
 
 </body>
 </html>

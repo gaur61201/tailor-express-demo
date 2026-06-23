@@ -44,15 +44,39 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": "Drive-thru and home tailoring services in Kuwait: What to know",
-    "image": "https://tailorexpresskw.com/assets/images_service_section/card_02.jpg",
-    "datePublished": "2026-06-14",
-    "dateModified": "2026-06-14",
-    "author": { "@type": "Organization", "name": "Tailor Express" },
-    "publisher": { "@type": "Organization", "name": "Tailor Express", "logo": { "@type": "ImageObject", "url": "https://tailorexpresskw.com/assets/icons/favicon.svg" } },
-    "description": "Modern tailoring should work around your schedule. Discover how drive-thru drop-off, home service, and 24/7 lockers change what's possible — and which fits your needs.",
-    "mainEntityOfPage": "https://tailorexpresskw.com/blog/drive-thru-home-tailoring-kuwait.html"
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://tailorexpresskw.com/#founder",
+        "name": "Dr. Shaikha E Alduaij",
+        "honorificPrefix": "Dr.",
+        "jobTitle": "Founder",
+        "worksFor": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        }
+      },
+      {
+        "@type": "Article",
+        "headline": "Drive-thru and home tailoring services in Kuwait: What to know",
+        "image": "https://tailorexpresskw.com/assets/images_service_section/card_02.jpg",
+        "datePublished": "2026-06-14",
+        "dateModified": "2026-06-14",
+        "author": {
+          "@id": "https://tailorexpresskw.com/#founder"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "@id": "https://tailorexpresskw.com/#organization",
+          "name": "Tailor Express",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://tailorexpresskw.com/assets/icons/favicon.svg"
+          }
+        },
+        "description": "Modern tailoring should work around your schedule. Discover how drive-thru drop-off, home service, and 24/7 lockers change what's possible — and which fits your needs.",
+        "mainEntityOfPage": "https://tailorexpresskw.com/blog/drive-thru-home-tailoring-kuwait.html"
+      }
+    ]
   }
   </script>
 </head>
@@ -177,6 +201,8 @@
 
     <div class="article-meta">
       <div class="article-meta__inner container">
+        <span class="article-meta__item article-meta__byline"><span class="en-text">By Dr. Shaikha E Alduaij</span><span class="ar-text">بقلم د. شيخة العدواني</span></span>
+        <span class="article-meta__dot" aria-hidden="true">·</span>
         <span class="article-meta__item"><span class="en-text">June 14, 2026</span><span class="ar-text">14 يونيو 2026</span></span>
         <span class="article-meta__dot" aria-hidden="true">·</span>
         <span class="article-meta__item"><span class="en-text">6 min read</span><span class="ar-text">6 دقائق قراءة</span></span>

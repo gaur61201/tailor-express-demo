@@ -45,25 +45,27 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "ClothingStore",
-    "name": "Tailor Express",
-    "alternateName": "Tailor Express",
-    "url": "https://tailorexpresskw.com/gallery.html",
-    "image": "https://tailorexpresskw.com/assets/images/og-gallery.jpg",
-    "telephone": "+96598741904",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "The Avenues, Al-Rai",
-      "addressLocality": "Kuwait City",
-      "addressCountry": "KW"
-    },
-    "openingHoursSpecification": {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-      "opens": "00:00",
-      "closes": "23:59"
-    },
-    "sameAs": ["https://instagram.com/tailorexpress_kw"]
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://tailorexpresskw.com/gallery.html#webpage",
+        "url": "https://tailorexpresskw.com/gallery.html",
+        "name": "Gallery — Tailor Express Atelier & Work in Kuwait",
+        "isPartOf": {
+          "@id": "https://tailorexpresskw.com/#website"
+        },
+        "about": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        },
+        "publisher": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        },
+        "inLanguage": [
+          "en",
+          "ar"
+        ]
+      }
+    ]
   }
   </script>
 </head>

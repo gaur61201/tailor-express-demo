@@ -45,31 +45,63 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "ClothingStore",
-    "name": "Tailor Express",
-    "alternateName": "Tailor Express",
-    "url": "https://tailorexpresskw.com/contact.html",
-    "image": "https://tailorexpresskw.com/assets/images/og-contact.jpg",
-    "telephone": "+96598741904",
-    "email": "tailorexpresskw@gmail.com",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "The Avenues, Al-Rai",
-      "addressLocality": "Kuwait City",
-      "addressCountry": "KW"
-    },
-    "openingHoursSpecification": {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-      "opens": "00:00",
-      "closes": "23:59"
-    },
-    "contactPoint": [
-      { "@type": "ContactPoint", "telephone": "+96598741904", "contactType": "customer service", "areaServed": "KW", "availableLanguage": ["en","ar"] },
-      { "@type": "ContactPoint", "telephone": "+96598742477", "contactType": "customer service", "areaServed": "KW", "availableLanguage": ["en","ar"] },
-      { "@type": "ContactPoint", "email": "tailorexpresskw@gmail.com", "contactType": "sales", "areaServed": "KW", "availableLanguage": ["en","ar"] }
-    ],
-    "sameAs": ["https://instagram.com/tailorexpress_kw"]
+    "@graph": [
+      {
+        "@type": "ContactPage",
+        "@id": "https://tailorexpresskw.com/contact.html#webpage",
+        "url": "https://tailorexpresskw.com/contact.html",
+        "name": "Contact Tailor Express",
+        "isPartOf": {
+          "@id": "https://tailorexpresskw.com/#website"
+        },
+        "about": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        },
+        "publisher": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        },
+        "inLanguage": [
+          "en",
+          "ar"
+        ]
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://tailorexpresskw.com/#organization",
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "telephone": "+96598741904",
+            "contactType": "customer service",
+            "areaServed": "KW",
+            "availableLanguage": [
+              "en",
+              "ar"
+            ]
+          },
+          {
+            "@type": "ContactPoint",
+            "telephone": "+96598742477",
+            "contactType": "customer service",
+            "areaServed": "KW",
+            "availableLanguage": [
+              "en",
+              "ar"
+            ]
+          },
+          {
+            "@type": "ContactPoint",
+            "email": "tailorexpresskw@gmail.com",
+            "contactType": "sales",
+            "areaServed": "KW",
+            "availableLanguage": [
+              "en",
+              "ar"
+            ]
+          }
+        ]
+      }
+    ]
   }
   </script>
 </head>

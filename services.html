@@ -45,118 +45,162 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
+    "@graph": [
       {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://tailorexpresskw.com/"
+        "@type": "WebPage",
+        "@id": "https://tailorexpresskw.com/services.html#webpage",
+        "url": "https://tailorexpresskw.com/services.html",
+        "name": "Tailoring & Alteration Services in Kuwait",
+        "isPartOf": {
+          "@id": "https://tailorexpresskw.com/#website"
+        },
+        "about": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        },
+        "publisher": {
+          "@id": "https://tailorexpresskw.com/#organization"
+        },
+        "inLanguage": [
+          "en",
+          "ar"
+        ]
       },
       {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Services",
-        "item": "https://tailorexpresskw.com/services.html"
-      }
-    ]
-  }
-  </script>
-
-  <!-- Service catalog — 6 Service objects, each provided by Tailor Express -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": "Tailor Express Services",
-    "description": "Six tailoring services offered by Tailor Express across Kuwait.",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "item": {
-          "@type": "Service",
-          "name": "Clothing Alterations & Repairs",
-          "description": "Hemming, resizing, zipper repairs, seam restoration, and lining replacement. 24-hour turnaround at all branches.",
-          "serviceType": "Alterations",
-          "provider": {
-            "@type": "LocalBusiness",
-            "name": "Tailor Express",
-            "telephone": "+96598741904",
-            "address": { "@type": "PostalAddress", "addressLocality": "Kuwait City", "addressCountry": "KW" }
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://tailorexpresskw.com/"
           },
-          "areaServed": { "@type": "Country", "name": "Kuwait" },
-          "url": "https://tailorexpresskw.com/services.html#alterations"
-        }
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Services",
+            "item": "https://tailorexpresskw.com/services.html"
+          }
+        ]
       },
       {
-        "@type": "ListItem",
-        "position": 2,
-        "item": {
-          "@type": "Service",
-          "name": "Home Service",
-          "description": "Garment pickup and delivery across Kuwait. WhatsApp coordination, insured transit, 48-72 hour turnaround.",
-          "serviceType": "Pickup and Delivery",
-          "provider": { "@type": "LocalBusiness", "name": "Tailor Express" },
-          "areaServed": { "@type": "Country", "name": "Kuwait" },
-          "url": "https://tailorexpresskw.com/services.html#home-service"
-        }
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "item": {
-          "@type": "Service",
-          "name": "Drive-Thru Service",
-          "description": "Pull up, hand over your garment, drive off. Sub-60-second handoff at Avenues and Khaldiya branches.",
-          "serviceType": "Drive-Thru",
-          "provider": { "@type": "LocalBusiness", "name": "Tailor Express" },
-          "areaServed": { "@type": "Place", "name": "The Avenues and Khaldiya, Kuwait" },
-          "url": "https://tailorexpresskw.com/services.html#drive-thru"
-        }
-      },
-      {
-        "@type": "ListItem",
-        "position": 4,
-        "item": {
-          "@type": "Service",
-          "name": "Tailor Cloud",
-          "description": "24/7 smart locker network. QR-coded drop-off and pickup at Avenues, Khaldiya, and Bayan. From 3-hour turnaround.",
-          "serviceType": "Smart Locker",
-          "provider": { "@type": "LocalBusiness", "name": "Tailor Express" },
-          "areaServed": { "@type": "Place", "name": "Avenues, Khaldiya, Bayan — Kuwait" },
-          "url": "https://tailorexpresskw.com/services.html#tailor-cloud"
-        }
-      },
-      {
-        "@type": "ListItem",
-        "position": 5,
-        "item": {
-          "@type": "Service",
-          "name": "Uniform Alterations",
-          "description": "Corporate, school, and hospitality uniform alterations. Bulk pricing, recurring fittings, 5-7 day turnaround.",
-          "serviceType": "Uniform Alterations",
-          "provider": { "@type": "LocalBusiness", "name": "Tailor Express" },
-          "areaServed": { "@type": "Country", "name": "Kuwait" },
-          "url": "https://tailorexpresskw.com/services.html#uniforms"
-        }
-      },
-      {
-        "@type": "ListItem",
-        "position": 6,
-        "item": {
-          "@type": "Service",
-          "name": "Event & Brand Activations",
-          "description": "On-site tailoring for events. Embroidery stations, fitting room setup, same-day garment turnaround.",
-          "serviceType": "Event Tailoring",
-          "provider": { "@type": "LocalBusiness", "name": "Tailor Express" },
-          "areaServed": { "@type": "Country", "name": "Kuwait" },
-          "url": "https://tailorexpresskw.com/services.html#events"
-        }
+        "@type": "ItemList",
+        "name": "Tailor Express Services",
+        "description": "Six tailoring services offered by Tailor Express across Kuwait.",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "Service",
+              "name": "Clothing Alterations & Repairs",
+              "description": "Hemming, resizing, zipper repairs, seam restoration, and lining replacement. 24-hour turnaround at all branches.",
+              "serviceType": "Alterations",
+              "provider": {
+                "@id": "https://tailorexpresskw.com/#business"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Kuwait"
+              },
+              "url": "https://tailorexpresskw.com/services.html#alterations"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "Service",
+              "name": "Home Service",
+              "description": "Garment pickup and delivery across Kuwait. WhatsApp coordination, insured transit, 48-72 hour turnaround.",
+              "serviceType": "Pickup and Delivery",
+              "provider": {
+                "@id": "https://tailorexpresskw.com/#business"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Kuwait"
+              },
+              "url": "https://tailorexpresskw.com/services.html#home-service"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "Service",
+              "name": "Drive-Thru Service",
+              "description": "Pull up, hand over your garment, drive off. Sub-60-second handoff at Avenues and Khaldiya branches.",
+              "serviceType": "Drive-Thru",
+              "provider": {
+                "@id": "https://tailorexpresskw.com/#business"
+              },
+              "areaServed": {
+                "@type": "Place",
+                "name": "The Avenues and Khaldiya, Kuwait"
+              },
+              "url": "https://tailorexpresskw.com/services.html#drive-thru"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "Service",
+              "name": "Tailor Cloud",
+              "description": "24/7 smart locker network. QR-coded drop-off and pickup at Avenues, Khaldiya, and Bayan. From 3-hour turnaround.",
+              "serviceType": "Smart Locker",
+              "provider": {
+                "@id": "https://tailorexpresskw.com/#business"
+              },
+              "areaServed": {
+                "@type": "Place",
+                "name": "Avenues, Khaldiya, Bayan — Kuwait"
+              },
+              "url": "https://tailorexpresskw.com/services.html#tailor-cloud"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "item": {
+              "@type": "Service",
+              "name": "Uniform Alterations",
+              "description": "Corporate, school, and hospitality uniform alterations. Bulk pricing, recurring fittings, 5-7 day turnaround.",
+              "serviceType": "Uniform Alterations",
+              "provider": {
+                "@id": "https://tailorexpresskw.com/#business"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Kuwait"
+              },
+              "url": "https://tailorexpresskw.com/services.html#uniforms"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "item": {
+              "@type": "Service",
+              "name": "Event & Brand Activations",
+              "description": "On-site tailoring for events. Embroidery stations, fitting room setup, same-day garment turnaround.",
+              "serviceType": "Event Tailoring",
+              "provider": {
+                "@id": "https://tailorexpresskw.com/#business"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Kuwait"
+              },
+              "url": "https://tailorexpresskw.com/services.html#events"
+            }
+          }
+        ]
       }
     ]
   }
   </script>
+  
 </head>
 
 <body dir="ltr">
