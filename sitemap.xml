@@ -123,6 +123,28 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tailorexpresskw.com/blog/alteration-costs-kuwait.html" />
   </url>
 
+  <!-- Blog article: Female tailors and women's alterations in Kuwait -->
+  <url>
+    <loc>https://tailorexpresskw.com/blog/female-tailors-women-alterations-kuwait.html</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tailorexpresskw.com/blog/female-tailors-women-alterations-kuwait.html" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://tailorexpresskw.com/blog/female-tailors-women-alterations-kuwait.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tailorexpresskw.com/blog/female-tailors-women-alterations-kuwait.html" />
+  </url>
+
+  <!-- Blog article: 24/7 and emergency tailoring in Kuwait -->
+  <url>
+    <loc>https://tailorexpresskw.com/blog/24-7-tailoring-emergency-alterations-kuwait.html</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tailorexpresskw.com/blog/24-7-tailoring-emergency-alterations-kuwait.html" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://tailorexpresskw.com/blog/24-7-tailoring-emergency-alterations-kuwait.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tailorexpresskw.com/blog/24-7-tailoring-emergency-alterations-kuwait.html" />
+  </url>
+
   <!-- Legal pages (lower priority, draft state) -->
   <url>
     <loc>https://tailorexpresskw.com/privacy.html</loc>
