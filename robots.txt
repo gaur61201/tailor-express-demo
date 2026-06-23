@@ -1,21 +1,65 @@
 # robots.txt for Tailor Express
 # https://tailorexpresskw.com
 
+# Default rule — all crawlers (Googlebot, Bingbot, etc.)
 User-agent: *
 Allow: /
+Disallow: /_qa_screenshots/
+Disallow: /_qa_reports/
+# Legal pages are draft-state (noindex meta also present)
+Disallow: /privacy.html
+Disallow: /terms.html
+Crawl-delay: 1
 
-# Block draft/staging content if any
+# =============================================
+# AI / LLM crawlers — explicitly allowed (GEO posture)
+# Site content may be used for AI answers and citations.
+# Draft legal pages remain excluded.
+# =============================================
+
+User-agent: GPTBot
+Allow: /
+Disallow: /privacy.html
+Disallow: /terms.html
 Disallow: /_qa_screenshots/
 Disallow: /_qa_reports/
 
-# Block legal pages from indexing (draft state)
-# Note: noindex meta tag is already present on these pages
-# This is redundant safety
+User-agent: ClaudeBot
+Allow: /
+Disallow: /privacy.html
+Disallow: /terms.html
+Disallow: /_qa_screenshots/
+Disallow: /_qa_reports/
+
+User-agent: anthropic-ai
+Allow: /
 Disallow: /privacy.html
 Disallow: /terms.html
 
-# Sitemap location
-Sitemap: https://tailorexpresskw.com/sitemap.xml
+User-agent: Claude-Web
+Allow: /
+Disallow: /privacy.html
+Disallow: /terms.html
 
-# Crawl delay (optional, conservative)
-Crawl-delay: 1
+User-agent: PerplexityBot
+Allow: /
+Disallow: /privacy.html
+Disallow: /terms.html
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /privacy.html
+Disallow: /terms.html
+
+User-agent: cohere-ai
+Allow: /
+Disallow: /privacy.html
+Disallow: /terms.html
+
+User-agent: CCBot
+Allow: /
+Disallow: /privacy.html
+Disallow: /terms.html
+
+# Sitemap
+Sitemap: https://tailorexpresskw.com/sitemap.xml
