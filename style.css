@@ -5409,3 +5409,27 @@ body[dir="rtl"] .breadcrumbs__list { font-family: var(--font-ar); }
 .breadcrumbs__item a { color: var(--color-coral); text-decoration: none; }
 .breadcrumbs__item a:hover { text-decoration: underline; }
 .breadcrumbs__item--current { color: var(--color-plum); font-weight: 600; }
+
+/* =============================================
+   PHONE NUMBERS — uniform lining figures
+   Cormorant Garamond (--font-display) defaults to old-style figures
+   (uneven digit heights). Force the clean sans (Raleway) + lining +
+   tabular numerals so every phone number renders even-height,
+   same-width, in a straight line. Digits only — text-only WhatsApp
+   buttons keep their own font/weight.
+   ============================================= */
+a[href^="tel:"],
+.phone-number,
+[class*="phone"] {
+  font-family: var(--font-en);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+  letter-spacing: 0.02em;
+  font-weight: var(--fw-medium);
+}
+/* Numbers inside a WhatsApp link get lining figures without changing
+   the button's own font-family / weight / spacing. */
+a[href^="https://wa.me/"] {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
