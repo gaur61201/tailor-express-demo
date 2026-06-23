@@ -282,7 +282,7 @@
   /* =============================================
      HERO REVEAL
      Runs after preloader completes.
-     Order: eyebrow → headline (line-by-line mask) → subline → 24/7 → CTAs → X icon → scroll cue
+     Order: headline (line-by-line mask) → subline → 24/7 → CTAs → X icon → scroll cue
      ============================================= */
   let heroRevealStarted = false;
   function startHeroReveal() {
@@ -290,7 +290,7 @@
     heroRevealStarted = true;
 
     if (prefersReducedMotion) {
-      gsap.set('.hero__eyebrow, .hero__headline, .hero__subline, .hero__open, .hero__ctas, .hero__media-x, .hero__scroll-cue', {
+      gsap.set('.hero__headline, .hero__subline, .hero__open, .hero__ctas, .hero__media-x, .hero__scroll-cue', {
         opacity: 1
       });
       return;
@@ -320,17 +320,12 @@
 
     const tl = gsap.timeline({ delay: 0.1 });
 
-    tl.to('.hero__eyebrow', {
-      opacity: 1,
-      duration: 0.8,
-      ease: 'power3.out',
-    })
-    .to('.hero__line-inner', {
+    tl.to('.hero__line-inner', {
       y: 0,
       duration: 1.2,
       ease: 'power4.out',
       stagger: 0.10,
-    }, '-=0.4')
+    }, 0.4)
     .to('.hero__subline', {
       opacity: 1,
       y: 0,

@@ -698,10 +698,6 @@ body.menu-open .nav-menu-toggle { color: var(--color-blush); }
   gap: var(--space-2);
 }
 
-.hero__eyebrow {
-  opacity: 0; /* JS reveals */
-}
-
 .hero__headline {
   font-size: var(--fs-hero);
   font-weight: var(--fw-bold);
@@ -933,7 +929,6 @@ body[dir="rtl"] .hero__scroll-label { letter-spacing: 0.1em; text-transform: non
 
   /* Mobile color overrides — blush-on-plum for legibility against the
      gradient. Desktop colors (burgundy/plum/sage on blush bg) untouched. */
-  .hero__eyebrow      { color: var(--color-blush); }
   .hero__headline     { color: var(--color-blush); font-size: clamp(1.75rem, 8vw, 2.5rem); }
   .hero__subline      { color: rgba(246, 232, 234, 0.85); }
   .hero__open-numerals,
