@@ -864,9 +864,9 @@
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
 
-        <div class="services__carousel" role="group" aria-roledescription="carousel" tabindex="0">
+        <div class="services__carousel" role="group" aria-roledescription="carousel" aria-live="polite" tabindex="0">
           <!-- Card 1 — Alterations & Repairs -->
-          <article class="services__card" data-index="0"
+          <div class="services__card" data-index="0"
                    data-section-bg="#f6e8ea"
                    data-overlay-rgba="51,32,42,0.65"
                    data-overlay-tone="dark"
@@ -888,10 +888,10 @@
                 <span class="ar-text">تقصير، تعديل المقاسات، إصلاحات السحابات والأزرار، وإصلاحات عامة للملابس.</span>
               </p>
             </div>
-          </article>
+          </div>
 
           <!-- Card 2 — Home Service -->
-          <article class="services__card" data-index="1"
+          <div class="services__card" data-index="1"
                    data-section-bg="#60202e"
                    data-overlay-rgba="42,26,34,0.65"
                    data-overlay-tone="dark"
@@ -913,10 +913,10 @@
                 <span class="ar-text">خدمة الاستلام والتوصيل للتعديلات من موقع العميل.</span>
               </p>
             </div>
-          </article>
+          </div>
 
           <!-- Card 3 — Drive-Thru Service -->
-          <article class="services__card" data-index="2"
+          <div class="services__card" data-index="2"
                    data-section-bg="#ff5050"
                    data-overlay-rgba="81,90,71,0.65"
                    data-overlay-tone="dark"
@@ -938,10 +938,10 @@
                 <span class="ar-text">تسليم واستلام سريع بدون دخول المحل.</span>
               </p>
             </div>
-          </article>
+          </div>
 
           <!-- Card 4 — Tailor Cloud (hero card) -->
-          <article class="services__card" data-index="3"
+          <div class="services__card" data-index="3"
                    data-section-bg="#33202a"
                    data-overlay-rgba="240,100,73,0.65"
                    data-overlay-tone="dark"
@@ -963,10 +963,10 @@
                 <span class="ar-text">خدمة الخزائن الذكية للاستلام والتسليم على مدار 24/7.</span>
               </p>
             </div>
-          </article>
+          </div>
 
           <!-- Card 5 — Uniform Alterations -->
-          <article class="services__card" data-index="4"
+          <div class="services__card" data-index="4"
                    data-section-bg="#515a47"
                    data-overlay-rgba="96,32,46,0.65"
                    data-overlay-tone="dark"
@@ -988,10 +988,10 @@
                 <span class="ar-text">تعديلات وإصلاحات لأزياء العمل، الأزياء المدرسية، والأزياء الخاصة.</span>
               </p>
             </div>
-          </article>
+          </div>
 
           <!-- Card 6 — Event & Brand Activations -->
-          <article class="services__card" data-index="5"
+          <div class="services__card" data-index="5"
                    data-section-bg="#ff8773"
                    data-overlay-rgba="42,26,34,0.65"
                    data-overlay-tone="dark"
@@ -1013,7 +1013,7 @@
                 <span class="ar-text">خدمات الخياطة والتطريز في الموقع للفعاليات والتعاونات.</span>
               </p>
             </div>
-          </article>
+          </div>
         </div>
 
         <button class="services__arrow services__arrow--next" aria-label="Next service">
@@ -1261,9 +1261,9 @@
         </div>
 
         <!-- RIGHT: 9 stacked branch brackets -->
-        <div class="branches__list" role="list" aria-label="Tailor Express branches">
+        <div class="branches__list" role="group" aria-label="Tailor Express branches">
 
-          <button type="button" class="branches__bracket is-active" data-i="0" role="listitem" aria-pressed="true"
+          <button type="button" class="branches__bracket is-active" data-i="0" aria-pressed="true"
                   data-maps-url="https://www.google.com/maps/search/?api=1&amp;query=29.3027,47.9347">
             <span class="branches__bracket-name">
               <span class="en-text">Tailor Express — Avenues</span>
@@ -1282,7 +1282,7 @@
             </span>
           </button>
 
-          <button type="button" class="branches__bracket" data-i="1" role="listitem" aria-pressed="false"
+          <button type="button" class="branches__bracket" data-i="1" aria-pressed="false"
                   data-maps-url="https://maps.app.goo.gl/gacNM8rVFA5Lkw5VA?g_st=iwb">
             <span class="branches__bracket-name">
               <span class="en-text">Tailor Express — Hessa District</span>
@@ -1301,7 +1301,7 @@
             </span>
           </button>
 
-          <button type="button" class="branches__bracket" data-i="2" role="listitem" aria-pressed="false"
+          <button type="button" class="branches__bracket" data-i="2" aria-pressed="false"
                   data-maps-url="https://maps.app.goo.gl/9t9Mfd4BGgA9mgCm6?g_st=iwb">
             <span class="branches__bracket-name">
               <span class="en-text">Tailor Express — Promenade</span>
@@ -1320,7 +1320,7 @@
             </span>
           </button>
 
-          <button type="button" class="branches__bracket" data-i="3" role="listitem" aria-pressed="false"
+          <button type="button" class="branches__bracket" data-i="3" aria-pressed="false"
                   data-maps-url="https://maps.app.goo.gl/Ht7SWCWYMZqzt8Z78?g_st=iwb">
             <span class="branches__bracket-name">
               <span class="en-text">Tailor Express — W-Mishrif</span>
@@ -1339,7 +1339,7 @@
             </span>
           </button>
 
-          <button type="button" class="branches__bracket" data-i="4" role="listitem" aria-pressed="false"
+          <button type="button" class="branches__bracket" data-i="4" aria-pressed="false"
                   data-maps-url="https://maps.app.goo.gl/DSiBYqoCpmoEdHVK9?g_st=iwb">
             <span class="branches__bracket-name">
               <span class="en-text">Tailor Express — Yarmouk</span>
@@ -1358,7 +1358,7 @@
             </span>
           </button>
 
-          <button type="button" class="branches__bracket" data-i="5" role="listitem" aria-pressed="false"
+          <button type="button" class="branches__bracket" data-i="5" aria-pressed="false"
                   data-maps-url="https://maps.app.goo.gl/gzj6RcXY7B97XR1n8?g_st=iwb">
             <span class="branches__bracket-name">
               <span class="en-text">Tailor Express — Qurtoba</span>
@@ -1377,7 +1377,7 @@
             </span>
           </button>
 
-          <button type="button" class="branches__bracket" data-i="6" role="listitem" aria-pressed="false"
+          <button type="button" class="branches__bracket" data-i="6" aria-pressed="false"
                   data-maps-url="https://maps.app.goo.gl/7d4m9B4qwCSnfKcG8?g_st=iwb">
             <span class="branches__bracket-name">
               <span class="en-text">Tailor Express — Zahra Complex</span>
@@ -1396,7 +1396,7 @@
             </span>
           </button>
 
-          <button type="button" class="branches__bracket" data-i="7" role="listitem" aria-pressed="false"
+          <button type="button" class="branches__bracket" data-i="7" aria-pressed="false"
                   data-maps-url="https://maps.app.goo.gl/z7724ypMNggJ6SxEA?g_st=iwb">
             <span class="branches__bracket-name">
               <span class="en-text">Tailor Express — Dasma</span>
@@ -1416,7 +1416,7 @@
           </button>
 
           <!-- VERIFY WITH DR. SHAIKHA — possibly a sister brand or co-branded location -->
-          <button type="button" class="branches__bracket" data-i="8" role="listitem" aria-pressed="false"
+          <button type="button" class="branches__bracket" data-i="8" aria-pressed="false"
                   data-maps-url="https://maps.app.goo.gl/5e3JiJNuDxbZXCRB9?g_st=iwb">
             <span class="branches__bracket-name">
               <span class="en-text">Premium Tailor</span>
