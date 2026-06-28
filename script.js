@@ -1456,7 +1456,7 @@
       { en: 'Tailor Express — Avenues',        ar: 'Tailor Express — الأفنيوز',  lat: 29.3027,    lng: 47.9347,    exterior: `${IMG}/exterior/avenus-mall-image.jpg`,       interior: `${IMG}/interior/avenus-location.jpeg` },
       { en: 'Tailor Express — Hessa District',  ar: 'Tailor Express — ضاحية حصة', lat: 29.3593245, lng: 48.0208909, exterior: `${IMG}/exterior/hessa-location.jpeg`,          interior: `${IMG}/interior/hessa-interior-location.jpeg` },
       { en: 'Tailor Express — Promenade',       ar: 'Tailor Express — بروميناد',  lat: 29.3469709, lng: 48.0124569 },
-      { en: 'Tailor Express — W-Mishrif',       ar: 'Tailor Express — غرب مشرف',  lat: 29.2731356, lng: 48.0445720 },
+      { en: 'Tailor Express — W-Mishrif',       ar: 'Tailor Express — غرب مشرف',  lat: 29.2731356, lng: 48.0445720, interior: `${IMG}/interior/mishref-location.jpeg` },
       { en: 'Tailor Express — Yarmouk',         ar: 'Tailor Express — اليرموك',   lat: 29.3135497, lng: 47.9662392 },
       { en: 'Tailor Express — Qurtoba',         ar: 'Tailor Express — قرطبة',     lat: 29.3130369, lng: 47.9861687, interior: `${IMG}/interior/quortoba-location.jpeg` },
       { en: 'Tailor Express — Zahra Complex',   ar: 'Tailor Express — مجمع زهرة', lat: 29.3416300, lng: 48.0721896, exterior: `${IMG}/exterior/zahra-complex-image.jpg`,      interior: `${IMG}/interior/zahara-complex-location.jpeg` },
