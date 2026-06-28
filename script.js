@@ -1447,22 +1447,26 @@
     // branches 2-9 were resolved from the owner's maps.app.goo.gl short links
     // (the place-pin !3d/!4d values); Avenues is the flagship embed. The
     // "Open in Maps →" links still use the original short URLs. ===
+    // Real branch photos live in assets/image-location/{exterior,interior}/.
+    // A branch with an `exterior`/`interior` path uses it; branches without a
+    // real photo yet fall back to a picsum placeholder (see *Url helpers below).
+    // Remaining branch photos drop straight into these keys as they arrive.
+    const IMG = 'assets/image-location';
     const branches = [
-      { en: 'Tailor Express — Avenues',        ar: 'Tailor Express — الأفنيوز',  lat: 29.3027,    lng: 47.9347 },
-      { en: 'Tailor Express — Hessa District',  ar: 'Tailor Express — ضاحية حصة', lat: 29.3593245, lng: 48.0208909 },
+      { en: 'Tailor Express — Avenues',        ar: 'Tailor Express — الأفنيوز',  lat: 29.3027,    lng: 47.9347,    exterior: `${IMG}/exterior/avenus-mall-image.jpg`,       interior: `${IMG}/interior/avenus-location.jpeg` },
+      { en: 'Tailor Express — Hessa District',  ar: 'Tailor Express — ضاحية حصة', lat: 29.3593245, lng: 48.0208909, exterior: `${IMG}/exterior/hessa-location.jpeg`,          interior: `${IMG}/interior/hessa-interior-location.jpeg` },
       { en: 'Tailor Express — Promenade',       ar: 'Tailor Express — بروميناد',  lat: 29.3469709, lng: 48.0124569 },
       { en: 'Tailor Express — W-Mishrif',       ar: 'Tailor Express — غرب مشرف',  lat: 29.2731356, lng: 48.0445720 },
       { en: 'Tailor Express — Yarmouk',         ar: 'Tailor Express — اليرموك',   lat: 29.3135497, lng: 47.9662392 },
-      { en: 'Tailor Express — Qurtoba',         ar: 'Tailor Express — قرطبة',     lat: 29.3130369, lng: 47.9861687 },
-      { en: 'Tailor Express — Zahra Complex',   ar: 'Tailor Express — مجمع زهرة', lat: 29.3416300, lng: 48.0721896 },
-      { en: 'Tailor Express — Dasma',           ar: 'Tailor Express — الدسمة',    lat: 29.3656113, lng: 48.0015817 },
-      { en: 'Premium Tailor',                   ar: 'Premium Tailor',             lat: 29.3791050, lng: 47.9932457 },
+      { en: 'Tailor Express — Qurtoba',         ar: 'Tailor Express — قرطبة',     lat: 29.3130369, lng: 47.9861687, interior: `${IMG}/interior/quortoba-location.jpeg` },
+      { en: 'Tailor Express — Zahra Complex',   ar: 'Tailor Express — مجمع زهرة', lat: 29.3416300, lng: 48.0721896, exterior: `${IMG}/exterior/zahra-complex-image.jpg`,      interior: `${IMG}/interior/zahara-complex-location.jpeg` },
+      { en: 'Tailor Express — Dasma',           ar: 'Tailor Express — الدسمة',    lat: 29.3656113, lng: 48.0015817, exterior: `${IMG}/exterior/SM-CITY-DASMARINAS-image.jpg` },
+      { en: 'Premium Tailor',                   ar: 'Premium Tailor',             lat: 29.3791050, lng: 47.9932457, interior: `${IMG}/interior/hamra-tower-location.jpeg` },
     ];
 
-    // Placeholder image URLs — picsum returns a deterministic random photo per
-    // seed. Real branch photos drop in here when the client provides them.
-    const interiorUrl = (i) => `https://picsum.photos/seed/te-int-${i + 1}/800/600`;
-    const exteriorUrl = (i) => `https://picsum.photos/seed/te-ext-${i + 1}/800/600`;
+    // Real photo if the branch has one, else a deterministic picsum placeholder.
+    const interiorUrl = (i) => branches[i].interior || `https://picsum.photos/seed/te-int-${i + 1}/800/600`;
+    const exteriorUrl = (i) => branches[i].exterior || `https://picsum.photos/seed/te-ext-${i + 1}/800/600`;
     // Map language follows the page (EN/AR). hl=ar gives Arabic map labels.
     const currentHl = () =>
       (document.documentElement.dir === 'rtl' || document.body.dir === 'rtl' ||
