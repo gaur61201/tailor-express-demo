@@ -5413,9 +5413,12 @@ body[dir="rtl"] .breadcrumbs__list { font-family: var(--font-ar); }
    same-width, in a straight line. Digits only — text-only WhatsApp
    buttons keep their own font/weight.
    ============================================= */
+/* NOTE: [class*="phone"] must exclude Font Awesome icons — the fa-phone
+   icon class contains "phone", and matching it overrides FA's font-family
+   (Raleway instead of "Font Awesome 6 Free"), rendering the glyph as tofu. */
 a[href^="tel:"],
 .phone-number,
-[class*="phone"] {
+[class*="phone"]:not([class*="fa-"]) {
   font-family: var(--font-en);
   font-variant-numeric: lining-nums tabular-nums;
   font-feature-settings: "lnum" 1, "tnum" 1;
