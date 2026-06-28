@@ -1460,7 +1460,7 @@
       { en: 'Tailor Express — Yarmouk',         ar: 'Tailor Express — اليرموك',   lat: 29.3135497, lng: 47.9662392 },
       { en: 'Tailor Express — Qurtoba',         ar: 'Tailor Express — قرطبة',     lat: 29.3130369, lng: 47.9861687, interior: `${IMG}/interior/quortoba-location.jpeg` },
       { en: 'Tailor Express — Zahra Complex',   ar: 'Tailor Express — مجمع زهرة', lat: 29.3416300, lng: 48.0721896, exterior: `${IMG}/exterior/zahra-complex-image.jpg`,      interior: `${IMG}/interior/zahara-complex-location.jpeg` },
-      { en: 'Tailor Express — Dasma',           ar: 'Tailor Express — الدسمة',    lat: 29.3656113, lng: 48.0015817, exterior: `${IMG}/exterior/SM-CITY-DASMARINAS-image.jpg` },
+      { en: 'Tailor Express — Dasma',           ar: 'Tailor Express — الدسمة',    lat: 29.3656113, lng: 48.0015817, exterior: `${IMG}/exterior/SM-CITY-DASMARINAS-image.jpg`, interior: `${IMG}/interior/Dasma-location.jpeg` },
       { en: 'Premium Tailor',                   ar: 'Premium Tailor',             lat: 29.3791050, lng: 47.9932457, interior: `${IMG}/interior/hamra-tower-location.jpeg` },
     ];
 
