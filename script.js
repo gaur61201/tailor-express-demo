@@ -1514,7 +1514,8 @@
     });
 
     let activeIndex = 0;
-    let transitioning = false;
+    const isSmallScreen = () => window.matchMedia('(max-width: 900px)').matches;
+    const resetStrips = () => interiorStrips.forEach((s, i) => gsap.set(s, { clipPath: stripClosed(i) }));
 
     const updateMapLink = (idx) => {
       const b = branches[idx];
@@ -1530,17 +1531,23 @@
 
     // === Transition to a new branch ===
     const goToBranch = (newIdx) => {
-      if (newIdx === activeIndex || transitioning) return;
-      transitioning = true;
+      if (newIdx === activeIndex) return;
+      // Cancel any in-flight transition so rapid taps are never dropped and the
+      // panels never get stuck mid-animation (the cause of images appearing
+      // "frozen" on mobile). We commit the new index immediately.
+      gsap.killTweensOf([mapFrame, exteriorBase, exteriorOverlay, interiorBase, ...interiorStrips]);
+      activeIndex = newIdx;
 
       const branch = branches[newIdx];
+      const newMapSrc = mapEmbedUrl(branch.lat, branch.lng);
+      const newExtSrc = exteriorUrl(newIdx);
+      const newIntSrc = interiorUrl(newIdx);
 
       // 1. Bracket active state flips immediately (no animation needed)
       updateBracketAria(newIdx);
       updateMapLink(newIdx);
 
       // 2. Map fade-swap to the selected branch's real location.
-      const newMapSrc = mapEmbedUrl(branch.lat, branch.lng);
       mapFrame.dataset.loaded = '1';   // we own the src now; lazy-load won't override
       if (prefersReducedMotion) {
         mapFrame.src = newMapSrc;
@@ -1556,44 +1563,41 @@
         });
       }
 
-      // 3. Exterior (front layer) — simple crossfade
-      const newExtSrc = exteriorUrl(newIdx);
-      if (prefersReducedMotion) {
+      // 3 + 4. Branch photos. On reduced-motion OR small screens, swap the base
+      // images DIRECTLY (with a light crossfade) — bulletproof on every device.
+      // The 7-strip clip-path "shutter" + overlay crossfade is desktop-only: on
+      // mobile it was heavy/unreliable and could leave the previous photo showing
+      // even though the map updated. Setting the base src up front also starts the
+      // image download immediately instead of waiting for a ~1s animation to end.
+      if (prefersReducedMotion || isSmallScreen()) {
         exteriorBase.src = newExtSrc;
-      } else {
-        exteriorOverlay.src = newExtSrc;
-        gsap.fromTo(exteriorOverlay,
-          { opacity: 0 },
-          {
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power2.inOut',
-            onComplete: () => {
-              exteriorBase.src = newExtSrc;
-              gsap.set(exteriorOverlay, { opacity: 0 });
-            },
-          }
-        );
-      }
-
-      // 4. Interior (back layer) — shutter-blinds reveal
-      const newIntSrc = interiorUrl(newIdx);
-      // Point each strip at the new image
-      interiorStrips.forEach((strip) => { strip.src = newIntSrc; });
-
-      if (prefersReducedMotion) {
-        // Instant swap
         interiorBase.src = newIntSrc;
-        interiorStrips.forEach((strip, i) => {
-          gsap.set(strip, { clipPath: stripClosed(i) });
-        });
-        transitioning = false;
-        activeIndex = newIdx;
+        gsap.set(exteriorOverlay, { opacity: 0 });
+        resetStrips();
+        if (!prefersReducedMotion) {
+          gsap.fromTo([interiorBase, exteriorBase],
+            { opacity: 0.35 }, { opacity: 1, duration: 0.5, ease: 'power2.out' });
+        }
         return;
       }
 
-      // Stagger each strip's "open" — center-out clip-path expansion.
-      // Total wall-clock: (STRIP_COUNT - 1) * 0.08s + 0.5s ≈ 1.0s.
+      // ----- Desktop: exterior crossfade -----
+      exteriorOverlay.src = newExtSrc;
+      gsap.fromTo(exteriorOverlay,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            exteriorBase.src = newExtSrc;
+            gsap.set(exteriorOverlay, { opacity: 0 });
+          },
+        }
+      );
+
+      // ----- Desktop: interior shutter-blinds reveal -----
+      interiorStrips.forEach((strip) => { strip.src = newIntSrc; });
       const stripStagger = 0.08;
       const stripDur = 0.5;
       interiorStrips.forEach((strip, i) => {
@@ -1604,15 +1608,11 @@
           ease: 'power3.inOut',
           onComplete: i === STRIP_COUNT - 1
             ? () => {
-                // All strips fully open — swap base image to new src and
-                // reset strips to closed (invisible). Visually a no-op
-                // since the strips already cover the base with the new image.
+                // All strips fully open — swap base to new src and reset strips
+                // to closed (invisible). Visually a no-op since the strips
+                // already cover the base with the new image.
                 interiorBase.src = newIntSrc;
-                interiorStrips.forEach((s, j) => {
-                  gsap.set(s, { clipPath: stripClosed(j) });
-                });
-                transitioning = false;
-                activeIndex = newIdx;
+                resetStrips();
               }
             : undefined,
         });
