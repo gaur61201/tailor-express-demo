@@ -2344,6 +2344,47 @@ html[dir="rtl"] .gallery__heading {
   opacity: 0;
   transform: scale(0.98);
 }
+/* Only one medium shows at a time — the [hidden] toggle must win over the
+   display:block above (equal specificity, so state it explicitly). */
+.gallery-lightbox__img[hidden],
+.gallery-lightbox__video[hidden] { display: none; }
+/* Lightbox video — mirrors the image sizing; plays with sound + controls. */
+.gallery-lightbox__video {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  display: block;
+  background: #000;
+}
+
+/* 2D-grid video tiles — fill the tile like images; a play badge marks them. */
+.gallery__tile-btn video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.9) brightness(0.9);
+  transition: transform 0.6s var(--ease-out-soft), filter 0.5s var(--ease-out-soft);
+}
+.gallery__tile-btn:hover video,
+.gallery__tile-btn:focus-visible video { transform: scale(1.05); filter: none; }
+.gallery__tile--video .gallery__tile-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 0;
+  height: 0;
+  z-index: 2;
+  border-style: solid;
+  border-width: 11px 0 11px 18px;
+  border-color: transparent transparent transparent rgba(255, 255, 255, 0.92);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55));
+  pointer-events: none;
+}
 
 /* Close button (top-right) */
 .gallery-lightbox__close {

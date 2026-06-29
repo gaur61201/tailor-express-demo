@@ -1717,80 +1717,59 @@
           builds the scene; if anything fails, we silently fall back
           to the 2D grid path. Same lightbox in both modes.
      ============================================= */
-  // PLACEHOLDER IMAGES — to be replaced with real Tailor Express work
-  // later. Currently using consistent warm-toned Unsplash/picsum stock
-  // that matches the cinematic atelier aesthetic. Indices line up with
-  // PLANE_LAYOUT and the 2D-fallback tiles in index.html.
+  // Gallery media — real Tailor Express work. Drives the homepage 3D scene,
+  // the 2D mobile fallback tiles (index.html), and the lightbox.
+  //   type 'video' → THREE.VideoTexture, autoplay muted+loop in-scene, sound
+  //                  on click (lightbox). Videos are portrait (720×1280).
+  //   type 'image' → THREE.TextureLoader as before.
+  // Indices line up with PLANE_LAYOUT and the 2D-fallback tiles in index.html.
+  // Homepage shows 2 videos (one centre hero + one mid-left) + all 10 photos.
+  const G = 'assets/gallery';
   const GALLERY_IMAGES = [
-    { src: 'https://picsum.photos/seed/te-gallery-1/1200/900',  alt: 'Warm fabric texture in dramatic side light — the featured exhibit.' },
-    { src: 'https://picsum.photos/seed/te-gallery-2/900/1200',  alt: 'Tailor atelier interior in moody dark lighting.' },
-    { src: 'https://picsum.photos/seed/te-gallery-3/1000/1000', alt: 'Thread spools arranged in warm light.' },
-    { src: 'https://picsum.photos/seed/te-gallery-4/900/1200',  alt: 'Close-up detail of a garment in warm tones.' },
-    { src: 'https://picsum.photos/seed/te-gallery-5/900/1200',  alt: 'Scissors resting on fabric — tailor’s tools.' },
-    { src: 'https://picsum.photos/seed/te-gallery-6/900/1200',  alt: 'Folded fabric with dramatic shadow.' },
-    // v6 — NEW lower-left foreground plane (distinct seed, warm-toned).
-    // v7 — seed swapped from `te-gallery-9-foreground` (was returning an
-    // American flag from picsum's random pool — inappropriate for a
-    // Kuwait business) to `te-linen-folded-warm`, a neutral warm-toned
-    // image (organic macro). Verified prior to commit against the
-    // exclusion list: no flag, recognizable landmark, face, religious
-    // symbol, brand, or map. Distinct from the other 8 plane images.
-    { src: 'https://picsum.photos/seed/te-linen-folded-warm/900/1200', alt: 'Warm organic detail in soft side light.' },
-    { src: 'https://picsum.photos/seed/te-gallery-7/900/1200',  alt: 'Macro close-up of needle and thread.' },
-    { src: 'https://picsum.photos/seed/te-gallery-8/900/1200',  alt: 'Luxury garment hanging on a stand.' },
+    { type: 'video', src: `${G}/video-1.mp4`, poster: `${G}/video-1-poster.jpg`, alt: 'Tailor Express — alterations in progress.' },
+    { type: 'video', src: `${G}/video-2.mp4`, poster: `${G}/video-2-poster.jpg`, alt: 'Tailor Express — fitting and finishing a garment.' },
+    { type: 'image', src: `${G}/portrait-1.jpg`,  alt: 'Hand-finishing a garment at Tailor Express.' },
+    { type: 'image', src: `${G}/portrait-2.jpg`,  alt: 'Tailoring detail at Tailor Express.' },
+    { type: 'image', src: `${G}/portrait-3.jpg`,  alt: 'Inside a Tailor Express atelier.' },
+    { type: 'image', src: `${G}/portrait-4.jpg`,  alt: 'Alterations work at Tailor Express.' },
+    { type: 'image', src: `${G}/portrait-5.jpg`,  alt: 'Pinning and measuring at Tailor Express.' },
+    { type: 'image', src: `${G}/landscape-1.jpg`, alt: 'Tailor Express workspace.' },
+    { type: 'image', src: `${G}/landscape-2.jpg`, alt: 'Tailor Express interior.' },
+    { type: 'image', src: `${G}/landscape-3.jpg`, alt: 'Garments and fabric at Tailor Express.' },
+    { type: 'image', src: `${G}/landscape-4.jpg`, alt: 'Tailoring tools and materials.' },
+    { type: 'image', src: `${G}/landscape-5.jpg`, alt: 'Finished tailoring work.' },
   ];
 
-  // Per-plane layout for the Stage 2 gallery rebuild. Indices line
-  // up with GALLERY_IMAGES above. Geometry sizes are explicit per
-  // plane (not aspect-derived) so the hero plane reads as the largest
-  // focal piece and the deep-corner planes are visibly smaller.
-  // Drift kind/amp/period + random phaseOffset keeps each plane out
-  // of sync so the composition feels organic, never robotic.
+  // Per-plane layout — index-matched to GALLERY_IMAGES (12 planes). Sizes are
+  // explicit per plane and chosen to match each item's orientation: portrait
+  // videos (idx 0,1) and portrait photos (idx 2–6) are tall; landscape photos
+  // (idx 7–11) are wide. Centre video (idx 0) is the largest focal piece.
   //   rot = [rotX, rotY, rotZ]    pos = [x, y, z]    size = [w, h]
-  // Stage 2 v6.1 — spacing + pedestal-clearance pass.
-  // v6 had two issues on review: (a) upper-left visual cluster — Plane
-  // 2 (back-wall-L), Plane 6 (close-side-L) and Plane 8 (deep-corner-L)
-  // all projected into the same left zone; (b) new Plane 7 bottom edge
-  // dropped below the pedestal top (y=0.6 vs pedestal top y=1.2), so
-  // the plane visibly touched the pedestal. v6.1 fixes both:
-  //   - Plane 7 lifted (y 2.2 → 3.5) so its bottom y=1.9 is 0.7u above
-  //     pedestal top — clearly floating, not touching.
-  //   - Plane 6 pushed further outward (x -6.5 → -7.5) for separation
-  //     from Plane 7 below it.
-  //   - Planes 2 & 3 spread further into the back-wall corners and
-  //     lifted (Plane 2: -9→-10/y 7.5→8; Plane 3: 9→10/y 7→8).
-  //   - Planes 8 & 9 pulled outward + dropped + slightly back
-  //     (-8,7.5,-2 → -9.5,6.5,-3 and mirror) to break the upper stack
-  //     against Plane 2 and visually balance the right side.
-  // All other planes unchanged. Pedestal clearance verified for every
-  // plane: lowest bottom is now Plane 7 at y=1.9 (was y=0.6).
   const PLANE_LAYOUT = [
-    // 1 — HERO (NO CHANGE)
-    { size: [4.0,  3.0 ], pos: [ 0,    5.2,  4   ], rot: [-0.05,  0,    0], drift: { kind: 'circle',    amp: 0.10, period: 12 } },
-    // 2 — back-wall left — v6.1 spread outward (-9→-9.5) + lifted (7.5→8)
-    { size: [3.64, 4.55], pos: [-9.5,  8.0, -8   ], rot: [ 0,     0.10, 0], drift: { kind: 'updown',    amp: 0.12, period: 8  } },
-    // 3 — back-wall right — v6.1 mirror of Plane 2 (9→9.5, y 7→8)
-    { size: [3.64, 3.64], pos: [ 9.5,  8.0, -7.5 ], rot: [ 0,    -0.10, 0], drift: { kind: 'leftright', amp: 0.10, period: 9  } },
-    // 4 — mid-depth right (UNCHANGED FROM v6 — fills mid-right zone)
-    { size: [2.5,  3.2 ], pos: [ 4,    4.5, -1   ], rot: [-0.05, -0.15, 0], drift: { kind: 'circle',    amp: 0.08, period: 10 } },
-    // 5 — close side wall RIGHT (NO CHANGE)
-    { size: [2.0,  2.5 ], pos: [ 8.5,  3.5,  2.5 ], rot: [ 0,    -0.30, 0], drift: { kind: 'updown',    amp: 0.15, period: 7  } },
-    // 6 — close side wall LEFT — v6.1 pushed further outward (-6.5→-7.5,
-    //     y 3.2→3.5) for separation from new Plane 7 at x=-5
-    { size: [2.0,  2.5 ], pos: [-7.5,  3.5,  2.5 ], rot: [ 0,     0.30, 0], drift: { kind: 'leftright', amp: 0.12, period: 11 } },
-    // 7 — v6 NEW (v6.1 lifted): lower-left foreground plane. Portrait,
-    //     gentle inward tilt toward camera. y 2.2 → 3.5 lifts plane
-    //     bottom from y=0.6 to y=1.9 (0.7u clear of pedestal top y=1.2)
-    //     so the plane no longer touches the pedestal. Right edge at
-    //     x=-3.8 still sits 0.2u inside pedestal x range, but with
-    //     bottom now well above pedestal top there's no visible
-    //     intersection. Drift x-amp kept small (0.04) for stability.
-    { size: [2.4,  3.2 ], pos: [-5,    3.5,  4   ], rot: [ 0,     0.15, 0], drift: { kind: 'updown',    amp: 0.08, period: 9, ampX: 0.04 } },
-    // 8 — deep corner LEFT — v6.1 dropped + back (y 7.5→6, z -2→-3),
-    //     x stays at -8 so plane reads in mid-left, not pushed off-frame
-    { size: [1.8,  2.4 ], pos: [-8.0,  6.0, -3   ], rot: [ 0,     0.20, 0], drift: { kind: 'circle',    amp: 0.06, period: 13 } },
-    // 9 — deep corner RIGHT — v6.1 mirror of Plane 8 (y 7.5→6, z -2→-3)
-    { size: [1.8,  2.2 ], pos: [ 8.0,  6.0, -3   ], rot: [ 0,    -0.20, 0], drift: { kind: 'updown',    amp: 0.10, period: 10 } },
+    // 0 — CENTRE video (hero, portrait)
+    { size: [2.9, 5.16], pos: [ 0.0, 4.6,  4.5], rot: [ 0,     0,    0], drift: { kind: 'updown',    amp: 0.08, period: 12 } },
+    // 1 — second video (mid-left, portrait)
+    { size: [2.3, 4.09], pos: [-6.3, 4.3,  0.5], rot: [ 0,     0.24, 0], drift: { kind: 'updown',    amp: 0.10, period: 10, ampX: 0.04 } },
+    // 2 — portrait photo, mid-right
+    { size: [2.5, 3.33], pos: [ 6.1, 4.5,  0.2], rot: [ 0,    -0.24, 0], drift: { kind: 'updown',    amp: 0.10, period: 9  } },
+    // 3 — portrait photo, back-left-up
+    { size: [2.1, 2.80], pos: [-9.0, 7.6, -6.5], rot: [ 0,     0.16, 0], drift: { kind: 'circle',    amp: 0.08, period: 13 } },
+    // 4 — portrait photo, close-right
+    { size: [1.9, 2.53], pos: [ 9.0, 3.4,  2.3], rot: [ 0,    -0.32, 0], drift: { kind: 'leftright', amp: 0.12, period: 8  } },
+    // 5 — portrait photo, close-left
+    { size: [1.9, 2.53], pos: [-8.4, 3.6,  2.4], rot: [ 0,     0.32, 0], drift: { kind: 'leftright', amp: 0.12, period: 11 } },
+    // 6 — portrait photo, mid-right-up-back
+    { size: [1.8, 2.40], pos: [ 4.7, 7.7, -5.0], rot: [ 0,    -0.14, 0], drift: { kind: 'updown',    amp: 0.07, period: 10 } },
+    // 7 — landscape photo, back-left
+    { size: [3.6, 2.70], pos: [-9.9, 8.0, -8.0], rot: [ 0,     0.12, 0], drift: { kind: 'updown',    amp: 0.12, period: 8  } },
+    // 8 — landscape photo, back-right
+    { size: [3.6, 2.70], pos: [ 9.9, 8.0, -7.5], rot: [ 0,    -0.12, 0], drift: { kind: 'leftright', amp: 0.10, period: 9  } },
+    // 9 — landscape photo, mid-right-low
+    { size: [2.7, 2.02], pos: [ 3.9, 2.6, -1.0], rot: [-0.05, -0.12, 0], drift: { kind: 'circle',    amp: 0.08, period: 10 } },
+    // 10 — landscape photo, mid-left-low
+    { size: [2.6, 1.95], pos: [-4.4, 2.7, -0.5], rot: [-0.05,  0.12, 0], drift: { kind: 'circle',    amp: 0.08, period: 11 } },
+    // 11 — landscape photo, top-centre-back
+    { size: [3.2, 2.40], pos: [ 0.0, 8.9, -9.0], rot: [ 0,     0,    0], drift: { kind: 'leftright', amp: 0.10, period: 12 } },
   ];
 
   const initGallery = () => {
@@ -1835,13 +1814,33 @@
     /* --- Lightbox -------------------------------------------- */
     let activeIndex = 0;
 
+    const lightboxVideo = lightbox?.querySelector('.gallery-lightbox__video');
+
+    // Show the item at `index` in the lightbox — a <video> (with sound +
+    // controls) for video items, the <img> for photos. Only one is visible.
+    const setLightboxMedia = (index) => {
+      const item = GALLERY_IMAGES[index];
+      if (lightboxCur) lightboxCur.textContent = index + 1;
+      if (item.type === 'video') {
+        if (lightboxImg) { lightboxImg.hidden = true; lightboxImg.removeAttribute('src'); }
+        if (lightboxVideo) {
+          lightboxVideo.hidden = false;
+          lightboxVideo.src = item.src;
+          lightboxVideo.muted = false;   // sound on in the lightbox
+          lightboxVideo.currentTime = 0;
+          lightboxVideo.play().catch(() => {});
+        }
+      } else {
+        if (lightboxVideo) { lightboxVideo.pause(); lightboxVideo.hidden = true; lightboxVideo.removeAttribute('src'); }
+        if (lightboxImg) { lightboxImg.hidden = false; lightboxImg.src = item.src; lightboxImg.alt = item.alt || ''; }
+      }
+    };
+
     const openLightbox = (index) => {
       if (!lightbox) return;
       activeIndex = index;
       lightbox.hidden = false;
-      lightboxImg.src = GALLERY_IMAGES[index].src;
-      lightboxImg.alt = GALLERY_IMAGES[index].alt;
-      lightboxCur.textContent = index + 1;
+      setLightboxMedia(index);
       // Force a reflow so the [hidden] → display flex transition fires
       // cleanly on first open.
       void lightbox.offsetHeight;
@@ -1853,6 +1852,7 @@
       if (!lightbox) return;
       lightbox.classList.remove('is-open');
       document.documentElement.style.overflow = '';
+      if (lightboxVideo) lightboxVideo.pause();
       // Wait for transition to end before fully hiding
       setTimeout(() => {
         if (!lightbox.classList.contains('is-open')) lightbox.hidden = true;
@@ -1860,13 +1860,11 @@
     };
 
     const swapLightboxImage = (newIndex) => {
-      if (!lightbox || !lightboxImg) return;
+      if (!lightbox) return;
       activeIndex = (newIndex + GALLERY_IMAGES.length) % GALLERY_IMAGES.length;
       lightbox.classList.add('is-changing');
       setTimeout(() => {
-        lightboxImg.src = GALLERY_IMAGES[activeIndex].src;
-        lightboxImg.alt = GALLERY_IMAGES[activeIndex].alt;
-        lightboxCur.textContent = activeIndex + 1;
+        setLightboxMedia(activeIndex);
         lightbox.classList.remove('is-changing');
       }, 200);
     };
@@ -2264,17 +2262,28 @@
           const [w, h] = layout.size;
 
           const geo = new THREE.PlaneGeometry(w, h);
-          const mat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            side: THREE.DoubleSide,
-            transparent: true,
-            opacity: prefersReducedMotion ? 1 : 0,
-            roughness: 0.6,
-            metalness: 0.0,
-            envMapIntensity: 0.5,
-            emissive: new THREE.Color(0xf06449),
-            emissiveIntensity: 0,        // gsap animates 0 → 0.08 on hover
-          });
+          const isVideo = img.type === 'video';
+          // Videos use an unlit MeshBasicMaterial so the footage reads at its
+          // true brightness/colour (the scene lighting would otherwise dim it).
+          // Photos keep the lit MeshStandardMaterial with the coral hover glow.
+          const mat = isVideo
+            ? new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: prefersReducedMotion ? 1 : 0,
+              })
+            : new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: prefersReducedMotion ? 1 : 0,
+                roughness: 0.6,
+                metalness: 0.0,
+                envMapIntensity: 0.5,
+                emissive: new THREE.Color(0xf06449),
+                emissiveIntensity: 0,        // gsap animates 0 → 0.08 on hover
+              });
 
           const mesh = new THREE.Mesh(geo, mat);
           const startZ = prefersReducedMotion ? layout.pos[2] : layout.pos[2] + 6;
@@ -2285,32 +2294,59 @@
           mesh.userData = { idx: i };
           scene.add(mesh);
 
-          texLoader.load(
-            img.src,
-            (tex) => {
-              if (typeof THREE.SRGBColorSpace !== 'undefined') {
-                tex.colorSpace = THREE.SRGBColorSpace;
-              } else if (typeof THREE.sRGBEncoding !== 'undefined') {
-                tex.encoding = THREE.sRGBEncoding;
-              }
-              if (renderer.capabilities.getMaxAnisotropy) {
-                tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-              }
-              mat.map = tex;
-              mat.needsUpdate = true;
-            },
-            undefined,
-            () => { /* silent texture failure — material stays white */ }
-          );
+          let videoEl = null;
+          if (isVideo) {
+            // Muted + playsinline + loop so it autoplays in-scene on every
+            // browser (incl. iOS). Sound only plays in the click → lightbox.
+            videoEl = document.createElement('video');
+            videoEl.muted = true;
+            videoEl.loop = true;
+            videoEl.playsInline = true;
+            videoEl.setAttribute('muted', '');
+            videoEl.setAttribute('playsinline', '');
+            videoEl.preload = 'auto';
+            if (img.poster) videoEl.poster = img.poster;
+            videoEl.src = img.src;
+            const vtex = new THREE.VideoTexture(videoEl);
+            vtex.minFilter = THREE.LinearFilter;
+            vtex.magFilter = THREE.LinearFilter;
+            if (typeof THREE.SRGBColorSpace !== 'undefined') {
+              vtex.colorSpace = THREE.SRGBColorSpace;
+            } else if (typeof THREE.sRGBEncoding !== 'undefined') {
+              vtex.encoding = THREE.sRGBEncoding;
+            }
+            mat.map = vtex;
+            mat.needsUpdate = true;
+            if (!prefersReducedMotion) { videoEl.play().catch(() => {}); }
+          } else {
+            texLoader.load(
+              img.src,
+              (tex) => {
+                if (typeof THREE.SRGBColorSpace !== 'undefined') {
+                  tex.colorSpace = THREE.SRGBColorSpace;
+                } else if (typeof THREE.sRGBEncoding !== 'undefined') {
+                  tex.encoding = THREE.sRGBEncoding;
+                }
+                if (renderer.capabilities.getMaxAnisotropy) {
+                  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                }
+                mat.map = tex;
+                mat.needsUpdate = true;
+              },
+              undefined,
+              () => { /* silent texture failure — material stays white */ }
+            );
+          }
 
           planes.push({
             mesh, mat,
             basePos: { x: layout.pos[0], y: layout.pos[1], z: layout.pos[2] },
             baseScale: 1.0,
             drift: layout.drift,
-            // Random phase offset so the 9 sinusoids never sync.
+            // Random phase offset so the sinusoids never sync.
             phaseOffset: Math.random() * Math.PI * 2,
             idx: i,
+            video: videoEl,
           });
         });
 
@@ -2484,6 +2520,15 @@
         end: 'bottom top',
         onToggle: (self) => {
           sceneActive = self.isActive;
+          // Pause videos when the gallery is off-screen (saves battery/CPU),
+          // resume when it scrolls back in.
+          if (!prefersReducedMotion) {
+            planes.forEach((p) => {
+              if (!p.video) return;
+              if (sceneActive) p.video.play().catch(() => {});
+              else p.video.pause();
+            });
+          }
           if (sceneActive && !rafId) {
             // Resume clock from "now" — drift phases per plane keep
             // them out of sync regardless of when we restart.
@@ -3488,134 +3533,39 @@
        plane on a circle around the camera; distances/heights/sizes/images are
        varied with adjacency constraints so nothing reads as a grid.
        Deterministic (seeded) → identical placement on every load. ---------- */
-    const IMAGE_POOL = [
-      'assets/image_background_about_section/bg_01.jpg',
-      'assets/image_background_about_section/bg_02.jpg',
-      'assets/image_background_about_section/bg_03.jpg',
-      'assets/image_background_about_section/bg_04.jpg',
-      'assets/image_background_about_section/bg_05.jpg',
-      'assets/image_background_about_section/bg_06.jpg',
-      'assets/image_background_about_section/bg_07.jpg',
-      'assets/image_background_about_section/bg_08.jpg',
-      'assets/images_service_section/card_01.jpg',
-      'assets/images_service_section/card_02.jpg',
-      'assets/images_service_section/card_03.jpg',
-      'assets/images_service_section/card_04.jpg',
-      'assets/images_service_section/card_05.jpg',
-      'assets/images_service_section/card_06.jpg',
+    /* Real content: 3 videos + 10 photos. The camera sweeps the FRONT arc
+       (rotation.y +π/2 → -π/2 ≈ azimuth -90°→+90°), so all 13 pieces live in
+       that arc. The 3 videos sit in the CENTRE (azimuth -15/0/+15) as the focal
+       trio; the 10 photos fan out left and right. Portrait media → tall planes,
+       landscape → wide planes (no distortion). x = sin(az)·r, z = -cos(az)·r. */
+    const GV  = (n) => `assets/gallery/video-${n}.mp4`;
+    const GVP = (n) => `assets/gallery/video-${n}-poster.jpg`;
+    const GP  = (n) => `assets/gallery/portrait-${n}.jpg`;
+    const GL  = (n) => `assets/gallery/landscape-${n}.jpg`;
+    const VID    = [3.0, 5.33];   // portrait video 9:16
+    const PORT   = [2.6, 3.47];   // portrait photo ~3:4
+    const PORT_S = [2.3, 3.07];
+    const LAND   = [3.6, 2.70];   // landscape photo ~4:3
+    const LAND_L = [4.2, 3.15];
+    const planeConfigs = [
+      // --- centre focal trio: the 3 videos ---
+      { type: 'video', src: GV(2), poster: GVP(2), azimuth: -15, radius: 8.5, y:  0.2, size: VID, alt: 'Tailor Express — fitting and finishing a garment.' },
+      { type: 'video', src: GV(1), poster: GVP(1), azimuth:   0, radius: 7.5, y:  0.0, size: VID, alt: 'Tailor Express — alterations in progress.' },
+      { type: 'video', src: GV(3), poster: GVP(3), azimuth:  15, radius: 8.5, y:  0.4, size: VID, alt: 'Tailor Express — tailoring in the atelier.' },
+      // --- photos fanning out to the LEFT ---
+      { type: 'image', src: GP(1), azimuth: -24, radius: 10.5, y: -1.2, size: PORT,   alt: 'Hand-finishing a garment at Tailor Express.' },
+      { type: 'image', src: GL(1), azimuth: -34, radius: 13.0, y:  1.6, size: LAND,   alt: 'Tailor Express workspace.' },
+      { type: 'image', src: GP(2), azimuth: -52, radius:  9.0, y:  0.3, size: PORT_S, alt: 'Tailoring detail at Tailor Express.' },
+      { type: 'image', src: GL(2), azimuth: -70, radius: 15.0, y: -1.8, size: LAND_L, alt: 'Tailor Express interior.' },
+      { type: 'image', src: GP(3), azimuth: -88, radius: 11.5, y:  2.2, size: PORT,   alt: 'Inside a Tailor Express atelier.' },
+      // --- photos fanning out to the RIGHT ---
+      { type: 'image', src: GL(3), azimuth:  24, radius: 10.5, y:  1.4, size: LAND,   alt: 'Garments and fabric at Tailor Express.' },
+      { type: 'image', src: GP(4), azimuth:  34, radius: 13.0, y: -1.4, size: PORT,   alt: 'Alterations work at Tailor Express.' },
+      { type: 'image', src: GL(4), azimuth:  52, radius:  9.0, y:  0.6, size: LAND,   alt: 'Tailoring tools and materials.' },
+      { type: 'image', src: GP(5), azimuth:  70, radius: 15.0, y:  2.0, size: PORT_S, alt: 'Pinning and measuring at Tailor Express.' },
+      { type: 'image', src: GL(5), azimuth:  88, radius: 11.5, y: -2.0, size: LAND_L, alt: 'Finished tailoring work.' },
     ];
-    const altFor = (img) => img.includes('/card_')
-      ? 'Tailor Express service'
-      : 'Inside the Tailor Express atelier';
-
-    const generatePlaneConfigs = (seedStart) => {
-      const RADIUS_BANDS = [6, 9, 12, 15, 18];
-      const HEIGHT_BANDS = [-2, -1, 0, 1.5, 2.5];
-      const SIZES = { large: [4, 3], medium: [3, 2.25], small: [2.5, 1.875] };
-      const BASE_STEP = 360 / 18; // 20°
-      // 6 large + 8 medium + 4 small = 18, spread so sizes don't cluster
-      const sizeLabels = [
-        'large', 'medium', 'small', 'large', 'medium',
-        'large', 'medium', 'small', 'large', 'medium',
-        'large', 'medium', 'small', 'medium', 'large',
-        'medium', 'small', 'medium',
-      ];
-
-      let seed = seedStart;
-      const seededRandom = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-
-      const planes = [];
-      for (let i = 0; i < 18; i++) {
-        const baseAzimuth = i * BASE_STEP;
-        const azimuth = baseAzimuth + (seededRandom() - 0.5) * 8; // ±4° jitter
-
-        let radiusIdx;
-        do { radiusIdx = Math.floor(seededRandom() * RADIUS_BANDS.length); }
-        while (i > 0 && radiusIdx === planes[i - 1].radiusIdx);
-
-        let heightIdx;
-        do { heightIdx = Math.floor(seededRandom() * HEIGHT_BANDS.length); }
-        while (i > 0 && heightIdx === planes[i - 1].heightIdx);
-
-        planes.push({
-          azimuth,
-          radius: RADIUS_BANDS[radiusIdx],
-          y: HEIGHT_BANDS[heightIdx],
-          size: SIZES[sizeLabels[i]],
-          radiusIdx,
-          heightIdx,
-          image: null,
-        });
-      }
-
-      // First pass: 14 unique images cycle across 18 planes (last 4 repeat)
-      for (let i = 0; i < 18; i++) planes[i].image = IMAGE_POOL[i % IMAGE_POOL.length];
-
-      // Second pass: push any repeat that sits within 60° of its twin to a far slot
-      const norm = (a) => ((a % 360) + 360) % 360;
-      const arc = (a, b) => { const d = Math.abs(norm(a) - norm(b)); return Math.min(d, 360 - d); };
-      for (let i = 14; i < 18; i++) {
-        const current = planes[i].image;
-        const tooClose = planes.some((p, j) => j !== i && p.image === current && arc(p.azimuth, planes[i].azimuth) < 60);
-        if (tooClose) {
-          for (let k = 0; k < 18; k++) {
-            if (k === i) continue;
-            if (arc(planes[k].azimuth, planes[i].azimuth) > 90 && planes[k].image !== current) {
-              const tmp = planes[k].image; planes[k].image = planes[i].image; planes[i].image = tmp;
-              break;
-            }
-          }
-        }
-      }
-
-      return planes.map((p) => ({ azimuth: p.azimuth, radius: p.radius, y: p.y, size: p.size, image: p.image, alt: altFor(p.image) }));
-    };
-
-    // Validate the distribution against the 5 coverage constraints; returns maxGap.
-    const validatePlaneConfigs = (cfgs) => {
-      const norm = (a) => ((a % 360) + 360) % 360;
-      const arc = (a, b) => { const d = Math.abs(norm(a) - norm(b)); return Math.min(d, 360 - d); };
-      let violations = 0;
-      const warn = (m) => { violations++; console.warn('[GALLERY] constraint:', m); };
-
-      if (cfgs.length !== 18) warn('expected 18 planes, got ' + cfgs.length);
-
-      const sorted = cfgs.map((c) => ({ ...c, az: norm(c.azimuth) })).sort((a, b) => a.az - b.az);
-      for (let k = 0; k < sorted.length; k++) {
-        const a = sorted[k], b = sorted[(k + 1) % sorted.length];
-        if (a.radius === b.radius) warn(`azimuth-adjacent planes share radius ${a.radius} (${a.az.toFixed(1)}°, ${b.az.toFixed(1)}°)`);
-        if (a.y === b.y) warn(`azimuth-adjacent planes share height ${a.y} (${a.az.toFixed(1)}°, ${b.az.toFixed(1)}°)`);
-      }
-      for (let m = 0; m < cfgs.length; m++) {
-        for (let n = m + 1; n < cfgs.length; n++) {
-          if (cfgs[m].image === cfgs[n].image && arc(cfgs[m].azimuth, cfgs[n].azimuth) < 60) {
-            warn(`same image within 60°: ${cfgs[m].image.split('/').pop()} (${norm(cfgs[m].azimuth).toFixed(1)}°, ${norm(cfgs[n].azimuth).toFixed(1)}°)`);
-          }
-        }
-      }
-      let maxGap = 0;
-      for (let k = 0; k < sorted.length; k++) {
-        const a = sorted[k].az, b = sorted[(k + 1) % sorted.length].az;
-        const gap = (k + 1 < sorted.length) ? (b - a) : (360 - a + sorted[0].az);
-        if (gap > maxGap) maxGap = gap;
-      }
-      if (maxGap > 25) warn(`largest azimuth gap ${maxGap.toFixed(1)}° exceeds 25°`);
-      return { maxGap, violations };
-    };
-
-    // Generate, then auto-retry a few seeds if the layout has hard violations
-    // (gap > 25° or a within-60° image clash). Wraparound band repeats are
-    // tolerated — they're cosmetic, not coverage gaps.
-    let planeConfigs, vr, usedSeed = 42;
-    for (const trySeed of [42, 7, 99, 123, 2026, 314, 555]) {
-      planeConfigs = generatePlaneConfigs(trySeed);
-      vr = validatePlaneConfigs(planeConfigs);
-      usedSeed = trySeed;
-      if (vr.maxGap <= 25) break; // coverage is the constraint that matters most
-    }
-    console.log('[GALLERY] Generated', planeConfigs.length, 'planes (seed', usedSeed + ')');
-    console.log('[GALLERY] Largest azimuth gap:', vr.maxGap.toFixed(1), '°');
-    console.log('[GALLERY] Constraint warnings:', vr.violations);
+    console.log('[GALLERY] media planes:', planeConfigs.length);
 
     /* ---- Build planes ---- */
     const planes = [];
@@ -3627,18 +3577,38 @@
       const x = Math.sin(angleRad) * config.radius;
       const z = -Math.cos(angleRad) * config.radius;
 
-      const texture = textureLoader.load(config.image, (tex) => {
-        applyTexColorSpace(tex);
-        tex.minFilter = THREE.LinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-        tex.anisotropy = maxAniso;
-        tex.needsUpdate = true;
-        renderer.render(scene, camera); // repaint once the image lands
-      });
-      applyTexColorSpace(texture);
-      texture.minFilter = THREE.LinearFilter;
-      texture.magFilter = THREE.LinearFilter;
-      texture.anisotropy = maxAniso;
+      let texture, videoEl = null;
+      if (config.type === 'video') {
+        // Muted + playsinline + loop autoplays on every browser (incl. iOS).
+        // Sound only plays in the click → lightbox.
+        videoEl = document.createElement('video');
+        videoEl.muted = true;
+        videoEl.loop = true;
+        videoEl.playsInline = true;
+        videoEl.setAttribute('muted', '');
+        videoEl.setAttribute('playsinline', '');
+        videoEl.preload = 'auto';
+        if (config.poster) videoEl.poster = config.poster;
+        videoEl.src = config.src;
+        texture = new THREE.VideoTexture(videoEl);
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        applyTexColorSpace(texture);
+        if (!prefersReduced) videoEl.play().catch(() => {});
+      } else {
+        texture = textureLoader.load(config.src, (tex) => {
+          applyTexColorSpace(tex);
+          tex.minFilter = THREE.LinearFilter;
+          tex.magFilter = THREE.LinearFilter;
+          tex.anisotropy = maxAniso;
+          tex.needsUpdate = true;
+          renderer.render(scene, camera); // repaint once the image lands
+        });
+        applyTexColorSpace(texture);
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.anisotropy = maxAniso;
+      }
 
       const geometry = new THREE.PlaneGeometry(config.size[0], config.size[1]);
       const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
@@ -3651,7 +3621,8 @@
         baseRotZ: plane.rotation.z,
         driftPhase: index * 1.37,            // deterministic, de-synced (no Math.random — keeps QA reproducible)
         driftSpeed: 0.35 + (index % 5) * 0.06,
-        imagePath: config.image,
+        src: config.src,
+        video: videoEl,
         index,
       };
 
@@ -3674,9 +3645,12 @@
       const elapsed = clock.getElapsedTime();
       if (!prefersReduced) {
         planes.forEach((plane) => {
-          const { basePosition, baseRotZ, driftPhase, driftSpeed } = plane.userData;
+          const { basePosition, baseRotZ, driftPhase, driftSpeed, video } = plane.userData;
           plane.position.y = basePosition.y + Math.sin(elapsed * driftSpeed + driftPhase) * 0.05;
           plane.rotation.z = baseRotZ + Math.sin(elapsed * driftSpeed + driftPhase) * 0.02;
+          // Keep in-scene videos playing (autoplay can be deferred until the
+          // first frame is decodable). VideoTexture refreshes itself on render.
+          if (video && video.paused) video.play().catch(() => {});
         });
         // Starfield whole-system pulse (Approach A twinkle) — the sky "breathes"
         if (stars) stars.material.opacity = 0.85 + Math.sin(elapsed * 0.3) * 0.15;
@@ -3745,6 +3719,7 @@
     /* ---- Lightbox (reuses the homepage #gallery-lightbox markup/CSS) ---- */
     const lb        = document.getElementById('gallery-lightbox');
     const lbImg     = lb?.querySelector('.gallery-lightbox__img');
+    const lbVideo   = lb?.querySelector('.gallery-lightbox__video');
     const lbCur     = lb?.querySelector('.gallery-lightbox__counter-current');
     const lbTot     = lb?.querySelector('.gallery-lightbox__counter-total');
     const lbClose   = lb?.querySelector('.gallery-lightbox__close');
@@ -3754,11 +3729,23 @@
 
     if (lbTot) lbTot.textContent = planeConfigs.length;
 
+    // Show a <video> (sound + controls) for video items, the <img> for photos.
     const renderLb = () => {
-      if (!lbImg) return;
-      lbImg.src = planeConfigs[lbIndex].image;
-      lbImg.alt = planeConfigs[lbIndex].alt || '';
+      const item = planeConfigs[lbIndex];
       if (lbCur) lbCur.textContent = lbIndex + 1;
+      if (item.type === 'video') {
+        if (lbImg) { lbImg.hidden = true; lbImg.removeAttribute('src'); }
+        if (lbVideo) {
+          lbVideo.hidden = false;
+          lbVideo.src = item.src;
+          lbVideo.muted = false;
+          lbVideo.currentTime = 0;
+          lbVideo.play().catch(() => {});
+        }
+      } else {
+        if (lbVideo) { lbVideo.pause(); lbVideo.hidden = true; lbVideo.removeAttribute('src'); }
+        if (lbImg) { lbImg.hidden = false; lbImg.src = item.src; lbImg.alt = item.alt || ''; }
+      }
     };
     const openLb = (index) => {
       if (!lb) return;
@@ -3773,6 +3760,7 @@
       if (!lb) return;
       lb.classList.remove('is-open');
       lb.setAttribute('aria-hidden', 'true');
+      if (lbVideo) lbVideo.pause();
       setTimeout(() => { if (!lb.classList.contains('is-open')) lb.hidden = true; }, 320);
     };
     const stepLb = (dir) => {

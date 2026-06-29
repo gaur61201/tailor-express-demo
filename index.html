@@ -1486,51 +1486,64 @@
              used. The same eight items here are the source of truth
              for the lightbox in either mode. -->
         <ul class="gallery__grid" role="list">
-          <li class="gallery__tile gallery__tile--portrait"  data-gi="0">
-            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 1 of 9">
-              <img src="https://picsum.photos/seed/te-gallery-1/900/1200" alt="Atelier — close-up of hands stitching dark fabric." loading="lazy" decoding="async" width="900" height="1200" />
+          <li class="gallery__tile gallery__tile--portrait gallery__tile--video" data-gi="0">
+            <button class="gallery__tile-btn" type="button" aria-label="Play video 1 of 12">
+              <video src="assets/gallery/video-1.mp4" poster="assets/gallery/video-1-poster.jpg" muted loop autoplay playsinline preload="metadata"></video>
             </button>
           </li>
-          <li class="gallery__tile gallery__tile--landscape" data-gi="1">
-            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 2 of 9">
-              <img src="https://picsum.photos/seed/te-gallery-2/1200/900" alt="Garment detail — folded fabric and stitching in warm light." loading="lazy" decoding="async" width="1200" height="900" />
+          <li class="gallery__tile gallery__tile--portrait gallery__tile--video" data-gi="1">
+            <button class="gallery__tile-btn" type="button" aria-label="Play video 2 of 12">
+              <video src="assets/gallery/video-2.mp4" poster="assets/gallery/video-2-poster.jpg" muted loop autoplay playsinline preload="metadata"></video>
             </button>
           </li>
-          <li class="gallery__tile gallery__tile--square"    data-gi="2">
-            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 3 of 9">
-              <img src="https://picsum.photos/seed/te-gallery-3/1000/1000" alt="Thread spools arranged on a workbench." loading="lazy" decoding="async" width="1000" height="1000" />
+          <li class="gallery__tile gallery__tile--portrait" data-gi="2">
+            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 3 of 12">
+              <img src="assets/gallery/portrait-1.jpg" alt="Hand-finishing a garment at Tailor Express." loading="lazy" decoding="async" />
             </button>
           </li>
-          <li class="gallery__tile gallery__tile--portrait"  data-gi="3">
-            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 4 of 9">
-              <img src="https://picsum.photos/seed/te-gallery-4/900/1200" alt="Tailor measuring fabric — soft warm light from the side." loading="lazy" decoding="async" width="900" height="1200" />
+          <li class="gallery__tile gallery__tile--portrait" data-gi="3">
+            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 4 of 12">
+              <img src="assets/gallery/portrait-2.jpg" alt="Tailoring detail at Tailor Express." loading="lazy" decoding="async" />
             </button>
           </li>
-          <li class="gallery__tile gallery__tile--landscape" data-gi="4">
-            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 5 of 9">
-              <img src="https://picsum.photos/seed/te-gallery-5/1200/900" alt="Atelier interior — workbench, tools and shears." loading="lazy" decoding="async" width="1200" height="900" />
+          <li class="gallery__tile gallery__tile--portrait" data-gi="4">
+            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 5 of 12">
+              <img src="assets/gallery/portrait-3.jpg" alt="Inside a Tailor Express atelier." loading="lazy" decoding="async" />
             </button>
           </li>
-          <li class="gallery__tile gallery__tile--square"    data-gi="5">
-            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 6 of 9">
-              <img src="https://picsum.photos/seed/te-gallery-6/1000/1000" alt="Folded fabric stack in dramatic side-lighting." loading="lazy" decoding="async" width="1000" height="1000" />
+          <li class="gallery__tile gallery__tile--portrait" data-gi="5">
+            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 6 of 12">
+              <img src="assets/gallery/portrait-4.jpg" alt="Alterations work at Tailor Express." loading="lazy" decoding="async" />
             </button>
           </li>
-          <!-- v6 — NEW lower-left foreground tile (matches new Plane 7 in PLANE_LAYOUT).
-               v7 — seed swapped to neutral placeholder. -->
-          <li class="gallery__tile gallery__tile--portrait"  data-gi="6">
-            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 7 of 9">
-              <img src="https://picsum.photos/seed/te-linen-folded-warm/900/1200" alt="Warm organic detail in soft side light." loading="lazy" decoding="async" width="900" height="1200" />
+          <li class="gallery__tile gallery__tile--portrait" data-gi="6">
+            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 7 of 12">
+              <img src="assets/gallery/portrait-5.jpg" alt="Pinning and measuring at Tailor Express." loading="lazy" decoding="async" />
             </button>
           </li>
           <li class="gallery__tile gallery__tile--landscape" data-gi="7">
-            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 8 of 9">
-              <img src="https://picsum.photos/seed/te-gallery-7/1200/900" alt="Detail of a finished dishdasha collar with crisp seams." loading="lazy" decoding="async" width="1200" height="900" />
+            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 8 of 12">
+              <img src="assets/gallery/landscape-1.jpg" alt="Tailor Express workspace." loading="lazy" decoding="async" />
             </button>
           </li>
-          <li class="gallery__tile gallery__tile--portrait"  data-gi="8">
-            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 9 of 9">
-              <img src="https://picsum.photos/seed/te-gallery-8/900/1200" alt="Tailor at work, viewed from above, against a dark surface." loading="lazy" decoding="async" width="900" height="1200" />
+          <li class="gallery__tile gallery__tile--landscape" data-gi="8">
+            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 9 of 12">
+              <img src="assets/gallery/landscape-2.jpg" alt="Tailor Express interior." loading="lazy" decoding="async" />
+            </button>
+          </li>
+          <li class="gallery__tile gallery__tile--landscape" data-gi="9">
+            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 10 of 12">
+              <img src="assets/gallery/landscape-3.jpg" alt="Garments and fabric at Tailor Express." loading="lazy" decoding="async" />
+            </button>
+          </li>
+          <li class="gallery__tile gallery__tile--landscape" data-gi="10">
+            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 11 of 12">
+              <img src="assets/gallery/landscape-4.jpg" alt="Tailoring tools and materials." loading="lazy" decoding="async" />
+            </button>
+          </li>
+          <li class="gallery__tile gallery__tile--landscape" data-gi="11">
+            <button class="gallery__tile-btn" type="button" aria-label="Open gallery image 12 of 12">
+              <img src="assets/gallery/landscape-5.jpg" alt="Finished tailoring work." loading="lazy" decoding="async" />
             </button>
           </li>
         </ul>
@@ -1921,7 +1934,7 @@
     <div class="gallery-lightbox__counter" aria-live="polite">
       <span class="gallery-lightbox__counter-current">1</span>
       <span class="gallery-lightbox__counter-sep"> / </span>
-      <span class="gallery-lightbox__counter-total">8</span>
+      <span class="gallery-lightbox__counter-total">12</span>
     </div>
     <button class="gallery-lightbox__nav gallery-lightbox__nav--prev" type="button" aria-label="Previous image">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -1935,6 +1948,7 @@
     </button>
     <div class="gallery-lightbox__stage">
       <img class="gallery-lightbox__img" alt="" />
+      <video class="gallery-lightbox__video" playsinline controls preload="metadata" hidden></video>
     </div>
   </div>
 
