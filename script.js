@@ -3527,43 +3527,49 @@
     };
     const celestialLogo = createCelestialLogo();
 
-    /* ---- Plane configuration: 18 planes ALGORITHMICALLY distributed across
-       the full 360° azimuth so the camera's East→West sweep always has content
-       in view (no empty arc > ~25°). x = sin(az)·r, z = -cos(az)·r places each
-       plane on a circle around the camera; distances/heights/sizes/images are
-       varied with adjacency constraints so nothing reads as a grid.
-       Deterministic (seeded) → identical placement on every load. ---------- */
-    /* Real content: 3 videos + 10 photos. The camera sweeps the FRONT arc
-       (rotation.y +π/2 → -π/2 ≈ azimuth -90°→+90°), so all 13 pieces live in
-       that arc. The 3 videos sit in the CENTRE (azimuth -15/0/+15) as the focal
-       trio; the 10 photos fan out left and right. Portrait media → tall planes,
-       landscape → wide planes (no distortion). x = sin(az)·r, z = -cos(az)·r. */
+    /* ---- Plane configuration: 13 planes (3 videos + 10 photos) hand-placed
+       across the FRONT arc the camera sweeps (rotation.y +π/2 → -π/2 ≈ azimuth
+       -90°→+90°). x = sin(az)·r, z = -cos(az)·r sits each plane on a circle
+       around the camera at the origin.
+
+       SIZING: every plane keeps a FIXED HEIGHT per tier (video / portrait /
+       landscape — set below); its WIDTH is derived at load time from the
+       media's REAL aspect ratio (see fitToAspect in the build loop), so no
+       image is ever stretched. The `hint` here is only a nominal aspect for the
+       first paint before the real ratio lands.
+
+       LAYOUT: the 3 videos are the focal trio at the centre (azimuth -23/0/+23,
+       close radius). The 10 photos fan out left/right at progressively larger
+       radius. Azimuths + radii are tuned (layout_solver, 2026-06-29) so each
+       plane's on-screen angular width stays clear of its neighbours — no
+       cramping/overlap anywhere (min adjacent gap ≈ 1.6°). Wide landscapes sit
+       at the largest radii so their angular footprint stays small. ---------- */
     const GV  = (n) => `assets/gallery/video-${n}.mp4`;
     const GVP = (n) => `assets/gallery/video-${n}-poster.jpg`;
     const GP  = (n) => `assets/gallery/portrait-${n}.jpg`;
     const GL  = (n) => `assets/gallery/landscape-${n}.jpg`;
-    const VID    = [3.0, 5.33];   // portrait video 9:16
-    const PORT   = [2.6, 3.47];   // portrait photo ~3:4
-    const PORT_S = [2.3, 3.07];
-    const LAND   = [3.6, 2.70];   // landscape photo ~4:3
-    const LAND_L = [4.2, 3.15];
+    // Fixed plane HEIGHTS per tier (preserve the original visual scale; only the
+    // width-to-height relationship changes — width comes from real media ratio).
+    const VID_H = 5.33, PORT_H = 3.47, PORT_S_H = 3.07, LAND_H = 2.70, LAND_L_H = 3.15;
+    // Nominal aspect just for the placeholder geometry shown until media loads.
+    const HINT_V = 0.5625, HINT_P = 0.66, HINT_L = 1.4;
     const planeConfigs = [
-      // --- centre focal trio: the 3 videos ---
-      { type: 'video', src: GV(2), poster: GVP(2), azimuth: -15, radius: 8.5, y:  0.2, size: VID, alt: 'Tailor Express — fitting and finishing a garment.' },
-      { type: 'video', src: GV(1), poster: GVP(1), azimuth:   0, radius: 7.5, y:  0.0, size: VID, alt: 'Tailor Express — alterations in progress.' },
-      { type: 'video', src: GV(3), poster: GVP(3), azimuth:  15, radius: 8.5, y:  0.4, size: VID, alt: 'Tailor Express — tailoring in the atelier.' },
+      // --- centre focal trio: the 3 videos (azimuth -23/0/+23) ---
+      { type: 'video', src: GV(2), poster: GVP(2), azimuth: -23, radius: 8.5, y:  0.2, h: VID_H,    hint: HINT_V, alt: 'Tailor Express — fitting and finishing a garment.' },
+      { type: 'video', src: GV(1), poster: GVP(1), azimuth:   0, radius: 7.5, y:  0.0, h: VID_H,    hint: HINT_V, alt: 'Tailor Express — alterations in progress.' },
+      { type: 'video', src: GV(3), poster: GVP(3), azimuth:  23, radius: 8.5, y:  0.4, h: VID_H,    hint: HINT_V, alt: 'Tailor Express — tailoring in the atelier.' },
       // --- photos fanning out to the LEFT ---
-      { type: 'image', src: GP(1), azimuth: -24, radius: 10.5, y: -1.2, size: PORT,   alt: 'Hand-finishing a garment at Tailor Express.' },
-      { type: 'image', src: GL(1), azimuth: -34, radius: 13.0, y:  1.6, size: LAND,   alt: 'Tailor Express workspace.' },
-      { type: 'image', src: GP(2), azimuth: -52, radius:  9.0, y:  0.3, size: PORT_S, alt: 'Tailoring detail at Tailor Express.' },
-      { type: 'image', src: GL(2), azimuth: -70, radius: 15.0, y: -1.8, size: LAND_L, alt: 'Tailor Express interior.' },
-      { type: 'image', src: GP(3), azimuth: -88, radius: 11.5, y:  2.2, size: PORT,   alt: 'Inside a Tailor Express atelier.' },
+      { type: 'image', src: GP(1), azimuth: -40, radius: 11.0, y: -1.2, h: PORT_H,   hint: HINT_P, alt: 'Hand-finishing a garment at Tailor Express.' },
+      { type: 'image', src: GL(1), azimuth: -54, radius: 15.0, y:  1.6, h: LAND_H,   hint: HINT_L, alt: 'Tailor Express workspace.' },
+      { type: 'image', src: GP(2), azimuth: -67, radius: 11.0, y:  0.3, h: PORT_S_H, hint: HINT_P, alt: 'Tailoring detail at Tailor Express.' },
+      { type: 'image', src: GL(2), azimuth: -80, radius: 17.0, y: -1.8, h: LAND_L_H, hint: HINT_L, alt: 'Tailor Express interior.' },
+      { type: 'image', src: GP(3), azimuth: -93, radius: 13.0, y:  2.2, h: PORT_H,   hint: HINT_P, alt: 'Inside a Tailor Express atelier.' },
       // --- photos fanning out to the RIGHT ---
-      { type: 'image', src: GL(3), azimuth:  24, radius: 10.5, y:  1.4, size: LAND,   alt: 'Garments and fabric at Tailor Express.' },
-      { type: 'image', src: GP(4), azimuth:  34, radius: 13.0, y: -1.4, size: PORT,   alt: 'Alterations work at Tailor Express.' },
-      { type: 'image', src: GL(4), azimuth:  52, radius:  9.0, y:  0.6, size: LAND,   alt: 'Tailoring tools and materials.' },
-      { type: 'image', src: GP(5), azimuth:  70, radius: 15.0, y:  2.0, size: PORT_S, alt: 'Pinning and measuring at Tailor Express.' },
-      { type: 'image', src: GL(5), azimuth:  88, radius: 11.5, y: -2.0, size: LAND_L, alt: 'Finished tailoring work.' },
+      { type: 'image', src: GL(3), azimuth:  41, radius: 16.0, y:  1.4, h: LAND_H,   hint: HINT_L, alt: 'Garments and fabric at Tailor Express.' },
+      { type: 'image', src: GP(4), azimuth:  54, radius: 13.0, y: -1.4, h: PORT_H,   hint: HINT_P, alt: 'Alterations work at Tailor Express.' },
+      { type: 'image', src: GL(4), azimuth:  67, radius: 17.0, y:  0.6, h: LAND_H,   hint: HINT_L, alt: 'Tailoring tools and materials.' },
+      { type: 'image', src: GP(5), azimuth:  80, radius: 13.0, y:  2.0, h: PORT_S_H, hint: HINT_P, alt: 'Pinning and measuring at Tailor Express.' },
+      { type: 'image', src: GL(5), azimuth:  96, radius: 19.0, y: -2.0, h: LAND_L_H, hint: HINT_L, alt: 'Finished tailoring work.' },
     ];
     console.log('[GALLERY] media planes:', planeConfigs.length);
 
@@ -3576,6 +3582,21 @@
       const angleRad = THREE.MathUtils.degToRad(config.azimuth);
       const x = Math.sin(angleRad) * config.radius;
       const z = -Math.cos(angleRad) * config.radius;
+
+      // Fixed height per tier; width derived from the media's TRUE aspect ratio
+      // so the texture is never stretched. The real ratio isn't known until the
+      // media's metadata loads, so the plane is built with a nominal-aspect
+      // placeholder (config.hint) and resized here once the true ratio arrives.
+      const planeH = config.h;
+      let plane; // assigned below; referenced (async) by fitToAspect
+      const fitToAspect = (aspect) => {
+        if (!plane || !aspect || !isFinite(aspect) || aspect <= 0) return;
+        const w = planeH * aspect;
+        if (Math.abs(w - plane.geometry.parameters.width) < 0.001) return; // already correct
+        plane.geometry.dispose();
+        plane.geometry = new THREE.PlaneGeometry(w, planeH);
+        plane.userData.planeWidth = w;
+      };
 
       let texture, videoEl = null;
       if (config.type === 'video') {
@@ -3590,6 +3611,11 @@
         videoEl.preload = 'auto';
         if (config.poster) videoEl.poster = config.poster;
         videoEl.src = config.src;
+        // videoWidth/Height are 0 until metadata loads → resize the plane then.
+        videoEl.addEventListener('loadedmetadata', () => {
+          fitToAspect(videoEl.videoWidth / videoEl.videoHeight);
+          renderer.render(scene, camera);
+        });
         texture = new THREE.VideoTexture(videoEl);
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
@@ -3602,6 +3628,9 @@
           tex.magFilter = THREE.LinearFilter;
           tex.anisotropy = maxAniso;
           tex.needsUpdate = true;
+          // tex.image is the decoded HTMLImageElement → derive the real ratio.
+          const img = tex.image;
+          if (img) fitToAspect((img.naturalWidth || img.width) / (img.naturalHeight || img.height));
           renderer.render(scene, camera); // repaint once the image lands
         });
         applyTexColorSpace(texture);
@@ -3610,9 +3639,10 @@
         texture.anisotropy = maxAniso;
       }
 
-      const geometry = new THREE.PlaneGeometry(config.size[0], config.size[1]);
+      // Placeholder geometry (nominal aspect) until the real ratio lands above.
+      const geometry = new THREE.PlaneGeometry(planeH * config.hint, planeH);
       const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-      const plane = new THREE.Mesh(geometry, material);
+      plane = new THREE.Mesh(geometry, material);
       plane.position.set(x, config.y, z);
       plane.lookAt(0, config.y, 0); // face the camera at the origin (pure yaw — same height as target)
 
@@ -3621,6 +3651,7 @@
         baseRotZ: plane.rotation.z,
         driftPhase: index * 1.37,            // deterministic, de-synced (no Math.random — keeps QA reproducible)
         driftSpeed: 0.35 + (index % 5) * 0.06,
+        planeWidth: planeH * config.hint,
         src: config.src,
         video: videoEl,
         index,
