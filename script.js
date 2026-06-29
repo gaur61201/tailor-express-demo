@@ -1453,15 +1453,15 @@
     // Remaining branch photos drop straight into these keys as they arrive.
     const IMG = 'assets/image-location';
     const branches = [
-      { en: 'Tailor Express — Avenues',        ar: 'Tailor Express — الأفنيوز',  lat: 29.3027,    lng: 47.9347,    exterior: `${IMG}/exterior/avenus-mall-image.jpg`,       interior: `${IMG}/interior/avenus-location.jpeg` },
-      { en: 'Tailor Express — Hessa District',  ar: 'Tailor Express — ضاحية حصة', lat: 29.3593245, lng: 48.0208909, exterior: `${IMG}/exterior/hessa-location.jpeg`,          interior: `${IMG}/interior/hessa-interior-location.jpeg` },
-      { en: 'Tailor Express — Promenade',       ar: 'Tailor Express — بروميناد',  lat: 29.3469709, lng: 48.0124569, exterior: `${IMG}/exterior/promenade-location.jpeg`, interior: `${IMG}/interior/promenade-location.jpg` },
-      { en: 'Tailor Express — W-Mishrif',       ar: 'Tailor Express — غرب مشرف',  lat: 29.2731356, lng: 48.0445720, interior: `${IMG}/interior/mishref-location.jpeg` },
-      { en: 'Tailor Express — Yarmouk',         ar: 'Tailor Express — اليرموك',   lat: 29.3135497, lng: 47.9662392, exterior: `${IMG}/exterior/yamouk-location.jpeg`, interior: `${IMG}/interior/yamrouk-interior.jpeg`, intPos: '50% 0%' },
-      { en: 'Tailor Express — Qurtoba',         ar: 'Tailor Express — قرطبة',     lat: 29.3130369, lng: 47.9861687, interior: `${IMG}/interior/quortoba-location.jpeg` },
-      { en: 'Tailor Express — Zahra Complex',   ar: 'Tailor Express — مجمع زهرة', lat: 29.3416300, lng: 48.0721896, exterior: `${IMG}/exterior/zahra-complex-image.jpg`,      interior: `${IMG}/interior/zahara-complex-location.jpeg` },
-      { en: 'Tailor Express — Dasma',           ar: 'Tailor Express — الدسمة',    lat: 29.3656113, lng: 48.0015817, exterior: `${IMG}/exterior/SM-CITY-DASMARINAS-image.jpg`, interior: `${IMG}/interior/dasma-final-interior-image.jpeg` },
-      { en: 'Premium Tailor',                   ar: 'Premium Tailor',             lat: 29.3791050, lng: 47.9932457, interior: `${IMG}/interior/hamra-tower-location.jpeg` },
+      { en: 'Tailor Express — Avenues',        ar: 'Tailor Express — الأفنيوز',  lat: 29.3027,    lng: 47.9347,    exterior: `${IMG}/exterior/avenus-mall-image.webp`,       interior: `${IMG}/interior/avenus-location.webp` },
+      { en: 'Tailor Express — Hessa District',  ar: 'Tailor Express — ضاحية حصة', lat: 29.3593245, lng: 48.0208909, exterior: `${IMG}/exterior/hessa-location.webp`,          interior: `${IMG}/interior/hessa-interior-location.webp` },
+      { en: 'Tailor Express — Promenade',       ar: 'Tailor Express — بروميناد',  lat: 29.3469709, lng: 48.0124569, exterior: `${IMG}/exterior/promenade-location.webp`, interior: `${IMG}/interior/promenade-location.webp` },
+      { en: 'Tailor Express — W-Mishrif',       ar: 'Tailor Express — غرب مشرف',  lat: 29.2731356, lng: 48.0445720, interior: `${IMG}/interior/mishref-location.webp` },
+      { en: 'Tailor Express — Yarmouk',         ar: 'Tailor Express — اليرموك',   lat: 29.3135497, lng: 47.9662392, exterior: `${IMG}/exterior/yamouk-location.webp`, interior: `${IMG}/interior/yamrouk-interior.webp`, intPos: '50% 0%' },
+      { en: 'Tailor Express — Qurtoba',         ar: 'Tailor Express — قرطبة',     lat: 29.3130369, lng: 47.9861687, interior: `${IMG}/interior/quortoba-location.webp` },
+      { en: 'Tailor Express — Zahra Complex',   ar: 'Tailor Express — مجمع زهرة', lat: 29.3416300, lng: 48.0721896, exterior: `${IMG}/exterior/zahra-complex-image.webp`,      interior: `${IMG}/interior/zahara-complex-location.webp` },
+      { en: 'Tailor Express — Dasma',           ar: 'Tailor Express — الدسمة',    lat: 29.3656113, lng: 48.0015817, exterior: `${IMG}/exterior/SM-CITY-DASMARINAS-image.webp`, interior: `${IMG}/interior/dasma-final-interior-image.webp` },
+      { en: 'Premium Tailor',                   ar: 'Premium Tailor',             lat: 29.3791050, lng: 47.9932457, interior: `${IMG}/interior/hamra-tower-location.webp` },
     ];
 
     // Real photo if the branch has one, else a deterministic picsum placeholder.
@@ -1726,18 +1726,18 @@
   // Homepage shows 2 videos (one centre hero + one mid-left) + all 10 photos.
   const G = 'assets/gallery';
   const GALLERY_IMAGES = [
-    { type: 'video', src: `${G}/video-1.mp4`, poster: `${G}/video-1-poster.jpg`, alt: 'Tailor Express — alterations in progress.' },
-    { type: 'video', src: `${G}/video-2.mp4`, poster: `${G}/video-2-poster.jpg`, alt: 'Tailor Express — fitting and finishing a garment.' },
-    { type: 'image', src: `${G}/portrait-1.jpg`,  alt: 'Hand-finishing a garment at Tailor Express.' },
-    { type: 'image', src: `${G}/portrait-2.jpg`,  alt: 'Tailoring detail at Tailor Express.' },
-    { type: 'image', src: `${G}/portrait-3.jpg`,  alt: 'Inside a Tailor Express atelier.' },
-    { type: 'image', src: `${G}/portrait-4.jpg`,  alt: 'Alterations work at Tailor Express.' },
-    { type: 'image', src: `${G}/portrait-5.jpg`,  alt: 'Pinning and measuring at Tailor Express.' },
-    { type: 'image', src: `${G}/landscape-1.jpg`, alt: 'Tailor Express workspace.' },
-    { type: 'image', src: `${G}/landscape-2.jpg`, alt: 'Tailor Express interior.' },
-    { type: 'image', src: `${G}/landscape-3.jpg`, alt: 'Garments and fabric at Tailor Express.' },
-    { type: 'image', src: `${G}/landscape-4.jpg`, alt: 'Tailoring tools and materials.' },
-    { type: 'image', src: `${G}/landscape-5.jpg`, alt: 'Finished tailoring work.' },
+    { type: 'video', src: `${G}/video-1.mp4`, poster: `${G}/video-1-poster.webp`, alt: 'Tailor Express — alterations in progress.' },
+    { type: 'video', src: `${G}/video-2.mp4`, poster: `${G}/video-2-poster.webp`, alt: 'Tailor Express — fitting and finishing a garment.' },
+    { type: 'image', src: `${G}/portrait-1.webp`,  alt: 'Hand-finishing a garment at Tailor Express.' },
+    { type: 'image', src: `${G}/portrait-2.webp`,  alt: 'Tailoring detail at Tailor Express.' },
+    { type: 'image', src: `${G}/portrait-3.webp`,  alt: 'Inside a Tailor Express atelier.' },
+    { type: 'image', src: `${G}/portrait-4.webp`,  alt: 'Alterations work at Tailor Express.' },
+    { type: 'image', src: `${G}/portrait-5.webp`,  alt: 'Pinning and measuring at Tailor Express.' },
+    { type: 'image', src: `${G}/landscape-1.webp`, alt: 'Tailor Express workspace.' },
+    { type: 'image', src: `${G}/landscape-2.webp`, alt: 'Tailor Express interior.' },
+    { type: 'image', src: `${G}/landscape-3.webp`, alt: 'Garments and fabric at Tailor Express.' },
+    { type: 'image', src: `${G}/landscape-4.webp`, alt: 'Tailoring tools and materials.' },
+    { type: 'image', src: `${G}/landscape-5.webp`, alt: 'Finished tailoring work.' },
   ];
 
   // Per-plane layout — index-matched to GALLERY_IMAGES (12 planes). Sizes are
@@ -2143,7 +2143,7 @@
         // marble subtle reflections of the room's atmosphere so it
         // doesn't read as flat plastic.
         const texLoader = new THREE.TextureLoader();
-        const marbleColor     = texLoader.load('gallery_textures/Marble012_1K-JPG_Color.jpg');
+        const marbleColor     = texLoader.load('gallery_textures/Marble012_1K-JPG_Color.webp');
         const marbleNormal    = texLoader.load('gallery_textures/Marble012_1K-JPG_NormalGL.jpg');
         const marbleRoughness = texLoader.load('gallery_textures/Marble012_1K-JPG_Roughness.jpg');
 
@@ -3545,9 +3545,9 @@
        cramping/overlap anywhere (min adjacent gap ≈ 1.6°). Wide landscapes sit
        at the largest radii so their angular footprint stays small. ---------- */
     const GV  = (n) => `assets/gallery/video-${n}.mp4`;
-    const GVP = (n) => `assets/gallery/video-${n}-poster.jpg`;
-    const GP  = (n) => `assets/gallery/portrait-${n}.jpg`;
-    const GL  = (n) => `assets/gallery/landscape-${n}.jpg`;
+    const GVP = (n) => `assets/gallery/video-${n}-poster.webp`;
+    const GP  = (n) => `assets/gallery/portrait-${n}.webp`;
+    const GL  = (n) => `assets/gallery/landscape-${n}.webp`;
     // Fixed plane HEIGHTS per tier (preserve the original visual scale; only the
     // width-to-height relationship changes — width comes from real media ratio).
     const VID_H = 5.33, PORT_H = 3.47, PORT_S_H = 3.07, LAND_H = 2.70, LAND_L_H = 3.15;
@@ -3879,23 +3879,23 @@
     if (!frameImg) return;
 
     const FRAMES = [
-      'assets/service-frames/frame_000000.jpeg',
-      'assets/service-frames/frame_000001.jpeg',
-      'assets/service-frames/frame_000002.jpeg',
-      'assets/service-frames/frame_000003.jpeg',
-      'assets/service-frames/frame_000004.jpeg',
-      'assets/service-frames/frame_000005.jpeg',
-      'assets/service-frames/frame_000006.jpeg',
-      'assets/service-frames/frame_000007.jpeg',
-      'assets/service-frames/frame_000008.jpeg',
-      'assets/service-frames/frame_000009.jpeg',
-      'assets/service-frames/frame_000010.jpeg',
-      'assets/service-frames/frame_000011.jpeg',
-      'assets/service-frames/frame_000013.jpeg',
-      'assets/service-frames/frame_000014.jpeg',
-      'assets/service-frames/frame_000015.jpeg',
-      'assets/service-frames/frame_000016.jpeg',
-      'assets/service-frames/frame_000017.jpeg'
+      'assets/service-frames/frame_000000.webp',
+      'assets/service-frames/frame_000001.webp',
+      'assets/service-frames/frame_000002.webp',
+      'assets/service-frames/frame_000003.webp',
+      'assets/service-frames/frame_000004.webp',
+      'assets/service-frames/frame_000005.webp',
+      'assets/service-frames/frame_000006.webp',
+      'assets/service-frames/frame_000007.webp',
+      'assets/service-frames/frame_000008.webp',
+      'assets/service-frames/frame_000009.webp',
+      'assets/service-frames/frame_000010.webp',
+      'assets/service-frames/frame_000011.webp',
+      'assets/service-frames/frame_000013.webp',
+      'assets/service-frames/frame_000014.webp',
+      'assets/service-frames/frame_000015.webp',
+      'assets/service-frames/frame_000016.webp',
+      'assets/service-frames/frame_000017.webp'
     ];
     const TOTAL_FRAMES = FRAMES.length;                 // 17 (indices 0..16)
     const loadedFrames = new Set([0]);                  // frame 0 already in DOM
