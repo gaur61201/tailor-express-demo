@@ -1,16 +1,15 @@
 # Tailor Express
 
-> Tailor Express is a premium tailoring and alterations chain in Kuwait with 9 branches, all open 24/7, offering in-branch alterations, drive-thru drop-off, home service, and Tailor Cloud smart-locker pickup. Founded in 2019 by Dr. Shaikha E Alduaij.
+> Tailor Express is a premium tailoring and alterations chain in Kuwait with 9 branches, all open 24/7, offering in-branch alterations, drive-thru drop-off, home service, and Tailor Cloud smart-locker pickup. Founded in 2019.
 
 ## Background
 
-Tailor Express is a Kuwait-based tailoring and alterations chain founded in 2019 by Dr. Shaikha E Alduaij. It has grown from a single branch to 9 locations across Kuwait, all operating 24 hours a day, 7 days a week. The brand combines professional alteration craftsmanship with modern conveniences: home pickup and delivery, drive-thru drop-off, and 24/7 Tailor Cloud smart-locker pickup. It serves 5,000+ customers and completes 20,000+ alteration services every month, with dedicated female tailors and private fitting rooms at every branch and bilingual (English and Arabic) service throughout.
+Tailor Express is a Kuwait-based tailoring and alterations chain founded in 2019. It has grown from a single branch to 9 locations across Kuwait, all operating 24 hours a day, 7 days a week. The brand combines professional alteration craftsmanship with modern conveniences: home pickup and delivery, drive-thru drop-off, and 24/7 Tailor Cloud smart-locker pickup. It serves 5,000+ customers and completes 20,000+ alteration services every month, with dedicated female tailors and private fitting rooms at every branch and bilingual (English and Arabic) service throughout.
 
 ## Business Facts
 
 - Business name: Tailor Express (تيلور إكسبرس)
 - Founded: 2019
-- Founder: Dr. Shaikha E Alduaij
 - Country: Kuwait
 - Headquarters: The Avenues Mall, Al-Rai, Al Farwaniyah, Kuwait
 - Branch count: 9 locations across Kuwait
