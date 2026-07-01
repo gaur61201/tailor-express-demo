@@ -241,6 +241,17 @@
       document.body.dir = 'rtl';
     }
 
+    // Eagerly fetch the Arabic webfont on initial load (not lazily, only when
+    // Arabic text first renders). Otherwise the first EN->AR toggle triggers a
+    // late font-swap reflow AFTER ScrollTrigger.refresh() has already run, which
+    // leaves pinned sections (About, the 3D galleries) measuring stale geometry
+    // (white gaps / unresponsive pinned scroll). Non-blocking; ~one small subset.
+    if (document.fonts && document.fonts.load) {
+      ['400', '500', '600', '700'].forEach((w) => {
+        document.fonts.load(`${w} 1em "IBM Plex Sans Arabic"`).catch(() => {});
+      });
+    }
+
     document.querySelectorAll('[data-lang-toggle]').forEach(btn => {
       btn.addEventListener('click', () => {
         const currentDir = document.documentElement.dir || document.body.dir || 'ltr';
@@ -257,8 +268,20 @@
         // Let language-aware widgets (e.g. the branches map) re-render.
         document.dispatchEvent(new CustomEvent('te:langchange', { detail: { lang: nextLang } }));
 
+        // Recompute all pinned/scrubbed ScrollTriggers AFTER the layout settles.
+        // A single synchronous refresh() here measures stale geometry, because
+        // switching to Arabic reflows the page and the Arabic webfont can swap
+        // in a moment later (async) — reflowing again with no second refresh,
+        // which is what caused pinned sections (About, the 3D galleries) to hold
+        // stale start/end (white gaps, unresponsive pinned scroll). So refresh
+        // on the next frame, again once fonts are ready, and once more as a
+        // safety net for very slow devices. (The 3D gallery canvas is sized from
+        // the window, unchanged by the toggle, so refreshing its pin is enough.)
         if (typeof ScrollTrigger !== 'undefined') {
-          ScrollTrigger.refresh();
+          const refresh = () => ScrollTrigger.refresh();
+          requestAnimationFrame(refresh);
+          if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
+          setTimeout(refresh, 500);
         }
       });
     });
@@ -2304,7 +2327,7 @@
             videoEl.playsInline = true;
             videoEl.setAttribute('muted', '');
             videoEl.setAttribute('playsinline', '');
-            videoEl.preload = 'auto';
+            videoEl.preload = 'metadata';
             if (img.poster) videoEl.poster = img.poster;
             videoEl.src = img.src;
             const vtex = new THREE.VideoTexture(videoEl);
@@ -3608,7 +3631,7 @@
         videoEl.playsInline = true;
         videoEl.setAttribute('muted', '');
         videoEl.setAttribute('playsinline', '');
-        videoEl.preload = 'auto';
+        videoEl.preload = 'metadata';
         if (config.poster) videoEl.poster = config.poster;
         videoEl.src = config.src;
         // videoWidth/Height are 0 until metadata loads → resize the plane then.

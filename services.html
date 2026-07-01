@@ -312,12 +312,15 @@
       loop
       playsinline
       webkit-playsinline
-      preload="auto"
+      preload="metadata"
       poster="assets/video-for-service-page/REAL-FINAL-SERVICE-VIDEO-poster.webp"
       aria-hidden="true">
+      <!-- Mobile gate: <=768px shows the scroll-driven frame sequence instead,
+           so the backdrop video only loads on desktop (never downloads on mobile). -->
       <source
         src="assets/video-for-service-page/REAL-FINAL-SERVICE-VIDEO.mp4"
-        type="video/mp4">
+        type="video/mp4"
+        media="(min-width: 769px)">
     </video>
     <div class="services-backdrop__overlay" aria-hidden="true"></div>
 
