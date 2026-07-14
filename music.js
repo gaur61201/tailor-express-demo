@@ -6,7 +6,7 @@
 
   const iconOn = toggle.querySelector('.music-toggle__icon--on');
   const iconOff = toggle.querySelector('.music-toggle__icon--off');
-  const TARGET_VOLUME = 0.25;
+  const TARGET_VOLUME = 0.15;
   const FADE_DURATION = 0.6;
   const STORAGE_KEY = 'bg-music-enabled';
 
@@ -32,7 +32,7 @@
   }
 
   function play() {
-    audio.play().then(() => {
+    return audio.play().then(() => {
       localStorage.setItem(STORAGE_KEY, 'true');
       updateUI(true);
       fadeTo(TARGET_VOLUME);
@@ -56,9 +56,33 @@
     }
   });
 
-  if (localStorage.getItem(STORAGE_KEY) === 'true') {
+  // Auto-start music on first user gesture (any interaction).
+  // This bypasses the browser's autoplay policy legally (a real user
+  // gesture unlocks playback), but means audio can start on an incidental
+  // scroll/click/keypress, not just a deliberate tap on the toggle.
+  function autoStartOnGesture() {
     play();
-  } else {
+    window.removeEventListener('scroll', autoStartOnGesture);
+    window.removeEventListener('click', autoStartOnGesture);
+    window.removeEventListener('touchstart', autoStartOnGesture);
+    window.removeEventListener('keydown', autoStartOnGesture);
+  }
+
+  const wasExplicitlyMuted = localStorage.getItem(STORAGE_KEY) === 'false';
+
+  if (wasExplicitlyMuted) {
+    // User previously muted — respect their choice, don't auto-start.
     updateUI(false);
+  } else {
+    // First visit OR previously had music on: try to autoplay immediately.
+    play().then(() => {
+      if (audio.paused) {
+        // Browser blocked immediate autoplay — attach gesture listeners.
+        window.addEventListener('scroll', autoStartOnGesture, { once: true, passive: true });
+        window.addEventListener('click', autoStartOnGesture, { once: true });
+        window.addEventListener('touchstart', autoStartOnGesture, { once: true, passive: true });
+        window.addEventListener('keydown', autoStartOnGesture, { once: true });
+      }
+    });
   }
 })();
