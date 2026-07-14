@@ -1677,10 +1677,29 @@
         mapFrame.src = mapEmbedUrl(b.lat, b.lng);
       }
     });
+    // Preload every branch's interior + exterior photo once the section nears the
+    // viewport, so switching branches is instant — no blank/low frame while a
+    // photo still downloads. ~1.3 MB total, deferred so it never competes with
+    // above-the-fold load; the cached copies are reused when a bracket sets .src.
+    let branchesPreloaded = false;
+    const preloadedBranchImgs = [];
+    const preloadBranchImages = () => {
+      if (branchesPreloaded) return;
+      branchesPreloaded = true;
+      branches.forEach((_, i) => {
+        [interiorUrl(i), exteriorUrl(i)].forEach((src) => {
+          const img = new Image();
+          img.src = src;
+          preloadedBranchImgs.push(img);   // keep a ref so the fetch completes
+        });
+      });
+    };
+
     const mapObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           lazyLoadMap();
+          preloadBranchImages();
           mapObserver.disconnect();
         }
       });
