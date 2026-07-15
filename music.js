@@ -118,16 +118,32 @@
     }
   });
 
-  // Auto-start music on first user gesture (any interaction).
-  // This bypasses the browser's autoplay policy legally (a real user
-  // gesture unlocks playback), but means audio can start on an incidental
-  // scroll/click/keypress, not just a deliberate tap on the toggle.
-  function autoStartOnGesture() {
+  // Auto-start music on the first qualifying user gesture. Click, touch,
+  // key, and pointer input reliably unlock audio.play() (confirmed via
+  // repeated headless testing); scroll/wheel unlocked inconsistently in
+  // the same testing, so they're kept as opportunistic extras, not relied
+  // on as the primary trigger.
+  //
+  // BUG THIS REPLACES: the previous version bound one shared handler to
+  // scroll/click/touchstart/keydown and had that handler unconditionally
+  // remove ALL FOUR listeners the moment ANY ONE of them fired. Scroll
+  // fires easily and its play() attempt is the least reliable of the set —
+  // when it fired first and didn't result in audible playback, it had
+  // already destroyed the click/touchstart/keydown listeners, leaving
+  // nothing to catch the user's next (perfectly valid) click. That matched
+  // the reported symptom exactly: only the dedicated toggle button worked.
+  let autoStartAttempted = false;
+  const GESTURE_EVENTS = ['click', 'touchstart', 'keydown', 'pointerdown', 'wheel', 'scroll'];
+
+  function removeGestureListeners() {
+    GESTURE_EVENTS.forEach((evt) => window.removeEventListener(evt, attemptAutoStart));
+  }
+
+  function attemptAutoStart() {
+    if (autoStartAttempted) return; // one attempt only, regardless of which event triggered it
+    autoStartAttempted = true;
+    removeGestureListeners();
     play();
-    window.removeEventListener('scroll', autoStartOnGesture);
-    window.removeEventListener('click', autoStartOnGesture);
-    window.removeEventListener('touchstart', autoStartOnGesture);
-    window.removeEventListener('keydown', autoStartOnGesture);
   }
 
   const wasExplicitlyMuted = localStorage.getItem(STORAGE_KEY) === 'false';
@@ -136,14 +152,18 @@
     // User previously muted — respect their choice, don't auto-start.
     updateUI(false);
   } else {
-    // First visit OR previously had music on: try to autoplay immediately.
+    // Attach gesture listeners immediately (before the autoplay attempt
+    // below resolves), so the very first interaction is never missed.
+    GESTURE_EVENTS.forEach((evt) => {
+      window.addEventListener(evt, attemptAutoStart, { once: true, passive: true });
+    });
+
+    // Also try immediate autoplay in case the browser already allows it
+    // (e.g. enough prior engagement on this origin).
     play().then(() => {
-      if (audio.paused) {
-        // Browser blocked immediate autoplay — attach gesture listeners.
-        window.addEventListener('scroll', autoStartOnGesture, { once: true, passive: true });
-        window.addEventListener('click', autoStartOnGesture, { once: true });
-        window.addEventListener('touchstart', autoStartOnGesture, { once: true, passive: true });
-        window.addEventListener('keydown', autoStartOnGesture, { once: true });
+      if (!audio.paused) {
+        autoStartAttempted = true;
+        removeGestureListeners();
       }
     });
   }
