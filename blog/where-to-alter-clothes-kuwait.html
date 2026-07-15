@@ -140,9 +140,12 @@
         <a href="tel:+96598741904" class="nav__phone" aria-label="Call us">
           <i class="fas fa-phone" aria-hidden="true"></i>
         </a>
-        <button class="nav__lang" data-lang-toggle aria-label="Toggle language">
-          <span class="en-text">العربية</span>
-          <span class="ar-text">EN</span>
+        <button id="lang-toggle" class="lang-toggle" data-lang-toggle role="switch" aria-checked="false" aria-label="Switch between English and Arabic" type="button">
+          <span class="lang-toggle__label lang-toggle__label--en">EN</span>
+          <span class="lang-toggle__track">
+            <span class="lang-toggle__thumb"></span>
+          </span>
+          <span class="lang-toggle__label lang-toggle__label--ar">AR</span>
         </button>
         <button class="nav-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="main-menu">
           <span class="nav-menu-toggle__line"></span>

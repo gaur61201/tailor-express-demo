@@ -241,6 +241,14 @@
       document.body.dir = 'rtl';
     }
 
+    // Sync aria-checked to whatever language just got applied above (initial
+    // load), not just on click — otherwise a returning Arabic visitor sees the
+    // thumb on the right but a screen reader still reports the switch as off.
+    const langToggle = document.getElementById('lang-toggle');
+    if (langToggle) {
+      langToggle.setAttribute('aria-checked', document.documentElement.lang === 'ar' ? 'true' : 'false');
+    }
+
     // Eagerly fetch the Arabic webfont on initial load (not lazily, only when
     // Arabic text first renders). Otherwise the first EN->AR toggle triggers a
     // late font-swap reflow AFTER ScrollTrigger.refresh() has already run, which
@@ -261,6 +269,10 @@
         document.documentElement.dir = nextDir;
         document.documentElement.lang = nextLang;
         document.body.dir = nextDir;
+
+        if (langToggle) {
+          langToggle.setAttribute('aria-checked', nextLang === 'ar' ? 'true' : 'false');
+        }
 
         // Persist the choice so it carries across page navigation.
         try { localStorage.setItem(LANG_STORAGE_KEY, nextLang); } catch (e) {}

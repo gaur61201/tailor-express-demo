@@ -394,22 +394,120 @@ body[dir="rtl"] .nav__links a::after { transform-origin: right; }
   gap: 10px;
   flex-shrink: 0;
 }
-.nav__lang {
-  font-family: var(--font-en);
-  font-size: 0.75rem;
-  font-weight: var(--fw-semibold);
-  letter-spacing: 0.12em;
+/* =============================================
+   LANGUAGE TOGGLE — EN/AR slider
+   Thumb position + label opacity react to html[lang], already set by
+   initLangToggle() in script.js — no extra JS needed for the visuals.
+   ============================================= */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-family: inherit;
   color: var(--color-burgundy);
-  padding: 5px 12px;
-  border: 1px solid currentColor;
-  border-radius: var(--r-pill);
-  transition: background var(--duration-fast) var(--ease-elegant),
-              color var(--duration-fast) var(--ease-elegant);
+  transition: opacity 0.2s ease;
 }
-body[dir="rtl"] .nav__lang { font-family: var(--font-ar); letter-spacing: 0.04em; }
-.nav__lang:hover {
-  background: var(--color-burgundy);
-  color: var(--color-blush);
+
+.lang-toggle:hover {
+  opacity: 0.8;
+}
+
+.lang-toggle:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.lang-toggle__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: inherit;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+  font-variant-numeric: lining-nums tabular-nums;
+  min-width: 18px;
+  text-align: center;
+  user-select: none;
+}
+
+/* Active label (based on current language) */
+[lang="en"] .lang-toggle__label--en,
+[lang="ar"] .lang-toggle__label--ar {
+  opacity: 1;
+}
+
+/* The slider track */
+.lang-toggle__track {
+  position: relative;
+  width: 36px;
+  height: 18px;
+  background: rgba(128, 128, 128, 0.3);
+  border-radius: 9px;
+  transition: background 0.3s ease;
+  flex-shrink: 0;
+}
+
+.lang-toggle:hover .lang-toggle__track {
+  background: rgba(128, 128, 128, 0.5);
+}
+
+/* The sliding thumb/dot */
+.lang-toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+/* Thumb position based on language */
+[lang="en"] .lang-toggle__thumb {
+  transform: translateX(0);
+}
+
+[lang="ar"] .lang-toggle__thumb {
+  transform: translateX(18px);
+}
+
+/* Ensure toggle direction is consistent even in RTL mode */
+[dir="rtl"] .lang-toggle {
+  direction: ltr; /* Force LTR layout so EN is always left, AR is always right */
+}
+
+/* Mobile: shrink the visual slider but keep a 44px touch target via padding,
+   not by inflating the visible control (matches the rest of the nav cluster). */
+@media (max-width: 768px) {
+  .lang-toggle {
+    min-height: 44px;
+    padding-block: 0;
+  }
+
+  .lang-toggle__label {
+    font-size: 11px;
+  }
+
+  .lang-toggle__track {
+    width: 32px;
+    height: 16px;
+  }
+
+  .lang-toggle__thumb {
+    width: 12px;
+    height: 12px;
+  }
+
+  [lang="ar"] .lang-toggle__thumb {
+    transform: translateX(16px);
+  }
 }
 .nav__phone {
   display: grid;
@@ -658,7 +756,7 @@ body.menu-open .nav {
 }
 body.menu-open .nav__brand-text,
 body.menu-open .nav__phone,
-body.menu-open .nav__lang,
+body.menu-open .lang-toggle,
 body.menu-open .nav-menu-toggle { color: var(--color-blush); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4948,16 +5046,9 @@ body[dir="rtl"] .gallery-experience__overlay { text-align: right; }
 /* Nav elements high-contrast (blush) against the dark 3D scene */
 .gallery-page-body .nav__brand-text,
 .gallery-page-body .nav__phone,
-.gallery-page-body .nav__lang,
+.gallery-page-body .lang-toggle,
 .gallery-page-body .nav-menu-toggle {
   color: var(--color-blush);
-}
-
-/* Language toggle: blush text + faint blush border (its border uses
-   currentColor by default, so pin the border explicitly at 0.4) */
-.gallery-page-body .nav__lang {
-  border-color: rgba(246, 232, 234, 0.4);
-  background: transparent;
 }
 
 /* Logo text: subtle shadow so it stays legible over varied plane content */
@@ -5391,7 +5482,6 @@ body[dir="rtl"] .legal-status__label { font-family: var(--font-ar); letter-spaci
   .nav__cluster { gap: 8px; }
   .nav__phone { width: 44px; height: 44px; }
   .nav-menu-toggle { width: 44px; height: 44px; }
-  .nav__lang { min-height: 44px; display: inline-flex; align-items: center; }
 
   /* Article share buttons: 36 -> 44 */
   .article-share__btn { width: 44px; height: 44px; }
