@@ -260,18 +260,18 @@ body[dir="rtl"] .eyebrow { letter-spacing: 0.05em; text-transform: none; }
 }
 
 .preloader__wordmark {
-  font-family: var(--font-display);
-  font-weight: var(--fw-light);
+  font-family: var(--font-en);
+  font-weight: var(--fw-semibold);
   font-size: clamp(1.125rem, 1.6vw, 1.5rem);
-  letter-spacing: 0.18em;
+  letter-spacing: 0.04em;
   color: var(--color-blush);
   opacity: 0;
   /* JS fades to 1 */
 }
 body[dir="rtl"] .preloader__wordmark {
   font-family: var(--font-ar);
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.08em;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0;
 }
 
 .preloader__bar {
